@@ -15,6 +15,24 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 # Administrivia
 
+**ROOM.** Lo Schiavo Science 307.
+
+**TIME.** MWF 2:15pm - 3:20pm,  January 26 (Mon) - May 20 (Wed).
+
+**EXAMS.** Exam 1 ?, Exam 2 ?, Exam 3 ?
+
+### Instruction Format
+
+Class periods of 1:05min each 3 times per week for 15 weeks. Instructor-student interaction during lecture is encouraged. All programming will be done in the Java programming language, unless otherwise specified.
+
+### Books
+
+The ANTLR 4 reference book is [online](http://0-proquest.safaribooksonline.com.ignacio.usfca.edu/book/programming/9781941222621) for free via USF’s “safari online” as part of your tuition. Log in via the USF library site.
+
+Unfortunately the other book, [Language Implementation Patterns](http://amzn.com/193435645X), is not available for free (not sure why). It’s not required for CS652, but I will closely follow much of that book in class and it’s cheap at $24 in printed form. (A reminder that using an unpaid-for copy of the electronic version is uncool and violates our academic honesty policy and is illegal.)
+
+### Grading
+
 | Artifact | Grade Weight |
 |--------|--------|
 |Java REPL| 5%|
@@ -28,6 +46,35 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 |Exam 3| 20%|
 
 *No final exam, Smalltalk project counts as the final.*
+
+I consider an "A" grade to be above and beyond what most students have achieved. A "B" grade is an average grade for a graduate student or what you could call "competence" in a business setting. A "C" grade means that you either did not or could not put forth the effort to achieve competence. An "F" grade implies you did very little work or had great difficulty with the class compared to other students.
+
+Projects that do not run exactly as specified will lose 10% of the total points. Make sure that you do not have hardcoded files/directories in your code, remember that UNIX is case-sensitive as is Java, file names and class names must be correct, specified method signatures must be correct, etc...
+
+Code quality counts. Even if you have perfect functionality, I will deduct points for poor and sloppy coding.
+
+*I will be very strict and set a high standard in my grading*, but I will work hard to help you if you are having trouble. You some of you may not get the grade you were hoping for in this class, but I will do everything I can to make sure you learn a lot and have a satisfying educational experience!
+
+Unless you are sick or have a family emergency, I will not change deadlines for projects nor exam times. For example, I will not give you a special final exam just because you want to fly home early. Consult the university academic calendar before making travel plans.
+
+**ABOUT ME.** My name is Terence Parr and I’m a professor in the computer science department.  Please call me Terence (the use of “Terry” is a capital offense). For more information on me, see http://parrt.cs.usfca.edu.
+
+**TARDINESS.** Please be on time for class. It is a big distraction if you come in late.
+
+**ACADEMIC HONESTY.** You must abide by the copyright laws of the United States and academic honesty policies of USF. You may not copy code from other current or previous students. All suspicious activity will be investigated and, if warranted, passed to the Dean of Sciences for action.  Copying answers or code from other students or sources during a quiz, exam, or for a project is a violation of the university’s honor code and will be treated as such. Plagiarism consists of copying material from any source and passing off that material as your own original work. Plagiarism is plagiarism: it does not matter if the source being copied is on the Internet, from a book or textbook, or from quizzes or problem sets written up by other students.
+
+The golden rule: **You must never represent another person’s work as your own.**
+
+My policy is as follows:
+
+ 1. The first observed incident of cheating will result in a zero on the quiz or the assignment (for example). It will be reported to both the CS chair and the CS program assistant for tracking. 
+ 1. The second observed incident of cheating after the initial incident will result in a failing grade for the course.
+
+If you ever have questions about what constitutes plagiarism, cheating, or academic dishonesty in my course, please feel free to ask me. I’m happy to discuss the issue in a forthright manner.
+
+Official text from USF: *As a Jesuit institution committed to cura personalis—the care and education of the whole person—USF has an obligation to embody and foster the values of honesty and integrity. USF upholds the standards of honesty and integrity from all members of the academic community. All students are expected to know and adhere to the University's Honor Code. You can find the full text of the code [online](http://www.usfca.edu/catalog/policies/honor).*
+
+**ON DISABILITIES.** If you are a student with a disability or disabling condition, or if you think you may have a disability, please contact USF Student Disability Services (SDS) at 415/422-2613 within the first week of class, or immediately upon onset of the disability, to speak with a disability specialist. If you are determined eligible for reasonable accommodations, please meet with your disability specialist so they can arrange to have your accommodation letter sent to me, and we will discuss your needs for this course. For more information, please visit http://www.usfca.edu/sds/ or call 415/422-2613.
 
 # Syllabus
 
