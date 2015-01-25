@@ -8,7 +8,7 @@ This project teaches you about dynamic compilation (similar to what Java server 
 Your goal is to create a commandline Java interpreter that mimics the behavior of the Python interpreter. In other words you should be able to type the following, hit return, and see the result immediately:
 
 ```bash
-$ java jInterp
+$ java JavaREPL
 System.out.println("Hi");
 Hi
 ^D
@@ -17,7 +17,7 @@ $
 
 where ^D is "control-D". That sends end-of-file to standard input on UNIX. It's ^Z on Windows.
 
-You should print a line with a "> " prompt for the user. All commands execute upon newline.
+You should print a line with a "`> `" prompt for the user. All commands execute upon newline.
 
 You must allow variable definitions and function definitions as well as executable statements. We will assume that all definitions are on a single line, even function definitions.
 
@@ -116,7 +116,7 @@ I use URLClassLoader to load the compiled class then used Class.getDeclaredMetho
 
 # Deliverables
 
-You must deliver jInterp.java that contains a main() method that embodies the interpreter we demo class and described above.  
+You must deliver JavaREPL.java that contains a main() method that embodies the interpreter we demo class and described above.  
 
 # Submission
 
@@ -129,7 +129,7 @@ $ cd ~
 $ svn co https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345
 This makes a cs345 in your home directory, but of course you can put it wherever you want on your local disk tree. I only care about the pathnames in subversion. Be careful not to create extra subdirectories that get mapped to subversion. I will pull your files exactly as shown below. Failure to put the files in the right directory means 10% off. We will be using a robot to pull and test your source code.
 
-https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345/jInterp
+https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345/JavaREPL
 You can use the svn account for development of the software too if you would like, but I will only be looking at your jar file in the build directory.
 
 For more information, see svn in CS601. Naturally you will have to substitute cs345 for cs601.
