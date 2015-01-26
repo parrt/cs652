@@ -209,9 +209,7 @@ Just to summarize, keep in mind the following requirements.
 1.  Allow a blank line as a "do nothing" statement
 1. Accept `print `*expr*`;` as a statement and converted to the usual Java `print()` call before processing.
 1.  Comments on the end of the line should not present execution of the line:
-```java
-print "hi"; // a comment
-```
+`print "hi"; // a comment`.
 1.  Anything that does not parse as a valid declaration, should be assumed to be a statement and compiled/executed as such.
 1.  All code execution must occur within the same user thread and within the same process; i.e., you cannot use `Runtime.exec()` or anything like it to launch Java and another process. It won't do you any good but I wanted to prevent you from wasting time going down that path.
 1. You must use the Java compiler API to parse and compile code.
