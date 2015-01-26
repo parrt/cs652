@@ -225,10 +225,10 @@ As usual, you should try sending in all sorts of random input in an effort to ma
 
 You need to learn about compilation on-the-fly using Java's compiler API. **You are free to copy and use in your project any example code you find including Oracle javadoc but you must clearly delineate it in your code and provide the source from which you derived the bits of your solution.** Here are some pointers
 
-[JavaCompiler interface](http://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html)
-[Article on Java Compiler API](http://www.javabeat.net/the-java-6-0-compiler-api/)
-[How to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
-[Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm)
+* [JavaCompiler interface](http://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html)
+* [Article on Java Compiler API](http://www.javabeat.net/the-java-6-0-compiler-api/)
+* [How to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
+* [Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm)
 
 For example, I use this to get a an in-memory Java compiler:
 
