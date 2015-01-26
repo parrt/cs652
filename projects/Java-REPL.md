@@ -65,11 +65,11 @@ import java.io.*;
 import java.util.*;
 ```
 
-Before you freak out that you have to build the Java interpreter, my solution is less than 200 lines of code for the core functionality. Then, I have 100 lines of code for the scanner that figures out when the user has completed a statement or function or whatever.
+Before you freak out that you have to build a Java interpreter, note that my solution is less than 200 lines of code for the core functionality. Then, I have 100 lines of code for the scanner that figures out when the user has completed a statement or function or whatever.
 
 For simplicity, I will use the term *line* to mean whatever complete declaration or statement the user types in from here on.
 
-## How to build interactive shell
+## How to build an interactive Java shell
 
 Here's the trick you need to make this work without having to do much. When the user enters a statement or declaration (*line*), generate a class definition with that line and then compile it using Java's built-in compiler API; see packages `javax.tools.*`, `com.sun.source.util.JavacTask`. Once you compile the class just conjured up, use the `ClassLoader` to bring back code into memory and execute it.
 
@@ -157,59 +157,128 @@ The Java code entered by the user might also generate `stderr` or `stdout`. You 
 
 ![repl errors](images/repl-stderr.png)
 
-# Resources
+###  Recognizing nested character streams
 
-I am providing for you a class called StreamVacuum that you can use to pull all of the data out of an InputStream. You'll need it to capture the standard output from executing the exec() method on your newly created classes. Look at System.setOut().  You may find this code full of useful goodies:
+When the user types in a simple line like `int i;` it's easy to recognize they want you to execute that at the first newline, but we also want to handle the case of nested character streams with embedded newline's like:
 
-ANTLR v4's BaseTest.java
+```java
+> int[] a = {
+1,
+2
+};
+> print a[0];
+1
+>
+```
 
-You will also need to learn about compilation on-the-fly:
+I created a class called `NestedReader` that tracks three things:
 
-[Interface JavaCompiler](http://docs.oracle.com/javase/6/docs/api/javax/tools/JavaCompiler.html)
-[Java Compiler API](http://www.javabeat.net/articles/73-the-java-60-compiler-api-1.html)
-[yet another example](http://www.accordess.com/wpblog/an-overview-of-java-compilation-api-jsr-199/)
+```java
+public class NestedReader {
+	StringBuilder buf;    // fill this as you process, character by character
+	BufferedReader input; // where are we reading from?
+	int c; // current character of lookahead; reset upon each getNestedString() call
 
-I use this to get a java compiler to use in memory:
+	public NestedReader(BufferedReader input) {
+		this.input = input;
+	}
+	public String getNestedString() throws IOException {
+        ...
+    }
+}
+```
+
+A tricky issue is avoiding forcing the user to hit more than a single newline to indicate the interpreter should execute.  You will find that the best way to handle this is to keep a current character of *lookahead*, which I call field `c`. This is always the next character to process. When we consume a character, I add the character to my buffer and refill the lookahead character:
+
+```java
+void consume() throws IOException {
+	buf.append((char)c);
+	c = input.read();
+}
+```
+
+The basic idea is as follows. When asked to do so, my code looks at each character in turn and processes it accordingly. If it is an opening curly brace, bracket, or parenthesis, I push the appropriate closing character onto a stack. Upon closing character, I checked the top of the stack to make sure that it's the right symbol. If not, I declare and improperly nested piece of code and return the current buffer to my JavaREPL. When I see the start of a string or character literal, I consume characters until the closing character. Upon `//`, I consume characters until the end of line and in fact I strip away these comments and do not send them to the compiler. Upon `\n` and an empty stack, I returned the current buffer to the invoking code otherwise I keep consuming characters.
+
+## Requirements
+
+Just to summarize, keep in mind the following requirements.
+
+1. Your tool must be an interactive Java shell that executes user code when they hit newline when not nested inparentheses, square brackets, or curly brackets. Those characters are not counted when they are inside single or double quoted strings or within single-line comments.
+1.  Accept as a declaration, anything that will compile with `public static` in front of it as a field of a class, which would include variable, function, and class definitions.
+1. Your program must not require more than a single newline character after the end of a valid statement or declaration. In other words, I shouldn't have to hit extra newlines to make your program execute my code.
+1.  Allow a blank line as a "do nothing" statement
+1. Accept `print `*expr*`;` as a statement and converted to the usual Java `print()` call before processing.
+1.  Comments on the end of the line should not present execution of the line:
+```java
+print "hi"; // a comment
+```
+1.  Anything that does not parse as a valid declaration, should be assumed to be a statement and compiled/executed as such.
+1.  All code execution must occur within the same user thread and within the same process; i.e., you cannot use `Runtime.exec()` or anything like it to launch Java and another process. It won't do you any good but I wanted to prevent you from wasting time going down that path.
+1. You must use the Java compiler API to parse and compile code.
+1. You must use a `ClassLoader` to bring in the compiled class that you generate and then use standard reflection to execute that code (i.e., call `exec()` on the class object you bring in).
+1. Users must see standard output and standard error as they would normally expect from compiler errors and run-time errors.
+1. For improperly nested input, such as `(3+4]`, it's fine to just pass it off to the compiler and let it complain. But, you need to handle this case in your input scanner so it knows when to return input for processing.
+
+You are free to use Java 8, as that is how I will test your code.
+
+As usual, you should try sending in all sorts of random input in an effort to make your program robust. Expect that I will do something like that during testing. If I were you, I would try sending in lots of random Java code to ensure your program operates correctly.
+
+## Resources
+
+You need to learn about compilation on-the-fly using Java's compiler API. **You are free to copy an use in your project any example code you find including Oracle javadoc but you must clearly delineated in your code the source from which you derived the bits of your solution.** Here are some pointers
+
+[JavaCompiler interface](http://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html)
+[Article on Java Compiler API](http://www.javabeat.net/the-java-6-0-compiler-api/)
+[how to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
+[Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm)
+
+For example, I use this to get a java compiler to use in memory:
 
 ```java
 JavaCompiler compiler =
 	ToolProvider.getSystemJavaCompiler();
 ```
 
-Then, using a DiagnosticCollector and a StandardJavaFileManager, I get a CompilationTask and basket to compile by calling call(). I pull any error messages out of the DiagnosticCollector. There are lots of simple versions of compilation like this:
+Then, using a `DiagnosticCollector` and a `StandardJavaFileManager`, I get a specific `CompilationTask` called `JavacTask` and then compile by calling `call()`. I pull any error messages out of the DiagnosticCollector. There are lots of simple versions of compilation like this on the net that you are free to copy and mangle for your projects (assuming you give proper attribution):
 
 ```java
+...
 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-int result = compiler.run(null, null, null,
-"src/org/kodejava/example/tools/Hello.java");
+JavacTask task = (JavacTask)
+	compiler.getTask(null, fileManager, diagnostics,
+	compileOptions, null, compilationUnits);
+boolean ok = task.call();
 ```
 
-But this doesn't deal with capturing stdout / stderr from the compiler.
+To check whether or not something is *syntactically* (but not *semantically*) valid, use the `parse()` method of the `JavacTask` class.
+```java
+public static boolean isDeclaration(String line) throws IOException {
+   ...
+   
+   task.parse();
+   return diagnostics.getDiagnostics().size() == 0;
+}
+```
 
-Dynamic class loading:
+Here's some information on dynamic class loading:
 
 http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
-http://docs.oracle.com/javase/6/docs/api/java/lang/ClassLoader.html
+http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
 I use URLClassLoader to load the compiled class then used Class.getDeclaredMethod() to find the "exec" method.
 
-*You can cut and paste little pieces of code from around the web to make this work on this project.* For example, I cut and paste 5 or 6 lines from [Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm). You must indicate by a comment in the code where you have copied from the web!
+If it helps, here is my list of methods
 
-# Deliverables
+* main()
+* isDeclaration()
+* getCode()
+* compile()
+* exec()
+* writeFile()
 
-You must deliver JavaREPL.java that contains a main() method that embodies the interpreter we demo class and described above.  
+## Deliverables
 
-# Submission
+You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above. Make sure your repository has any other classes needed for this project.
 
-Make sure that you have a cs345 directory associated with your user account:
+## Submission
 
-svn mkdir https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345 -m 'add dir'
-To map that directory to a directory on your disk, do something like this:
-
-$ cd ~
-$ svn co https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345
-This makes a cs345 in your home directory, but of course you can put it wherever you want on your local disk tree. I only care about the pathnames in subversion. Be careful not to create extra subdirectories that get mapped to subversion. I will pull your files exactly as shown below. Failure to put the files in the right directory means 10% off. We will be using a robot to pull and test your source code.
-
-https://www.cs.usfca.edu/svn/YOUR_CS_STUDENT_LOGIN/cs345/JavaREPL
-You can use the svn account for development of the software too if you would like, but I will only be looking at your jar file in the build directory.
-
-For more information, see svn in CS601. Naturally you will have to substitute cs345 for cs601.
+You must submit your project via github.
