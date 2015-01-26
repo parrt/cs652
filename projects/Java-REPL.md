@@ -216,6 +216,7 @@ Just to summarize, keep in mind the following requirements.
 1. You must use a `ClassLoader` to bring in the compiled class that you generate and then use standard reflection to execute that code (i.e., call `exec()` on the class object you bring in).
 1. Users must see standard output and standard error as they would normally expect from compiler errors and run-time errors.
 1. For improperly nested input, such as `(3+4]`, it's fine to just pass it off to the compiler and let it complain. But, you need to handle this case in your input scanner so it knows when to return input for processing.
+1. Exit your program when the user hits EOF (^D or ^Z, depending on the OS).
 
 You are free to use Java 8, as that is how I will test your code.
 
@@ -259,9 +260,10 @@ public static boolean isDeclaration(String line) throws IOException {
 
 Here's some information on dynamic class loading:
 
-http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
-http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
-I use URLClassLoader to load the compiled class then used Class.getDeclaredMethod() to find the `exec()` method.
+* http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
+* http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
+
+I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method.
 
 If it helps, here is my list of methods
 
@@ -274,8 +276,14 @@ If it helps, here is my list of methods
 
 ## Deliverables
 
-You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above. Make sure your repository has any other classes needed for this project.
+You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above.  For example, you can see the starter kit I created here:
+
+https://github.com/USF-CS652-S15/parrt-repl
+
+Make sure your repository has any other classes needed for this project.
+
+Do not add `.class` files or any other build artifacts.
 
 ## Submission
 
-You must submit your project via github.
+You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S15](https://github.com/USF-CS652-S15).
