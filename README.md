@@ -19,7 +19,7 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 **TIME.** MWF 2:15pm - 3:20pm,  January 26 (Mon) - May 20 (Wed).
 
-**EXAMS.** Exam 1 ?, Exam 2 ?, Exam 3 ?
+**EXAMS.** There will be 3 exams but no final exam.
 
 ### Instruction Format
 
@@ -33,17 +33,17 @@ Unfortunately the other book, [Language Implementation Patterns](http://amzn.com
 
 ### Grading
 
-| Artifact | Grade Weight |
-|--------|--------|
-|Java REPL| 5%|
-|PostScript Interpreter | 2% |
-|modify java bytecodes |5%|
-|Java->C for vtable |8%|
-|smalltalk compiler|	10%|
-|smalltalk VM |		15%|
-|Exam 1| 20%|
-|Exam 2| 20%|
-|Exam 3| 20%|
+| Artifact | Grade Weight | Due date |
+|--------|--------|--------|
+|Java REPL| 5%| Feb 4 |
+|PostScript Interpreter | 2% | Feb 18 |
+|modify java bytecodes |5%| ? |
+|Java->C for vtable |8%| ? |
+|smalltalk compiler|	10%| ? |
+|smalltalk VM |		15%| ? |
+|Exam 1| 20%| ? |
+|Exam 2| 20%| ? |
+|Exam 3| 20%| May 20 |
 
 *No final exam, Smalltalk project counts as the final.*
 
