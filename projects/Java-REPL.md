@@ -230,7 +230,7 @@ You need to learn about compilation on-the-fly using Java's compiler API. **You 
 [How to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
 [Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm)
 
-For example, I use this to get a an in-memory Java compiler:
+For example, I use this to get an in-memory Java compiler:
 
 ```java
 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
