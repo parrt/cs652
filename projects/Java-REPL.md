@@ -223,18 +223,17 @@ As usual, you should try sending in all sorts of random input in an effort to ma
 
 ## Resources
 
-You need to learn about compilation on-the-fly using Java's compiler API. **You are free to copy an use in your project any example code you find including Oracle javadoc but you must clearly delineated in your code the source from which you derived the bits of your solution.** Here are some pointers
+You need to learn about compilation on-the-fly using Java's compiler API. **You are free to copy and use in your project any example code you find including Oracle javadoc but you must clearly delineate it in your code and provide the source from which you derived the bits of your solution.** Here are some pointers
 
 [JavaCompiler interface](http://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html)
 [Article on Java Compiler API](http://www.javabeat.net/the-java-6-0-compiler-api/)
-[how to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
+[How to compile java using javax](https://www.google.com/search?btnG=1&pws=0&q=how+to+compile+java+using+javax&gws_rd=ssl)
 [Compile a Java file with JavaCompiler](http://www.java2s.com/Code/Java/JDK-6/CompileaJavafilewithJavaCompiler.htm)
 
-For example, I use this to get a java compiler to use in memory:
+For example, I use this to get a an in-memory Java compiler:
 
 ```java
-JavaCompiler compiler =
-	ToolProvider.getSystemJavaCompiler();
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 ```
 
 Then, using a `DiagnosticCollector` and a `StandardJavaFileManager`, I get a specific `CompilationTask` called `JavacTask` and then compile by calling `call()`. I pull any error messages out of the DiagnosticCollector. There are lots of simple versions of compilation like this on the net that you are free to copy and mangle for your projects (assuming you give proper attribution):
@@ -262,7 +261,7 @@ Here's some information on dynamic class loading:
 
 http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
 http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
-I use URLClassLoader to load the compiled class then used Class.getDeclaredMethod() to find the "exec" method.
+I use URLClassLoader to load the compiled class then used Class.getDeclaredMethod() to find the `exec()` method.
 
 If it helps, here is my list of methods
 
