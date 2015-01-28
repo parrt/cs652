@@ -48,6 +48,8 @@ Unfortunately the other book, [Language Implementation Patterns](http://amzn.com
 
 *No final exam, Smalltalk project counts as the final.*
 
+*I expect to see proper git commit messages and github usage so I can track your development.*
+
 I consider an "A" grade to be above and beyond what most students have achieved. A "B" grade is an average grade for a graduate student or what you could call "competence" in a business setting. A "C" grade means that you either did not or could not put forth the effort to achieve competence. An "F" grade implies you did very little work or had great difficulty with the class compared to other students.
 
 Projects that do not run exactly as specified will lose 10% of the total points. Make sure that you do not have hardcoded files/directories in your code, remember that UNIX is case-sensitive as is Java, file names and class names must be correct, specified method signatures must be correct, etc...
