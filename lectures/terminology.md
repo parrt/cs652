@@ -17,7 +17,6 @@ Imagine taking Java to LISP (imperative to functional): remove assignments and a
 **Immutable**==**pure functional** and mutable objects.  Pure functional languages have purely immutable objects.
 
 ## C compilation stuff
-Imagine taking Java to LISP (imperative to functional): remove assignments and any other side effect inducing operations. Not very useful.
 
 ```c
 #include <stdio.h>
@@ -37,7 +36,7 @@ cc -E t.c
 cc -O -S t.c
 ```
 
-on ARM chip and it makes it clear what's going on, some you know its assembly code.
+on ARM chip and it makes it clear what's going on.
 
 ```c
 #include <stdio.h>
@@ -172,6 +171,7 @@ http://www.cs.swarthmore.edu/~newhall/unixhelp/compilecycle.html
  * tree-based interpreters; Perl ≤5, Ruby ≤1.8
  * Native code compilers; static C, C++, Visual Basic 5 and 6
  * Bytecode+dynamic compilation; Java ≥1.3, C#, Self, Smalltalk, Visual Basic .NET
+ * Translate one language to another; `cfront`
 
 # Java
 
