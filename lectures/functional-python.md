@@ -55,23 +55,23 @@ y' = f(x)
 
 While we *should* write small methods and object ordered languages, I've seen and written functions that are huge.  Functional programming makes it more difficult to write very large functions; everything is done with lots of little helper functions and then combining the results.
 
-Because state is not being changed all over the place, it's often easier to debug functional programs. All we care about is the parameters and return values. We can treat each function in isolation. Every function can be a unit test.
+Because state is not being changed all over the place, it's often easier to debug functional programs. All we care about is the parameters and return values. We can treat each function in isolation. Every function can be tested with unit tests easily.
 
 Functional programs tend to make it very easy to separate out boilerplate code into utility functions such as map, filter, reduce. To make this happen, we need to be able to pass around functions or other snippets of code.
 
-Functional programs are more abstract; We don't have to worry about null pointers and memory issues etc. The productivity boost of Java over C is an order magnitude. The productivity boost of functional languages over Java his equally large, if you can fit your problem into its world.
+Functional programs are more abstract; We don't have to worry about null pointers and memory issues etc. The productivity boost of Java over C is an order magnitude. The productivity boost of functional languages over Java is equally large, if you can fit your problem into its world nicely.
 
-Pure functional programming languages easily take advantage of concurrency because no 2 threads can be modifying the same memory. A single thread can't even modify its own memory space.
+Pure functional programming languages easily take advantage of concurrency because no 2 threads can be modifying the same memory. A single thread can't even modify its own memory space directly.
 
 ## Disadvantages
 
-Functional programming isn't used by mainstream programmers; harder to hire people, nobody knows it, completely different way of programming
+Functional programming languages are used by mainstream programmers much less often; harder to hire people, nobody knows it, completely different way of programming
 
-Time/space performance is an issue
+Time/space performance might be an issue.
 
-Lack of good IDEs as we have for imperative programming
+Lack of good IDEs as we have for imperative programming.
 
-Adding some functional flavor to your imperative programming, though, can be extremely effective. You can gain some of the advantages listed above by incorporating functional ideas.
+Adding some functional flavor to your imperative programming, though, can be extremely effective. You can gain some of the advantages listed above by incorporating functional ideas. E.g., Avoid fields when you can.
 
 Lack of side effects makes it pretty hard to do GUI programming.
 
@@ -102,22 +102,42 @@ Can't have multi line lambdas in Python and they have to be expressions; e.g., y
 
 ### Iterators
 
-An iterator is any object that answers `next(self)`, but they don't seem useful unless they also implement `__iter__(self)`.  `next()` "consumes" elements:
+An iterator is any object that answers `next(self)` and `__iter__(self)`.  `next()` "consumes" elements:
 ```python
->>> a,b = it.next(),it.next()
->>> a
+class I:
+    def __init__(self,n):
+        self.i = 0
+        self.n = n
+    def __iter__(self):
+        return self
+    def next(self):
+        if self.i>=self.n: raise StopIteration
+        self.i+=1
+        return self.i
+>>> for i in I(10):
+...     print i
+...
 1
->>> b
 2
+3
+4
+5
+6
+7
+8
+9
+10
 ```
 
 Iterators can represent infinite streams.
 
 Raise a `StopIteration` exception when the sequence has reached its logical conclusion.
 
-Some locations automatically convert to iterators like for each loop.  Can convert an object to an iterator by calling `iter()` manually. If that object doesn't iterate, raise `TypeError`
+Some operations automatically convert to iterators like for each loop.  But, can convert an object to an iterator by calling `iter()` manually if the object answers `__iter__()`. If that object doesn't iterate, raise `TypeError`
 
 ```python
+>>> print iter("hi").next()
+h
 >>> L = [1,2,3]
 >>> it = iter(L)
 >>> it.next()
@@ -139,6 +159,8 @@ We can also create tuples, lists, multiple assignments, do mix/max with iterator
 >>> tuple(iter(L))
 (1, 2, 3)
 >>> a,b,c = iter(L)
+>>> tuple(I(10))
+(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 ```
 
 Common: file, set, dict, string, tuples support iteration
@@ -149,7 +171,7 @@ for c in 'hi': ...
 for c in set((1,2)): ...
 ```
 
-Sample iterator:
+Sample infinite iterator:
 
 ```python
 class Forever:
@@ -172,7 +194,7 @@ for (int i=0; i<data.size(); i++) {
 }
 ```
 
-You could make a function that but the idea of iterating through a list performing operation that gets a value happens constantly and we should not have to make a function for each one of those. This is the boilerplate code talking about. If I want to change that `+=` to `*=`, I have to make an entirely new loop. These are automated for us with a few keystrokes in an IDE usually but he gives us code bloat and breaks single point change rule.
+You could make a function that but the idea of iterating through a list performing operation that gets a value happens constantly and we should not have to make a function for each one of those. This is boilerplate code we are talking about. If I want to change that `+=` to `*=`, I have to make an entirely new loop. These are automated for us with a few keystrokes in an IDE usually but it gives us code bloat and breaks single point of change rule.
 
 One of the most common operations for me is to walk a list or other data structure to get a new list where the new elements are a function of the old or I have filtered out some of the elements.  Python provides a number of functions from functional programming that make this really easy.
 
@@ -204,12 +226,17 @@ We often use the term map-reduced because they are so often used in combination.
 
 ### list comprehensions and generator expressions
 
-List comprehensions are generally much more efficient than the equivalent for-loops in Python.
+List comprehensions are generally much more efficient than the equivalent for-loops in Python and sort of replace the `map`/`filter` functions, but not `reduce`.
 Syntax:
 
 [ *expr* for *var* in *sequence*]
 
 [ *expr* for *var* in *sequence* if *condition*]
+
+```python
+L = [1, 2, 3]
+[2*x for x in L]
+```
 
 They are like a loop that adds to the list:
 
@@ -237,8 +264,10 @@ samples = [ random.random() for x in range(10) ]
 Create list of tuples from a map:
 
 ```python
+m = {"a":3, "b":4}
+[k for k in m]
 dict2list = lambda dic: [(k, v) for (k, v) in dic.iteritems()]
-dict2list( {"a":3, "b":4} )  # [('a', 3), ('b', 4)]
+dict2list( m )  # [('a', 3), ('b', 4)]
 ```
 
 Make 10 0s:
@@ -256,28 +285,37 @@ Use the IF part to filter
 How to run out of memory because list comprehensions are not lazy in Python:
 
 ```python
-[str(n) for n in range(10**100)]
+[str(n) for n in range(10**100)] # don not do this
 ```
 
-But you can use generator expressions for the same purpose I am getting lazy version:
+But you can use generator expressions for the same purpose, getting a lazy version. Used xrange() instead of range(); do not want list, want iterator.
 
 ```python
-(str(n) for n in range(10**100))
+type(range(10))
+<type 'list'>
+>>> type(xrange(10))
+<type 'xrange'>
+>>> 
 ```
-
-Think of list comprehension as generator expressions in list constructors. lets us avoid creating a list and can be used generally where list comprehensions can:
 
 ```python
-sum( 2*x for x in range(10) ) # 90
+any(n>0 for n in xrange(10**10))
+True # fast!
+>>> any(n>0 for n in range(10**10))
+...freezes...
 ```
 
-Used xrange() instead of range(), which gives you a list of elements instead of an iterator.
+Think of list comprehension as generator expressions in list constructors. Lets us avoid creating a list and can be used generally where list comprehensions can:
+
+```python
+sum( 2*x for x in xrange(10) ) # 90
+```
 
 `any()` returns true if any element of the sequence is true; it returns false if the sequence is empty. all() requires all elements in the sequence to be true.
 
 ```python
-any(x%2==0 for x in [1,2,3])  # True. Asks "is there a non-zero value"
-any(x>3 for x in [1,2,3])  # False. Asks "is zero value greater than 3"
+any(x%2==0 for x in [1,2,3]) # True. Asks "is there an even value"
+any(x>3 for x in [1,2,3])    # False. Asks "is there value greater than 3"
 
 # http://theglenbot.com/all-any-and-reduce-in-python/
 if a and b and c and d:
@@ -297,12 +335,12 @@ if any([a,b,c,d]):
  
 # a cool one that checks to see if certain parameters exist
 # within a URL encoded parameter list
-query_string = '&a=1&b=2&c=3'
-if any(map(query_string.find,['a','b'])):
+q = '&a=1&b=2&c=3'
+if any(map(q.find,['a','b'])):
     print 'It exists!'
 ```
 
-These are cool because they short-circuit the generator like C && and || operators that avoid evaluating operands unnecessarily. They can cut out of an iteration when they can decide the answer.
+These are cool because they short-circuit the operator like C `&&` and `||` operators that avoid evaluating operands unnecessarily. They can cut out of an iteration when they can decide the answer.
 
 ### Generators
 
@@ -330,7 +368,7 @@ python doc: "You could achieve the effect of generators manually by writing your
 From [stackoverflow.com answer](http://stackoverflow.com/questions/2776829/difference-between-python-generators-vs-iterators):
 
 <blockquote>
-iterator is a more general concept: any object whose class has a next method (__next__ in Python 3) and an __iter__ method that does return self.
+iterator is a more general concept: any object whose class has a `next` method (`__next__` in Python 3) and an `__iter__` method that does return self.
 
 Every generator is an iterator, but not vice versa.
 </blockquote>
@@ -355,7 +393,7 @@ def preorder(t):
             yield y
 ```
 
-My first attempt look like this:
+My first attempt looked like this:
 
 ```python
 def preorder(t):
@@ -364,7 +402,7 @@ def preorder(t):
         preorder(c) # whoops!
 ```
 
-Then we can create a tree and walked the nodes like this:
+Then we can create a tree and walk the nodes like this:
 
 ```python
 x = Tree("c").addChild(Tree("d").addChild(Tree("e")))
@@ -374,7 +412,7 @@ for node in preorder(x):
 
 ### Higher-order functions / closures
 
-In Java &lt; 8, these are methods wrapped in objects such as anonymous inner classes. We can pass functionality to a function by passing an object wrapped around that method. ugly. ugly. ugly. The advantage is that the function can carry along some data in the wrapper object.
+In Javam there are methods wrapped in objects such as anonymous inner classes. We can pass functionality to a function by passing an object wrapped around that method. ugly. ugly. ugly. The advantage is that the function can carry along some data in the wrapper object.
 We do this in Java as callbacks for GUIs or for passing in comparator functions to sorting algorithms.
 We can return anonymous and class objects from functions in Java, but we never do. In Python we can do this with more utility. For example, here's a function factory that returns functions computing linear curves where 'a' is the slope and 'b' is the offset:
 
@@ -395,10 +433,10 @@ print angle45_at_origin(0)
 [-1, 1, 3, 5]
 ```
 
-When a function captures some arguments in another function and returns it, we call it currying. Basically, we are taking a function of multiple arguments and breaking it down into functions with fewer arguments. Note that we can fix values in the function using parameters from another function as we've done here in linear(). From the Wikipedia page: Given function f(x,y) = y/x, we can create a new function g(y) = 2/x which is just like calling f(2,y). So g(y)=f(2,y)=y/2. g(y) is a function we can return from f. (Some languages only allow functions with single arguments and so they use currying to create functions with multiple arguments.) In Python, it looks like this
+When a function captures some arguments in another function and returns it, we call it **currying**. Basically, we are taking a function of multiple arguments and breaking it down into functions with fewer arguments. Note that we can fix values in the function using parameters from another function as we've done here in linear(). From the Wikipedia page: Given function f(x,y) = y/x, we can create a new function g(y) = 2/x which is just like calling f(2,y). So g(y)=f(2,y)=y/2. g(y) is a function we can return from f. (Some languages only allow functions with single arguments and so they use currying to create functions with multiple arguments.) In Python, it looks like this
 
 ```python
-def f(x):
+def f(x): # simulate f(x,y) with f(x)(y)
      def g(y):
              return float(y)/x
      return g 
@@ -409,9 +447,11 @@ def f(x):
 4.0
 >>> g(2)
 1.0
+>>> f(2)(3)
+1.5
 ```
 
-This kind of stuff is great for creating new functionality by composing other functions. For example, imagine that we have a general sort routine that takes a comparator function. We could create another function that return of function with a reverse sort function already put in it. Imagine that we have built-in `sort()` and `reverse_cmp()` functions. We get tired of having to combine a manually, which is a bit of boilerplate code. Let's create a function that gives us a handy shortcut function that combines sorted and `reverse_cmp`:
+This kind of stuff is great for creating new functionality by composing other functions. For example, imagine that we have a general sort routine that takes a comparator function. We could create another function that returns a function with a reverse sort function already put in it. Imagine that we have built-in `sort()` and `reverse_cmp()` functions. We get tired of having to combine them manually for a reverse sorter, which is a bit of boilerplate code. Let's create a function that gives us a handy shortcut function that combines `sort()` and `reverse_cmp() to form `rsort()`:
 
 ```python
 def reverse_cmp(x,y):
@@ -429,7 +469,7 @@ The key is that we're not statically defining new methods. They get created as n
 
 ### Function composition
 
-Because Python has higher-order functions, we can compose them to make more complicated functions like we did informally with the function objects in the previous section. Composition just means applying a function to the result of calling another function.  Given functions f and g, composing the two means calling `f(g(x))` or in sequence `y = g(x)` then `z = f(y). z=f(g(x))`. Note that because of the nesting, we actually compute the 2nd function first. we often write in functional stuff new composed function fg as:
+Because Python has higher-order functions, we can compose them to make more complicated functions like we did informally with the function objects in the previous section. Composition just means applying a function to the result of calling another function.  Given functions f and g, composing the two means calling `f(g(x))` or in sequence `y = g(x)` then `z = f(y). z=f(g(x))`. Note that because of the nesting, we actually compute the 2nd function first. We often write composed function `fg` as:
 
 `fg` = `f` • `g`
 
@@ -459,7 +499,7 @@ From [Python functional doc](http://docs.python.org/release/2.7.2/howto/function
 <blockquote>
 `compose(outer, inner, unpack=False)`
 
-The compose() function implements function composition. In other words, it returns a wrapper around the outerand inner callables, such that the return value from inner is fed directly to outer.
+The compose() function implements function composition. In other words, it returns a wrapper around the outer and inner callables, such that the return value from inner is fed directly to outer.
 </blockquote>
 
 They give this example:
@@ -475,7 +515,7 @@ def add(a, b):
 22
 ```
 
-Also note that sequence `f(); g(;` is the same as `compose(g, f)` because that's `g(f())`, which would call `f` first.  Weird but correct.
+Also note that sequence `f(); g()` is the same as `compose(g, f)` because that's `g(f())`, which would call `f` first.  Weird but correct.
 
 ### Computing prime number example
 
