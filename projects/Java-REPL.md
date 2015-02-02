@@ -139,7 +139,7 @@ public class Interp_0 {
 }
 ```
 
-Finally, before you try to and analyze the Java code and executed, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`
+Finally, before you try to and analyze the Java code and executed, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.   For simplicity, assume that this print statement only works as the first characters a line and only a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
 
 ###  Handling stderr and stdout
 
@@ -216,6 +216,10 @@ Just to summarize, keep in mind the following requirements.
 1. You must use a `ClassLoader` to bring in the compiled class that you generate and then use standard reflection to execute that code (i.e., call `exec()` on the class object you bring in).
 1. Users must see standard output and standard error as they would normally expect from compiler errors and run-time errors.
 1. For improperly nested input, such as `(3+4]`, it's fine to just pass it off to the compiler and let it complain. But, you need to handle this case in your input scanner so it knows when to return input for processing.
+1. Multiple statements or multiple declarations should work, such as `int i=3; int y;` but it should not handle a line that includes both a declaration and a statement because that would force the declaration to be a local variable.
+1. Do not attempt to execute statements are declarations with compile errors.
+1. Upon invalid and incomplete input such as `int {;`, keep waiting for the user to close with an improper symbol or with the proper symbol or hit eof. Your program should wait even if there are multiple new lines afterwards.
+1. Upon an improperly nested string, consume until the end of line before attempting to read another statement from the user.
 1. Exit your program when the user hits EOF (^D or ^Z, depending on the OS).
 
 You are free to use Java 8, as that is how I will test your code.

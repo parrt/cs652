@@ -35,7 +35,7 @@ From wikipedia history of functional programming:
 val x = 1;
 x = 2; // INVALID
 ```
-* There is no predefined order evaluation because it doesn't matter–values can be computed on demand. lazy evaluation supported
+* There is no predefined order evaluation because it doesn't matter--values can be computed on demand. lazy evaluation supported
 * Want functions to operate on parameters and return values. that's it. can only depend on parameters:
   * No local state maintained
   * Can't change global variables
@@ -46,10 +46,10 @@ y' = f(x)
 ```
 * No side effects such as print statements, writing to the disk, launching missiles. Pure functional languages hide these things in creatures called monads.
 * Inverse of OO programming that sends messages (functions) between objects (state). Functional languages send state between functions as parameters and return values
-* Functions are first-class objects (C function pointers don't count). First-class objects can capture parameters and other stuff not just a function address. We can create new functions on-the-fly whereas everything is fixed/static in C.
+* Functions are first-class objects (C function pointers don't count).  Moreover, these first-class objects are **closures** and can capture parameters and other stuff; they are not not just a function address. We can create new functions on-the-fly whereas everything is fixed/static in C.
 * Support for higher-order functions (functions can take functions as parameters and return functions)
 * Reliance on recursion instead of looping
-*
+
 
 ## Advantages
 
