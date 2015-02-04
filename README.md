@@ -81,28 +81,16 @@ Official text from USF: *As a Jesuit institution committed to cura personalis—
 
 # Syllabus
 
-## Week 1
+## Week 1, 2
+
+[Language Terminology](https://github.com/parrt/cs652/blob/master/lectures/terminology.md)
 
 Intro 3 days. Define terms compiler, interp/VM, translation, LLVM, bytecode, GC, closures, language, grammar, Syntax, semantics, scope, concurrency, pre/postfix, recursion, object, idioms, libraries, tools, closures, continuations etc...
 
-Quick survey of languages to show the extent/quirks/concepts:
- *	LISP
- *	Fortran
- *	Prolog
- *	SQL
- *	Forth
- *	Smalltalk
- *	C
- *	C++
- *	Obj-C
- *	Swift
- *	F#
- *	Python
- *	Erlang
- *	PostScript
- *	AppleScript
+[Functional programming in Python](https://github.com/parrt/cs652/blob/master/lectures/functional-python.md)
 
-## Week 2
+
+## Week 2,3
 
 ### formal grammars; 3 days
 
@@ -117,9 +105,9 @@ Quick survey of languages to show the extent/quirks/concepts:
  *	ambig
  *	left-recur elim
 
-## Week 3
+## Week 4
 
-Some key lang innovations in common use by programmers 	the representation of data in binary
+Some key lang innovations in common use by programmers	the representation of data in binary
  *	assembly language
  *	Hi-level lang
  *	strong typing, static vs dyn typing
@@ -142,7 +130,7 @@ Some key lang innovations in common use by programmers 	the representation of 
  *	Operator overloading
  *	Pass by name/value
 
-## Week 4
+## Week 5
 
 * Finite automata
    *	NFA
@@ -160,7 +148,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 * parsing II
    *	mapping grammars to recursive descent
 
-## Week 5
+## Week 6
 
 * parsing III
    *	bottom-up parsing
@@ -174,7 +162,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 
 * parse tree listeners/visitors
 
-## Week 6
+## Week 7
 
 * symbol tables II
    * monolithic scope
@@ -187,7 +175,7 @@ Some key lang innovations in common use by programmers 	the representation of 
    * structs
    * classes
 
-## Week 7
+## Week 8
 
 * static typing I
    * dynamic vs static typing
@@ -200,7 +188,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 * static typing III
    * polymorphic type safety
 
-## Week 8
+## Week 9
 
 * Polymorphism
    * via symbol table
@@ -214,7 +202,7 @@ Some key lang innovations in common use by programmers 	the representation of 
    * rule-based
    * Token stream rewriting
 
-## Week 9
+## Week 10
 
 * Translation III
    * model-driven
@@ -224,7 +212,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 
 * StringTemplate
 
-## Week 10
+## Week 11
 
 * Interpreters I
    * syntax-directed
@@ -236,7 +224,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 * Interpreters III
    * register
 
-## Week 11
+## Week 12
 
 * Java VM case study
 
@@ -244,7 +232,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 
 * Generating bytecode
 
-## Week 12
+## Week 13
 
 * smalltalk language
 
@@ -252,7 +240,7 @@ Some key lang innovations in common use by programmers 	the representation of 
 
 * smalltalk closures in detail II
 
-## Week 13
+## Week 14
 
 * GC I
 

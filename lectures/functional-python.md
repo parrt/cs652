@@ -224,7 +224,7 @@ reduce(lambda x,y : x + y, [1,2,3,4,5]) # 15
 
 We often use the term map-reduced because they are so often used in combination. These are also very easy to parallelize because we can split part the list into n chunks for n processors or machines and do them in parallel. We can reduce the elements within each chunk and then do a final reduce on the partial results from the n processors to get a single value.
 
-### list comprehensions and generator expressions
+### List comprehensions
 
 List comprehensions are generally much more efficient than the equivalent for-loops in Python and sort of replace the `map`/`filter` functions, but not `reduce`.
 Syntax:
@@ -282,13 +282,15 @@ Use the IF part to filter
 [x for x in range(10) if x%2 == 0]  # [0, 2, 4, 6, 8]
 ```
 
+### Generator expressions
+
 How to run out of memory because list comprehensions are not lazy in Python:
 
 ```python
 [str(n) for n in range(10**100)] # don not do this
 ```
 
-But you can use generator expressions for the same purpose, getting a lazy version. Used xrange() instead of range(); do not want list, want iterator.
+But you can use [generator expressions](https://docs.python.org/2/reference/expressions.html#generator-expressions) for the same purpose, getting a lazy version. Used xrange() instead of range(); do not want list, want iterator.
 
 ```python
 type(range(10))
@@ -298,20 +300,25 @@ type(range(10))
 >>> 
 ```
 
+The first creates a list of 10 numbers and the second is essentially an iterator that would let you count through 0..9.
+
 ```python
-any(n>0 for n in xrange(10**10))
-True # fast!
->>> any(n>0 for n in range(10**10))
-...freezes...
+>>> len(x for x in range(10))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: object of type 'generator' has no len()
 ```
 
-Think of list comprehension as generator expressions in list constructors. Lets us avoid creating a list and can be used generally where list comprehensions can:
+Think of list comprehension as generator expressions in list constructors.  Generator expressions let us avoid creating a list and can be used generally where list comprehensions can:
 
 ```python
 sum( 2*x for x in xrange(10) ) # 90
 ```
 
-`any()` returns true if any element of the sequence is true; it returns false if the sequence is empty. all() requires all elements in the sequence to be true.
+Generator expressions are the same syntax as list comprehensions but surrounded by parentheses instead of square brackets.
+
+Generators expressions can be much more efficient than lists.
+For example, `any()` returns true if any element of the sequence is true; it returns false if the sequence is empty. `all()` requires all elements in the sequence to be true. Here they are in action.
 
 ```python
 any(x%2==0 for x in [1,2,3]) # True. Asks "is there an even value"
@@ -344,7 +351,7 @@ These are cool because they short-circuit the operator like C `&&` and `||` oper
 
 ### Generators
 
-Generators are just continuations. Every method call has a stack activation record that holds locals and parameters. Return instruction normally pops this record off the stack but yield does not. Moreover, this makes the method special as the virtual machine recognizes it differently. Entry into this method the next time starts where it left off the last time. in other words, the pc register doesn't start at the first location in the method, it starts where the pc left off the last time. It's like a resume.
+[Python Generators](https://docs.python.org/2/reference/expressions.html#generator-iterator-methods) are just continuations. Every method call has a stack activation record that holds locals and parameters. Return instruction normally pops this record off the stack but yield does not. Moreover, this makes the method special as the virtual machine recognizes it differently. Entry into this method the next time starts where it left off the last time. in other words, the pc register doesn't start at the first location in the method, it starts where the pc left off the last time. It's like a resume.
 
 java has no capabilities to do this.
 
@@ -356,12 +363,37 @@ def generate_ints(N):
         yield i
 ```
 
+```python
+>>> g = generate_ints(10)
+>>> g.next()
+0
+>>> g.next()
+1
+>>> g.next()
+2
+>>> g.next()
+3
+>>> for x in generate_ints(10):
+...     print x
+... 
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
 A return (with no value) means stop the generator. no more in next().
 
 Generators are good for 2 reasons:
 
 * You can avoid constructing a list object to make large or infinite streams.
-* It's often much easier to build a generator than an iterator for recursive data structures such as trees. it remembers where in the recursion stack we were and can resume from there.
+* It's often much easier to build a generator than an iterator for recursive data structures such as trees.  The generator remembers where in the recursion stack we were and can resume from there.
 
 python doc: "You could achieve the effect of generators manually by writing your own class and storing all the local variables of the generator as instance variables."
 
@@ -379,40 +411,46 @@ A recursive generator that generates tree nodes in preorder:
 
 ```python
 class Tree:
-    def __init__(self, payload):
+    def __init__(self, payload): # constructor
         self.payload = payload
         self.children = []
     def addChild(self, c):
         self.children.append(c)
         return self
 
-def preorder(t):
+def preorder(t):                 # generator method
     yield t
     for c in t.children:
         for y in preorder(c):
-            yield y
+            yield y              # pretend this is a return
 ```
 
-My first attempt looked like this:
+Don't try to put a return in a generator as it should return nothing, as opposed to `None`. You will get an error:
 
-```python
-def preorder(t):
-    yield t
-    for c in t.children:
-        preorder(c) # whoops!
+```
+SyntaxError: 'return' with argument inside generator
 ```
 
-Then we can create a tree and walk the nodes like this:
+With that class and method we can create a tree and walk the nodes like this:
 
 ```python
-x = Tree("c").addChild(Tree("d").addChild(Tree("e")))
-for node in preorder(x):
+tree = Tree("a")
+tree.addChild(Tree("b"))
+tree.addChild( Tree("c").addChild(Tree("d")) )
+for node in preorder(tree):
     print node.payload
+```
+
+```python
+a
+b
+c
+d
 ```
 
 ### Higher-order functions / closures
 
-In Javam there are methods wrapped in objects such as anonymous inner classes. We can pass functionality to a function by passing an object wrapped around that method. ugly. ugly. ugly. The advantage is that the function can carry along some data in the wrapper object.
+In Java there are methods wrapped in objects such as anonymous inner classes. We can pass functionality to a function by passing an object wrapped around that method. ugly. ugly. ugly. The advantage is that the function can carry along some data in the wrapper object.
 We do this in Java as callbacks for GUIs or for passing in comparator functions to sorting algorithms.
 We can return anonymous and class objects from functions in Java, but we never do. In Python we can do this with more utility. For example, here's a function factory that returns functions computing linear curves where 'a' is the slope and 'b' is the offset:
 
@@ -433,39 +471,44 @@ print angle45_at_origin(0)
 [-1, 1, 3, 5]
 ```
 
-When a function captures some arguments in another function and returns it, we call it **currying**. Basically, we are taking a function of multiple arguments and breaking it down into functions with fewer arguments. Note that we can fix values in the function using parameters from another function as we've done here in linear(). From the Wikipedia page: Given function f(x,y) = y/x, we can create a new function g(y) = 2/x which is just like calling f(2,y). So g(y)=f(2,y)=y/2. g(y) is a function we can return from f. (Some languages only allow functions with single arguments and so they use currying to create functions with multiple arguments.) In Python, it looks like this
+When a function captures some arguments in another function and returns it, we call it **currying**. Basically, we are taking a function of multiple arguments and breaking it down into functions with fewer arguments. Note that we can fix values in the function using parameters from another function as we've done here in linear(). From the Wikipedia page: Given function f(x,y) = x/y, we can create a new function g(y) = 2/y which is just like calling f(2,y). So g(y)=f(2,y)=2/y. g(y) is a function we can return from f. (Some languages only allow functions with single arguments and so they use currying to create functions with multiple arguments.) In Python, it looks like this
 
 ```python
 def f(x): # simulate f(x,y) with f(x)(y)
      def g(y):
-             return float(y)/x
+             return float(x)/y
      return g 
 >>> f(2)
 <function g at 0x100465de8>
 >>> g = f(2)
 >>> g(8)
-4.0
+0.25
 >>> g(2)
 1.0
->>> f(2)(3)
-1.5
+>>> f(2)(3) # simulates f(2,3)
+0.6666666666666666
 ```
 
-This kind of stuff is great for creating new functionality by composing other functions. For example, imagine that we have a general sort routine that takes a comparator function. We could create another function that returns a function with a reverse sort function already put in it. Imagine that we have built-in `sort()` and `reverse_cmp()` functions. We get tired of having to combine them manually for a reverse sorter, which is a bit of boilerplate code. Let's create a function that gives us a handy shortcut function that combines `sort()` and `reverse_cmp() to form `rsort()`:
+This kind of stuff is great for creating new functionality by composing other functions. For example, imagine that we have a general sort routine that takes a comparator function. We could create another function that provides a reverse sort by creating a function with a reverse comparison function already put in it.  Let's say that we have built-in `sorted(`*data, comparison_func*`)` and `reverse_cmp()` functions. If we get tired of having to combine them manually for a reverse sorter, we can create a function that gives us a handy shortcut function that combines `sorted()` and `reverse_cmp() to form `rsort()`:
 
 ```python
 def reverse_cmp(x,y):
     return y-x
+
 def reverse_sorter():
     def sorter(data):
         return sorted(data, reverse_cmp)
     return sorter
+
 rsort = reverse_sorter()
-print rsort([1,2,3])
-[3, 2, 1]
+print rsort([9,2,31,18,72])
 ```
 
-The key is that we're not statically defining new methods. They get created as needed on the fly.
+```python
+[72, 31, 18, 9, 2]
+```
+
+The key is that we're not statically defining new methods. They get created as needed on the fly. It's like the command line shell where we can create new functionality by combining existing functionality without having to make new programs.
 
 ### Function composition
 
@@ -494,6 +537,8 @@ times8 = compose(dub, compose(dub, dub))
 80
 ```
 
+The reason that we need the compose function is so we don't have to create our own functions that do nothing but compose as we did in the previous section with `rsort()`.
+
 From [Python functional doc](http://docs.python.org/release/2.7.2/howto/functional.html):
 
 <blockquote>
@@ -505,24 +550,25 @@ The compose() function implements function composition. In other words, it retur
 They give this example:
 
 ```python
-def add(a, b):
-... return a + b
-...
->>> def double(a):
-... return 2 * a
-...
->>> compose(double, add)(5, 6)
+from functional import compose
+def add(a, b): return a + b
+
+def double(a): return 2 * a
+```
+
+```python
+>>> compose(double, add)(5, 6)  # 2*(5+6)
 22
 ```
 
-Also note that sequence `f(); g()` is the same as `compose(g, f)` because that's `g(f())`, which would call `f` first.  Weird but correct.
+So, `f(g(x))` is `compose(f,g)(x)`. Also note that sequence `f(); g()` is the same as `compose(g, f)` because that's `g(f())`, which would call `f` first.
 
 ### Computing prime number example
 
 Copied more or less from [Byrtek slides](http://www.slideshare.net/adambyrtek/functional-programming-with-python-516744) with tweaks by me. Here is the imperative version:
 
 ```python
-def is_prime(n):
+def is_prime(n): # try all numbers 2..n-1 for remainder of 0
     k = 2
     while k<n:
         if n%k == 0: return False
@@ -536,7 +582,16 @@ With `filter()`, we ask whether the list of non-1 divisors is empty.
 def is_prime(n):
     def divisible(x):
         return n%x==0
+    # try all numbers 2..n-1 for remainder of 0
     return len(filter(divisible, range(2,n))) == 0
+
+def is_prime(n): # using a lambda
+    # try all numbers 2..n-1 for remainder of 0
+    return len(filter(lambda x : n%x==0, range(2,n))) == 0
+
+def is_prime(n): # using any()
+    # Return true if no numbers 2..n-1 divide evenly
+    return not any(filter(lambda x : n%x==0, range(2,n)))
 
 def primes(m):
     return filter(is_prime, range(1,m))
@@ -549,6 +604,7 @@ Using list comprehensions now instead of the built-in operations, we can simplif
 ```python
 def is_prime(n):
     return True not in [n%k==0 for k in range(2,n)]
+
 def primes(m):
     return [n for n in range(1,m) if is_prime(n)]
 ```
@@ -557,11 +613,10 @@ Problem is that the `is_prime()` method does the entire range even if  it could 
 
 Finally, using `any()`, we get a very English like saying that says a number, n, is prime if there are not any numbers that divide cleanly from 2..n-1.
 
+Let's use a list comprehension with multiple `for` statements to compute phone number word possibilities:
+
 ```python
-def is_prime(n):
-    return not any(n%k==0 for k in xrange(2,n))
-Compute phone number word possibilities
-letters=[
+letters=[ # letters on the digits
     [' '],            # 0
     [' '],            # 1
     ['a','b','c'],    # 2
@@ -575,8 +630,8 @@ letters=[
 ]
 phone = '1234'
 phone_digits = [int(c) for c in phone]
-combos = [a+b+c+d
-     for a in letters[phone_digits[0]-int('0')]
+combos = [a+b+c+d # Cartesian product for 4 digits
+    for a in letters[phone_digits[0]-int('0')]
     for b in letters[phone_digits[1]-int('0')]
     for c in letters[phone_digits[2]-int('0')]
     for d in letters[phone_digits[3]-int('0')]

@@ -367,7 +367,7 @@ The following terms and definitions are pretty good ones I think, but there seem
   1. distinguish live from dead objects (tracing) and reclaim dead ones.
   1. Live objects are reachable from roots, which are globals, locals, registers of active methods etc... quick example **heap** before and after collection.
 
-* [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation) means you don't have to care about the order in which subexpressions are evaluated.
+* [lazy evaluation](http://en.wikipedia.org/wiki/Lazy_evaluation) means that expressions are evaluated only when they are needed.
 * *software transactional memories*: like transactions for a database. You can unroll a whole series of memory changes. Can be used to allow optimistic parallel processing and then roll back upon race or collision. As computers get faster and bigger and more parallel, we can literally record every single change made by a program.
 
 ## Misc
