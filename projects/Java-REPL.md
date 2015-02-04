@@ -221,6 +221,7 @@ Just to summarize, keep in mind the following requirements.
 1. Upon invalid and incomplete input such as `int {;`, keep waiting for the user to close with an improper symbol or with the proper symbol or hit eof. Your program should wait even if there are multiple new lines afterwards.
 1. Upon an improperly nested string, consume until the end of line before attempting to read another statement from the user.
 1. Exit your program when the user hits EOF (^D or ^Z, depending on the OS).
+1. [Ask Java for a temp directory](http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java) to store your java files.
 
 You are free to use Java 8, as that is how I will test your code.
 
