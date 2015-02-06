@@ -421,7 +421,8 @@ class Tree:
 def preorder(t):                 # generator method
     yield t
     for c in t.children:
-        for y in preorder(c):
+        for y in preorder(c):    # preorder() is not a recursive call;
+                                 # it returns a generator object
             yield y              # pretend this is a return
 ```
 
