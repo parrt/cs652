@@ -1,6 +1,6 @@
 # Homework: Fun with Python
 
-*To submit your answers, please work out all of the solutions and then run them as a single script through the Python REPL. Please print that run out and turn it in on paper.* For example, I would like to see sequences like:
+*To submit your answers, please work out all of the solutions and then run them as a single script through the Python REPL. Please print that run out and turn it in on paper. For example, I would like to see sequences like:*
 
 ```python
 >>> L = [5,9,2,100,41]
@@ -51,7 +51,7 @@ names = ['parrt', 'ksb', 'tombu']
 def map(fun, list):
 	...
 ```
-1. Write a function const(x) that returns a (nested) function that always returns x.
+1. Write a function `const(x)` that returns a function that always returns x.
 ```python
 def const(x):
 	...
