@@ -29,7 +29,7 @@ def rshift(x):
 
 ## List comprehensions
 
-1. Repeat the map,filter,reduce operations from the map/reduce section but using list comprehensions. You will get three new expressions for this part.
+1. Repeat the map and filter operations from the map/reduce section but using list comprehensions. You will get two new expressions for this part.
 
 Now, assume the following data:
 

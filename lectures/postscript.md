@@ -49,6 +49,7 @@ What about control structures? Unlike bytecode interpreters, PS does not branch 
 
 ```
 3 4 lt {(it works!) ==} if
+3 4 gt {3} {4} ifelse ==  % shows 4
 ```
 
 In other words, if takes two operands on the stack: a boolean value (here computed by `3 4 lt`: "*is 3 less than 4*?") followed by a chunk of code to execute. Here, the code chunk displays `it works!` at the current x, y location. This is using *postfix* notation.
@@ -147,7 +148,7 @@ The proper way to think about the above instructions is:
 
 To look up a symbol, just say its name: `version`, which would push string `3010` on the stack, for example.
 
-Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. These are like global, function, local nested scopes in C. To create local variables in a function, do this:
+Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. These are like global, function, local nested scopes in C. Because look up of symbols depends on the state of the dictionary stack, PS has *dynamic scoping*. To create local variables in a function, do this:
 
 ```
 /f {
@@ -166,6 +167,8 @@ PostScript has four stacks:
 1. dictionary stack. Like the nested scopes of a conventional language.
 1. execution stack. Holds procedure invocation stack frames.
 1. graphics state stack. Used to save/restore the graphics state before/after chunks of postscript that you want to only temporarily modify the graphics state.
+
+Objects are copied onto the stack when pushed, unless they are composite elements like arrays. In that case, a reference is pushed and so the data is shared.
 
 ### GhostScript in interactive mode
 
