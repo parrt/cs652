@@ -2,22 +2,11 @@
 
 ## Introduction
 
-In a previous lab you explored a very conventional stack-machine interpreter--one that emulates typical computer architecture with memory, a stack, and instructions that manipulate them both. To avoid having to do register allocation when generating these instructions (which we did by hand), we used instructions that operated on the stack rather than in registers. The syntax was fairly simple and fixed:
+In this lecture, we will explore a simple interpreter architecture for a real language called PostScript, a page description language created by Adobe Systems circa 1985. PostScript (*PS*) is stack-based and all operands go onto a stack and results go back onto the stack. It has no keywords!
 
-```
-.decl x
-main:
-; x = foo(20)
-	const 20
-	call foo
-	store x
-	halt
-```
+PDF (Acrobat) files are essentially a restricted form of PostScript that makes rendering more efficient, so postscript is an actively-used programming language. It is worthwhile learning how PostScript's interpreter works and how to code a little PostScript to impress your friends. The most interesting feature of PostScript is that it's a programming language, not a data file.
 
-There was no way, for example, to introduce a new byte-code instruction and then use it. You can in fact see the above instructions as keywords in a very low-level language. When you see halt, you know precisely what that means.
-The interpreter knows nothing of symbols, the assembler actually translates the symbols to physical addresses before execution. The byte-code interpreter really is simulating a traditional CPU.
-In this lecture, we will explore another interpreter architecture, again based on stack operations, but one that has no keywords! I am referring to PostScript, a page description language, created by Adobe Systems circa 1985. PDF (Acrobat) files are essentially a compressed, restricted form of PostScript, so postscript is an actively-used programming language. It is worthwhile learning how its interpreter works and how to code a little PostScript to impress your friends. The most interesting feature of PostScript is that it's a programming language, not a data file.
-Postscript is very similar to the [Forth programming language](http://www.forth.org/) and is in the class of languages like SmallTalk and LISP that use programming language constructs to extend the language. Forth could add new operations at will, SmallTalk could add a new instance variable by calling a method (addInstanceVar or some such), a LISP program is essentially just data so you can do whatever you want. Java goes part of the way, by letting you query object definitions at run-time, but you cannot add an instance variable at run-time.
+Postscript is very similar to the [Forth programming language](http://www.forth.org/) and is in the class of languages like SmallTalk and LISP that use programming language constructs to extend the language. Forth could add new operations at will, SmallTalk could add a new instance variable by calling a method (`addInstanceVar` or some such), a LISP program is essentially just data so you can do whatever you want. Java goes part of the way, by letting you query object definitions at run-time, but you cannot add an instance variables at run-time (you can or constructsnot define new keywords either).
 
 Just to give you a taste of the project associated with this lecture, you will build an interpreter for a simplified version of PostScript, but one that can actually draw pictures and so on. Your goal will be to get the interpreter functional enough to display the following:
 
@@ -25,7 +14,7 @@ Just to give you a taste of the project associated with this lecture, you will b
 
 ## Crash-course on PostScript
 
-See:
+Here are some useful links to tell you more about PS:
 
 * [An introduction to PostScript](http://homepage.mac.com/andykopra/pdm/tutorials/an_introduction_to_postscript.html)
 * [The Blue Book](http://www-cdf.fnal.gov/offline/PostScript/BLUEBOOK.PDF)
@@ -37,7 +26,8 @@ A PostScript program must begin with a magic line and generally has a trailer th
 ... instructions ...
 %%EOF
 ```
-Single-line comments start with % and, hence, these "commands" are just special comments.
+Single-line comments start with `%` and, hence, these "commands" are just special comments.
+
 The grammatical structure of the language is so simple that you can summarize the executable instructions in one rule:
 ```
 instruction : element* ;
@@ -55,20 +45,26 @@ For testing, you can use the == operator that pops and prints the top of the sta
 ```
 1.5 ==                        % displays 1.5 to standard out
 ```
-What about control structures? A byte-code interpreter does branches. PostScript is higher level and just uses another operator (if):
+What about control structures? Unlike bytecode interpreters, PS does not branch (move the program counter register). It is more high-level like LISP and just uses another operator (`if`):
+
 ```
 3 4 lt {(it works!) ==} if
 ```
-In other words, if takes two operands on the stack: a boolean value (here computed by 3 4 lt "is 3 less than 4") followed by a chunk of code to execute. Here, the code chunk displays "it works!" at the current x, y location. These chunks are sequences of operands and operators enclosed in curlies; postscript calls them procedures.
-You will see this again in SmallTalk.
-Even with the simplicity of these generic instructions, postscript can define subroutines and call them! For example, here is a postscript program that defines a procedure called average and uses it to average two numbers:
+
+In other words, if takes two operands on the stack: a boolean value (here computed by `3 4 lt`: "*is 3 less than 4*?") followed by a chunk of code to execute. Here, the code chunk displays `it works!` at the current x, y location. This is using *postfix* notation.
+
+Code chunks are sequences of operands and operators enclosed in curly races; postscript calls them *procedures*. You will see this again in SmallTalk!
+
+Even with the simplicity of these generic instructions, PS can define subroutines and call them. For example, here is a PS program that defines a procedure called `average` and uses it to average two numbers:
+
 ```
 /average {add 2 div} def
 20 40 average
 ```
 
-The result on the top of the stack would be 30.0 .
-Nothing is special in postscript--you can redefine showpage to be an empty operation. This is useful for preventing encapsulated (embedded) postscript files from performing illegal operations:
+The result on the top of the stack would be 30.0.
+
+Nothing is special in postscript--e.g., you could redefine `showpage` to be an empty operation. This would be useful for preventing encapsulated (embedded) postscript files from performing illegal operations:
 
 ```
 % showpage normal here...
@@ -80,21 +76,22 @@ end                    % exit local scope
 % showpage works again
 ```
 
-For completeness, let me mention that PostScript uses late binding in general. For example, the following procedure references two operators, add and div :
+For completeness, let me mention that PostScript uses *late binding* in general. For example, the following procedure references two operators, `add` and `div`:
+
 ```
 /average {add 2 div} def
 ```
 
-Upon each invocation of add and div in average , the interpreter must look up their definitions. Those operators are not keywords and you might have redefined them. You could, for example, have add redefine itself to be minus so that the next computation of average is wrong. To override this lazy evaluation, use bind to bind names to objects at def -time; during execution time, add and div are not looked up:
+Upon each invocation of `add` and `div` in `average`, the interpreter must look up their definitions. Those operators are not keywords and you might have redefined them. You could, for example, have `add` redefine itself to be `sub` so that the next computation of average is wrong. To override this lazy evaluation, use bind to bind names to objects at `def`-time; during execution time, `add` and `div` are not looked up:
 
 ```
 /average {add 2 div} bind def
 ```
 
-This is like static versus dynamic binding of functions in C++ version Python. 
+This is like static versus dynamic binding of functions in C versus Python.
 
 ## Encapsulated PS
-An encapsulated postscript file is simply a postscript file with a bounding box specification and a slight change to the magic first line (one must admit that I don't think the EPSF-3.0 is necessary):
+An encapsulated postscript file is simply a postscript file with a bounding box specification and a slight change to the magic first line (I don't think the `EPSF-3.0` is necessary):
 
 ```
 %!PS-Adobe-3.0 EPSF-3.0
@@ -109,9 +106,11 @@ This basically restricts the region of the page that the postscript file writes 
 ## Machine architecture
 
 A postscript interpreter is a stack-based calculator that manipulates familiar objects such as strings, numbers, and arrays. But, since programs are just data to postscript, operators and procedures are also objects that you can manipulate.
-A postscript program is a sequence of objects. When the interpreter encounters (executes) an operand, it pushes that object on the stack. When it sees a name, the interpreter looks up the definition and executes the associated object (which might be an integer or code chunk). Executing a name associated with a procedure is like calling a subprogram as execution of the current stream is temporarily suspended until the procedure's code chunk can be executed.
+
+A postscript program is a sequence of objects. When the interpreter encounters (executes) an operand, it pushes that object on the stack. When it sees a name, the interpreter looks up the definition and executes the associated object (which might be an integer or code chunk). Executing a name associated with a procedure is like calling a subprogram as execution of the current stream is temporarily suspended until the procedure's code chunk can be executed. "Executing" an atomic element like an integer, simply puts that integer on the stack.
+
 ### Tokens
-For our purposes, you will need to handle the following symbols:
+For our purposes, we'll look at the following symbols:
 
 | Symbol | Meaning |
 |--------|--------|
@@ -124,7 +123,7 @@ For our purposes, you will need to handle the following symbols:
 
 ### Dictionaries
 
-A dictionary is just a table that maps a key to a value. You can use them to associate a name with an object like an integer or array. Use the def operator to map a value (a name literal) with a value:
+A dictionary is just a table that maps a key to a value. You can use them to associate a name with an object like an integer or array. Use the `def` operator to map a value (a name literal) with a value:
 
 ```
 /Version 1.0 def
@@ -132,21 +131,23 @@ A dictionary is just a table that maps a key to a value. You can use them to ass
 ```
 
 Works with procedures too:
+
 ```
 /average {add 2 div}
 def
 ```
 
-To get an element of an array use array index get.
+To get an element of an array use array index `get`.
+
 The proper way to think about the above instructions is:
 
-*push literal symbol name*
-*push procedure object*
+*push literal symbol name* `average`
+*push procedure object* `{add 2 div}`
 *execute dictionary operator* `def`
 
-To look up a symbol, just say its name: `Version`, which would push `1.0` on the stack, for example.
+To look up a symbol, just say its name: `version`, which would push string `3010` on the stack, for example.
 
-Dictionaries are like scopes. There is a stack of dictionaries. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. These are like global, function, local nested scopes in C. To do locals in a function, do this:
+Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. These are like global, function, local nested scopes in C. To create local variables in a function, do this:
 
 ```
 /f {
