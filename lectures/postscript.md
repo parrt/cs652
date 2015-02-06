@@ -148,7 +148,19 @@ The proper way to think about the above instructions is:
 
 To look up a symbol, just say its name: `version`, which would push string `3010` on the stack, for example.
 
-Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. These are like global, function, local nested scopes in C. Because look up of symbols depends on the state of the dictionary stack, PS has *dynamic scoping*. To create local variables in a function, do this:
+Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. For example,
+
+```
+GS>1 dict begin
+GS>/x 3 def
+GS>x ==
+3
+GS>end
+GS>x ==
+Error: /undefined in x
+```
+
+These are like global, function, local nested scopes in C. Because look up of symbols depends on the state of the dictionary stack, PS has *dynamic scoping*. To create local variables in a function, do this:
 
 ```
 /f {
