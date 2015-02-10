@@ -134,7 +134,8 @@ A dictionary is just a table that maps a key to a value. You can use them to ass
 Works with procedures too:
 
 ```
-/average {add 2 div}
+/average
+{add 2 div}
 def
 ```
 
