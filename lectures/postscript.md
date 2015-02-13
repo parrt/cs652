@@ -164,7 +164,7 @@ GS>3 9 sum ==
 12
 ```
 
-**Higher-order functions***
+**Higher-order functions**
 
 Because we can pass code blocks around, we can have a function return a code block or we can pass a code block into a function. Here is a function that executes the procedure passed in:
 
@@ -193,6 +193,41 @@ end                    % exit local scope
 % showpage works again
 ```
 
+**Recursion**
+
+See [Recursion in PostScript](http://www.math.ubc.ca/~cass/graphics/manual/pdf/ch9.pdf).
+
+```
+/fact { % fact(n) = n * fact(n-1)
+    1 dict begin                % enter local scope
+        /n exch def             % save arg as n
+        n 0 eq                  % if n==0
+        {1}                     % return 1 by leaving on the stack
+        {n n 1 sub fact mul}    % n * fact(n-1)
+        ifelse
+    end                         % exit local scope
+} def
+```
+
+```
+GS>3 fact ==
+6
+GS>4 fact ==
+24
+GS>5 fact ==
+120
+GS>6 fact ==
+720
+GS>7 fact == 
+5040
+GS>8 fact == 
+40320
+GS>9 fact ==
+362880
+GS>0 fact ==
+1
+```
+
 ### Late binding and scoping
 
 For completeness, let me mention that PostScript uses *late binding* in general. For example, the following procedure references two operators, `add` and `div`:
@@ -209,28 +244,37 @@ To override this lazy evaluation, use bind to bind names to objects at `def`-tim
 /average {add 2 div} bind def
 ```
 
-*Procedures in PS do not automatically get local variable space.*
+*Procedures in PS do not automatically get local variable space.* For example,
+
+```
+GS>/foo {/y 1 def} def
+GS>/y 3 def
+GS>y ==
+3
+GS>foo
+GS>y ==
+1
+```
 
 Here is an example that defines a look scope in a procedure, stores the parameter into `y`, calls `foo`, and then leaves `y` on the stack. 
 
 ```
 % From:
 % http://digital.cs.usu.edu/~cdyreson/teaching/languages/142/lectures/printnames.htm
-/foo {/y 1 def} def
-
-/bar {
+/y 3 def           % set "global" y = 3
+/foo {
 	1 dict begin
-	   /y exch def
-	   foo
-	   y
+	   /y 1 def    % set local y = 1
+	   y           % leave y on the stack as a return value
 	end
 	} def
-
-3 bar           % yields 1 on the stack
+GS>foo ==
+1
+GS>y ==
+3
 ```
 
-The question is: where does `foo` store `y`? Does it overwrite the incoming parameter? Yes!  In other words, we called a function that defined a variable, but it did so in the local variable area of another procedure.
-
+The question is: where does `foo` store `y`? Does it overwrite the global? No.
 
 ## Encapsulated PS
 An encapsulated postscript file is simply a postscript file with a bounding box specification and a slight change to the magic first line (I don't think the `EPSF-3.0` is necessary):
@@ -258,10 +302,10 @@ For our purposes, we'll look at the following symbols:
 |--------|--------|
 |  (*some text*)      | *string*        |
 |1.2 +2 6 -1.05 | *numbers* |
-|[20 3 100 20] | *arrays* |
-|{add 2 div} | *procedure*. code chunk |
+|[20 3 100 20] | *arrays*; execute elements right away |
+|{add 2 div} | *procedure*. code chunk; deferred execution |
 |moveto average foo | *names*. Names do not have values, but are rather associated with a value in a dictionary |
-|/average | *literal*. Do not evaluate name (do not look up in dictionary), treat it as data; it is like a pointer to the value |
+|/average | *literal*. Do not evaluate name (do not look up in dictionary), treat it as data; it is a symbolic reference to a value or procedure |
 
 ### Dictionaries
 
@@ -280,8 +324,6 @@ Works with procedures too:
 def
 ```
 
-To get an element of an array use array index `get`.
-
 The proper way to think about the above instructions is:
 
 *push literal symbol name* `average`
@@ -290,7 +332,7 @@ The proper way to think about the above instructions is:
 
 To look up a symbol, just say its name: `Version`, which would push 1.0 on the stack, for example.
 
-Smalltalk uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. For example,
+PostScript uses dictionaries for scoping and there is a stack of dictionaries to support nested scopes. First the system dictionary is pushed then the user dictionary. Symbols are looked up moving from top of stack down to the system dictionary. So, if you want another scope, just push another dictionary. For example,
 
 ```
 GS>1 dict begin
