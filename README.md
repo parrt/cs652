@@ -36,7 +36,7 @@ Unfortunately the other book, [Language Implementation Patterns](http://amzn.com
 | Artifact | Grade Weight | Due date |
 |--------|--------|--------|
 |Java REPL| 5%| Feb 4 |
-|PostScript Interpreter | 2% | Feb 18 |
+|PostScript Interpreter | 2% | Feb 20 |
 |modify java bytecodes |5%| ? |
 |Java->C for vtable |5%| ? |
 |smalltalk compiler|	8%| ? |
