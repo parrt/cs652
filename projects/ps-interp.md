@@ -84,6 +84,10 @@ which is just invoking the following after building:
 $ java -cp out:antlr-4.5-complete.jar cs601.ps.PS tests/fact.ps
 ```
 
-Look in the `bild.log` file for complete output after a run or failed run of the build script.
- 
+Look in the `bild.log` file for complete output after a run or failed run of the build script. Or, use
+
+```bash
+$ ./bild.py -debug test
+```
+
 Here is the [complete output for fact.ps with -trace on](ps-fact-output.txt).
