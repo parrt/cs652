@@ -81,31 +81,9 @@ Official text from USF: *As a Jesuit institution committed to cura personalis—
 
 # Syllabus
 
-## Week 1, 2
+## Programming language concepts
 
 [Language Terminology](https://github.com/parrt/cs652/blob/master/lectures/terminology.md)
-
-Intro 3 days. Define terms compiler, interp/VM, translation, LLVM, bytecode, GC, closures, language, grammar, Syntax, semantics, scope, concurrency, pre/postfix, recursion, object, idioms, libraries, tools, closures, continuations etc...
-
-[Functional programming in Python](https://github.com/parrt/cs652/blob/master/lectures/functional-python.md)
-
-
-## Week 2,3
-
-### formal grammars; 3 days
-
- *	notation: CFG, yacc, EBNF
- *	hierarchy
- *	derivations
- *	L(G)
- *	parse trees
- *	grammars -> ATN
-
-### grammar properties
- *	ambig
- *	left-recur elim
-
-## Week 4
 
 Some key lang innovations in common use by programmers	the representation of data in binary
  *	assembly language
@@ -129,6 +107,15 @@ Some key lang innovations in common use by programmers	the representation of dat
  *	Macros
  *	Operator overloading
  *	Pass by name/value
+
+[Functional programming and other fun stuff in Python](https://github.com/parrt/cs652/blob/master/lectures/functional-python.md)
+
+[The PostScript (PDF) language](https://github.com/parrt/cs652/blob/master/lectures/postscript.md)
+
+### Formal grammars
+
+[grammars](https://github.com/parrt/cs652/blob/master/lectures/grammars.md)
+
 
 ## Week 5
 
