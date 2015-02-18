@@ -114,7 +114,7 @@ Some key lang innovations in common use by programmers	the representation of dat
 
 ### Formal grammars
 
-[grammars](https://github.com/parrt/cs652/blob/master/lectures/grammars.md)
+[grammars](https://github.com/parrt/cs652/blob/master/lectures/grammars.pdf)
 
 
 ## Week 5
