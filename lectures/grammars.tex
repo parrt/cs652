@@ -129,7 +129,13 @@ $expression \rightarrow {\bf id}$
 
 there can be multiple rules
 
-$expression \rightarrow {\bf integer}$
+\noindent $expression \rightarrow {\bf integer}$\\
+$expression \rightarrow {\bf id}$
+
+OR:
+
+$expression \rightarrow {\bf id} | {\bf integer}$
+
 
 For formal grammars we tend to use single single capital letters for non-terminals CFG notation:
 
@@ -169,7 +175,7 @@ A \rightarrow a A \\
 A \rightarrow a\\
 $
 
-$L = {a^+}$
+$L = {a^+}$. draw the RTN.
 
 Many grammars for one $L$.
 
@@ -206,7 +212,9 @@ $
 
 The set of all context-free languages is identical to the set of languages accepted by pushdown automata ({\em PDA}) and all contexts we languages can be parsed in $O(n^3)$ time.
 
-\section{Regular grammars}. A single non-terminal on the left like CFG, but the right-hand side can only be: empty, a sequence of terminals, a sequence of terminals followed by a non-terminal, but that's it. All regular languages can be recognized by a finite state machine linear time. NFA/DFA.
+\section{Regular grammars}
+
+A single non-terminal on the left like CFG, but the right-hand side can only be: empty, a sequence of terminals, a sequence of terminals followed by a non-terminal, but that's it. All regular languages can be recognized by a finite state machine linear time. NFA/DFA.
 
 Non-regular $\{a^nb^n | n \ge 1\}$ because we have no memory but $\{a^nb^m | n \ge 1\}$ is regular.
 
@@ -214,37 +222,8 @@ Non-regular $\{a^nb^n | n \ge 1\}$ because we have no memory but $\{a^nb^m | n \
 A \rightarrow a^* b^*\\
 $
 
-\section{EBNF}
-
-which introduces us to extended BNF (EBNF). we typically use a variation on {\tt yacc} notation, which flips things so that non-terminals are lowercase and terminals are uppercase like constants:
-
-\begin{alltt}
-a : A* B* ; // extended; yacc doesn't allow *
-\end{alltt}
-
-or
-
-\begin{alltt}
-a : 'a'* 'b'* ; // ANTLR notation
-\end{alltt}
-
-\begin{alltt}\small
-grammar Ex; // generates class ExParser
-// action defines ExParser member: enum_is_keyword
-@members \{boolean enum_is_keyword = true;\}
-stat: expr '=' expr ';' // production 1
-    | expr ';'          // production 2
-    ;
-expr: expr '*' expr
-    | expr '+' expr
-    | expr '(' expr ')' // f(x)
-    | id
-    ;
-id  : ID | \{!enum_is_keyword\}? 'enum' ;
-ID  : [A-Za-z]+ ; // match id with upper, lowercase
-WS  : [ \textbackslash{}t\textbackslash{}r\textbackslash{}n]+ -> skip ; // ignore whitespace
-\end{alltt}
-
+  drawing state machine
+ 
 \section{Derivations}
 
 $\alpha \Rightarrow \beta$ $\alpha \Rightarrow^* \beta$ $\alpha \Rightarrow^+ \beta$
@@ -297,11 +276,15 @@ Proof that $G$ gens $L$ means show every string gen'd by G is in L and every str
 
 \section{Parse trees}
 
+is just a record of the replacements made in a derivation. grab the derivation given a big shake. start symbols at the root.
+ 
 Show parse tree of  $A \rightarrow a A | \epsilon$ and if-then-else above.
 
 \section{Ambiguity}
 
 See section 5.4 in ANTLR 4 book. p69 printed.
+
+"You can't put too much water in a nuclear reactor". By one shot an elephant in my pajamas. How he got my pajamas I will never know.
 
 more than one lm or rm deriv for same input. normally an error. $L$ can be ambig too syntactically; e.g., expressions. Ambig $L$ gives ambig $G$. Need disambiguating rules from semantics or otherwise.
 
@@ -346,7 +329,7 @@ Parse trees for {\tt a*b+c} and $E \rightarrow E * E \,|\, E {\bf +} E \,|\, {\b
 \end{small}
 \end{center}
 
-
+\cut{
 A predicated grammar $G = (N, T, P, S, \Pi, \mathcal{M})$ has elements:
 
 \begin{itemize}\itemsep0pt \parskip0pt \parsep0pt
@@ -357,6 +340,7 @@ A predicated grammar $G = (N, T, P, S, \Pi, \mathcal{M})$ has elements:
 \item $\Pi$ is a set of side-effect-free semantic predicates
 \item $\mathcal{M}$ is a set of actions (mutators) 
 \end{itemize}
+}
 
 \section{Left recur}
 
@@ -406,6 +390,39 @@ or EBNF
 \noindent $
 S \rightarrow {\bf if} E {\bf then} S ({\bf else} S)^?\\
 $
+\section{EBNF}
 
+which introduces us to extended BNF (EBNF). we typically use a variation on {\tt yacc} notation, which flips things so that non-terminals are lowercase and terminals are uppercase like constants:
+
+\begin{alltt}
+a : A* B* ; // extended; yacc doesn't allow *
+\end{alltt}
+
+or
+
+\begin{alltt}
+a : 'a'* 'b'* ; // ANTLR notation
+\end{alltt}
+
+\begin{alltt}\small
+grammar Ex; // generates class ExParser
+// action defines ExParser member: enum_is_keyword
+@members \{boolean enum_is_keyword = true;\}
+stat: expr '=' expr ';' // production 1
+    | expr ';'          // production 2
+    ;
+expr: expr '*' expr
+    | expr '+' expr
+    | expr '(' expr ')' // f(x)
+    | id
+    ;
+id  : ID | \{!enum_is_keyword\}? 'enum' ;
+ID  : [A-Za-z]+ ; // match id with upper, lowercase
+WS  : [ \textbackslash{}t\textbackslash{}r\textbackslash{}n]+ -> skip ; // ignore whitespace
+\end{alltt}
+
+\section{Designing grammars}
+
+See chapter 5 in ANTLR 4 reference guide.
 
 \end{document}

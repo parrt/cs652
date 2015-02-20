@@ -128,6 +128,8 @@ Some key lang innovations in common use by programmers	the representation of dat
    *	with DFA
    *	show recursive descent version
 
+[The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
+
 * parsing I
    *	top-down
    *	LL(1), LL(k), lookahead computation
