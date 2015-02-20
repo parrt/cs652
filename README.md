@@ -42,7 +42,7 @@ Unfortunately the other book, [Language Implementation Patterns](http://amzn.com
 |smalltalk compiler|	8%| ? |
 |smalltalk VM |		12%| ? |
 |Quizzes | 3%| ? |
-|Exam 1| 20%| ? |
+|Exam 1| 20%| Monday March 2, 2015 |
 |Exam 2| 20%| ? |
 |Exam 3| 20%| May 14 |
 
