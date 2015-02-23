@@ -116,17 +116,19 @@ Some key lang innovations in common use by programmers	the representation of dat
 
 [grammars](https://github.com/parrt/cs652/blob/master/lectures/grammars.pdf)
 
+Chapter 5 in ANTLR 4 reference
 
-## Week 5
+## Finite automata
 
-* Finite automata
-   *	NFA
-   *	DFA
-   *	grammar -> NFA
+*	NFA
+*	DFA
+*	grammar -> NFA
 
 * lexing
    *	with DFA
    *	show recursive descent version
+
+## Parsing
 
 [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
 
@@ -137,21 +139,19 @@ Some key lang innovations in common use by programmers	the representation of dat
 * parsing II
    *	mapping grammars to recursive descent
 
-## Week 6
-
 * parsing III
    *	bottom-up parsing
    *	predicated parsing
    *	scannerless parsing
 
+* parse tree listeners/visitors
+
+## Symbol tables
+
 * symbol tables I
    *	what we track
    *	scopes (lexical, dynamic)
    *	resolving symbols
-
-* parse tree listeners/visitors
-
-## Week 7
 
 * symbol tables II
    * monolithic scope
