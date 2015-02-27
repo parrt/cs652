@@ -116,19 +116,11 @@ Some key lang innovations in common use by programmers	the representation of dat
 
 Chapter 5 in ANTLR 4 reference
 
-## Finite automata
-
-*	NFA
-*	DFA
-*	grammar -> NFA
-
-* lexing
-   *	with DFA
-   *	show recursive descent version
-
 ## Parsing
 
 [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
+
+Chapter 2 in [Language Impl Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
 
 * parsing I
    *	top-down
@@ -232,3 +224,13 @@ Chapter 5 in ANTLR 4 reference
 * GC I
 
 * GC II
+
+## Finite automata (Optional)
+
+*	NFA
+*	DFA
+*	grammar -> NFA
+
+* lexing
+   *	with DFA
+   *	show recursive descent version
