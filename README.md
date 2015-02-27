@@ -37,14 +37,12 @@ Unfortunately the other book, [Language Implementation Patterns](http://amzn.com
 |--------|--------|--------|
 |Java REPL| 5%| Feb 4 |
 |PostScript Interpreter | 2% | Feb 20 |
-|modify java bytecodes |5%| ? |
-|Java->C for vtable |5%| ? |
-|smalltalk compiler|	8%| ? |
-|smalltalk VM |		12%| ? |
-|Quizzes | 3%| ? |
-|Exam 1| 20%| Monday March 2, 2015 |
-|Exam 2| 20%| ? |
-|Exam 3| 20%| May 14 |
+|Java->C for vtable |10%| Wed, Mar 25 |
+|smalltalk compiler|	8%| Wed, Apr 15 |
+|smalltalk VM |		12%| Wed, May 13 |
+|Quizzes | 3%| sporadic |
+|Exam 1| 30%| Mon, March 30 |
+|Exam 2| 30%| Wed, May 13 |
 
 *No final exam, Smalltalk project counts as the final.*
 
