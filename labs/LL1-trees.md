@@ -4,7 +4,7 @@
 
 In this lab, you will add parse tree construction to the LL(1) parser you build in the previous lab.  I have provided the tree node infrastructure for you, leaving just the details of instructing the trees to you. You're free to use any resource, such as my Language Implementation Patterns book. Because you are adding tree construction and not altering the language, you do not need to modify the lexer at all that you created in the previous lab.
 
-[Here is your lab starter kit](https://github. Icom/parrt/cs652/tree/master/labs/code/LL1WithTree/src).
+[Here is your lab starter kit](https://github.com/parrt/cs652/tree/master/labs/code/LL1WithTree/src).
 
 ## Tasks
 
