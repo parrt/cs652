@@ -122,6 +122,10 @@ Chapter 5 in ANTLR 4 reference
 
 Chapter 2 in [Language Impl Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
 
+Student should read pattern number 2 on LL(1) lexical analysis in chapter 2
+
+Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow computations](http://www.cs.virginia.edu/~cs415/reading/FirstFollowLL.pdf)
+
 * parsing I
    *	top-down
    *	LL(1), LL(k), lookahead computation
