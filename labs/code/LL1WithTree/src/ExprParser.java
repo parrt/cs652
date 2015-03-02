@@ -10,6 +10,7 @@ public class ExprParser extends Parser {
 		super(input);
 	}
 
+	/**  expr : term ('+' term)* ; */
 	public ParseTree expr() {
 		ParseTree t;
 		ParseTree root = new RuleNode("expr");
@@ -19,9 +20,11 @@ public class ExprParser extends Parser {
 		return root;
 	}
 
+	/** term : factor ('*' factor)* ; */
 	public ParseTree term() {
 	}
 
+	/** factor : ID | INT | '(' expr ')' */
 	public ParseTree factor() {
 	}
 }
