@@ -108,6 +108,8 @@ Some key lang innovations in common use by programmers	the representation of dat
 
 [Functional programming and other fun stuff in Python](https://github.com/parrt/cs652/blob/master/lectures/functional-python.md)
 
+**LAB**: [Fun with Python](https://github.com/parrt/cs652/blob/master/labs/functional-python.md)
+
 [The PostScript (PDF) language](https://github.com/parrt/cs652/blob/master/lectures/postscript.md)
 
 ### Formal grammars
@@ -115,6 +117,8 @@ Some key lang innovations in common use by programmers	the representation of dat
 [grammars](https://github.com/parrt/cs652/blob/master/lectures/grammars.pdf)
 
 Chapter 5 in ANTLR 4 reference
+
+**LAB**: [Grammars](https://github.com/parrt/cs652/blob/master/labs/grammars.md)
 
 ## Parsing
 
@@ -124,7 +128,11 @@ Chapter 2 in [Language Impl Patterns](http://www.amazon.com/Language-Implementat
 
 Student should read pattern number 2 on LL(1) lexical analysis in chapter 2
 
+**LAB**: [LL(1) Parsing, Lexing](https://github.com/parrt/cs652/blob/master/labs/LL1.md)
+
 Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow computations](http://www.cs.virginia.edu/~cs415/reading/FirstFollowLL.pdf)
+
+**LAB**: [Parse Tree construction in an LL(1) Parser](https://github.com/parrt/cs652/blob/master/labs/LL1-trees.md)
 
 * parsing I
    *	top-down
