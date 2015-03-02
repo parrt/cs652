@@ -2,6 +2,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+/** Match tokens from the grammar + * ( ) and
+ ID  : [a-z]+ ;
+ INT : [0-9]+ ;
+ WS  : [ \r\t\n]+ -> skip ;
+ */
 public class ExprLexer extends Lexer {
 	public static final int ID = 1;
 	public static final int INT = 2;
@@ -18,6 +23,8 @@ public class ExprLexer extends Lexer {
 	public Token nextToken() throws IOException {
 		text.setLength(0); // reset text
 		int type = Token.INVALID_TYPE;
+
+		// ...
 
 		if ( type==0 ) {
 			System.err.println("illegal char: "+c);

@@ -10,15 +10,18 @@ public class ExprParser extends Parser {
 		super(input);
 	}
 
-	/**  expr : term ('+' term)* ; */
-	public void expr() {
+	public ParseTree expr() {
+		ParseTree t;
+		ParseTree root = new RuleNode("expr");
+		t = term();
+		root.addChild(t);
+		...
+		return root;
 	}
 
-	/** term : factor ('*' factor)* ; */
-	public void term() {
+	public ParseTree term() {
 	}
 
-	/** factor : ID | INT | '(' expr ')' */
-	public void factor() {
+	public ParseTree factor() {
 	}
 }
