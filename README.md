@@ -124,7 +124,7 @@ Chapter 5 in ANTLR 4 reference
 
 [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
 
-Chapter 2 in [Language Impl Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
+Chapter 2 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
 
 Student should read pattern number 2 on LL(1) lexical analysis in chapter 2
 
@@ -148,7 +148,15 @@ Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow
 
 * parse tree listeners/visitors
 
+## Parse Trees
+
+Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
+Section 5.1, 5.4, and Pattern 13 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
 ## Symbol tables
+
+Chapter 6 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
 * symbol tables I
    *	what we track
