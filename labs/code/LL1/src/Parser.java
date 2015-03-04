@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
-	protected TokenStream input = null;
+	protected TokenSource input = null;
 
 	/** Buffer of all tokens including EOF */
 	protected Token[] tokens = null;
@@ -11,12 +11,12 @@ public class Parser {
 	/** Pointer into tokens buffer; p=-1 means uninitialized */
 	protected int p = -1;
 
-	public Parser(TokenStream input) throws IOException {
+	public Parser(TokenSource input) throws IOException {
 		this.input = input;
 		initTokenBuffer(input);
 	}
 
-	protected void initTokenBuffer(TokenStream input) throws IOException {
+	protected void initTokenBuffer(TokenSource input) throws IOException {
 		// fill token buffer to make lookahead easy
 		List<Token> tokenBuf = new ArrayList<Token>();
 		Token t;

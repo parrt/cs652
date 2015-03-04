@@ -6,7 +6,7 @@ import java.io.IOException;
  factor : ID | INT | '(' expr ')' ;
  */
 public class ExprParser extends Parser {
-	public ExprParser(TokenStream input) throws IOException {
+	public ExprParser(TokenSource input) throws IOException {
 		super(input);
 	}
 

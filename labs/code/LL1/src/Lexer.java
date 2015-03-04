@@ -1,8 +1,7 @@
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.io.Reader;
 
-public abstract class Lexer implements TokenStream {
+public abstract class Lexer implements TokenSource {
 	protected Reader reader = null;
 
 	/** Lookahead char */
@@ -13,10 +12,10 @@ public abstract class Lexer implements TokenStream {
 
 	public Lexer(Reader reader) throws IOException {
 		this.reader = reader;
-		nextChar();
+		consume();
 	}
 
-	protected void nextChar() throws IOException {
+	protected void consume() throws IOException {
 		c = (char)reader.read();
 	}
 

@@ -18,6 +18,7 @@ public abstract class ParseTree {
 
 	/**Add a node to the end of the child list for this node */
 	public void addChild(ParseTree node) {
+		if ( node==null ) return;
 		if ( children==null ) {
 			children = new ArrayList<>();
 		}

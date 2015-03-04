@@ -27,8 +27,8 @@ public class ExprLexer extends Lexer {
 		// ...
 
 		if ( type==0 ) {
-			System.err.println("illegal char: "+c);
-			nextChar();
+			System.err.println("illegal char: "+(char)c);
+			consume();
 			// try again (tail recursion is like a loop)
 			return nextToken();
 		}
@@ -36,11 +36,9 @@ public class ExprLexer extends Lexer {
 	}
 
 	protected int matchINT() throws IOException {
-		return INT;
 	}
 
 	protected int matchID() throws IOException {
-		return ID;
 	}
 
 	public static void main(String[] args) throws IOException {

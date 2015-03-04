@@ -6,7 +6,7 @@ import java.io.IOException;
  factor : ID | INT | '(' expr ')' ;
  */
 public class ExprParser extends Parser {
-	public ExprParser(TokenStream input) throws IOException {
+	public ExprParser(TokenSource input) throws IOException {
 		super(input);
 	}
 
@@ -14,10 +14,9 @@ public class ExprParser extends Parser {
 	public ParseTree expr() {
 		ParseTree t;
 		ParseTree root = new RuleNode("expr");
-		t = term();
-		root.addChild(t);
-		...
-		return root;
+		t = term();								root.addChild(t);
+        // ...
+        return root;
 	}
 
 	/** term : factor ('*' factor)* ; */
