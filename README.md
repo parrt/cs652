@@ -132,8 +132,6 @@ Student should read pattern number 2 on LL(1) lexical analysis in chapter 2
 
 Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow computations](http://www.cs.virginia.edu/~cs415/reading/FirstFollowLL.pdf)
 
-**LAB**: [Parse Tree construction in an LL(1) Parser](https://github.com/parrt/cs652/blob/master/labs/LL1-trees.md)
-
 * parsing I
    *	top-down
    *	LL(1), LL(k), lookahead computation
@@ -153,6 +151,8 @@ Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow
 Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
 Section 5.1, 5.4, and Pattern 13 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
+**LAB**: [Parse Tree construction in an LL(1) Parser](https://github.com/parrt/cs652/blob/master/labs/LL1-trees.md)
 
 ## Symbol tables
 
