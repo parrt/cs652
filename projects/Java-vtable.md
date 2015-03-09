@@ -106,26 +106,77 @@ Finally, we have a function that allocates space for an instance of a class: `al
 ((Dog *)alloc(&Dog_metadata))
 ```
 
+#### Classes with fields
+
+Classes in J become `struct`s in C and the translation is pretty simple.
+
+```java
+class T {
+    int x;
+    Dog y;
+}
+```
+
+becomes:
+
+```c
+// D e f i n e  C l a s s  T
+typedef struct {
+    metadata *clazz;
+    int x;
+    Dog *y;
+} T;
+```
+
+Don't forget the metadata pointer so that every object knows its type at runtime. Most importantly, it is through this class definition object that we can access the `vtable` to do method calls. (More later on method calls).
+
+#### Inheritance of fields
+
+C does not support inheritance of `struct`s and so the translation needs to copy fields from all superclasses into subclasses. For example,
+
+```java
+class Animal {
+    int ID;
+}
+class Dog extends Animal {
+}
+```
+
+```c
+typedef struct {
+    metadata *clazz;
+    int ID;
+} Animal;
+typedef struct {
+    metadata *clazz;
+    int ID;
+} Dog;
+```
+
 #### Main programs
 
 The statements and local variable declarations of a J program translate to the body of a `main` function in C:
 
-<table border=0>
-<tr><td><pre>int x;
+<table cellpadding="0" border="0" align="center" bgcolor="#999999">
+<tr>
+<td bgcolor="#ffffff"><pre>int x;
 x = 1;
 printf("%d\n", x);
-</td><td><pre>int main(int argc, char *argv[])
+</td>
+<td bgcolor="#ffffff">
+<pre>int main(int argc, char *argv[])
 {
     int x;
     x = 1;
     printf("%d\n", x);
 }
-</td></tr>
+</td>
+</tr>
 </table>
 
 #### Polymorphism
 
-Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog * d;`.
+Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with a final assignment of a `Dog` to an `Animal`:
 
 ```java
 Animal a;
@@ -134,13 +185,17 @@ d = new Dog();
 a = d; // should cast to Animal *
 ```
 
+The C code requires a cast in the assignment, as you can see in the last statement here:
+
 ```c
-Animal * a;
-Dog * d;
+Animal *a;
+Dog *d;
 
 d = ((Dog *)alloc(&Dog_metadata));
 a = ((Animal *)d);
 ```
+
+`Animal *` and `Dog *` are never compatible in C and so we need the typecast.
 
 #### Late binding (dynamic method dispatch)
 
