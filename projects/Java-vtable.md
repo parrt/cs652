@@ -2,7 +2,7 @@
 
 ## Goal
 
-In this project, you must translate a very small subset of Java to pure C using ANTLR and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about one which translation but also how polymorphism is implemented using so-called `vtables`, which C++ also uses. It requires a deep understanding of C types as well.
+In this project, you must translate a very small subset of Java to pure C using ANTLR and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about  language translation but also how polymorphism is implemented using so-called `vtables`, which C++ also uses. It requires a deep understanding of C pointer types as well.
 
 To get started, please familiarize yourself with the [Java translator starter kit](https://github.com/USF-CS652-starterkits/parrt-vtable). The main program is `JTran.java`.
 
@@ -257,6 +257,8 @@ class Truck extends Vehicle {
 }
 ```
 
+Both `Car` and `Truck` inherit `getColor`.
+
 If I have a reference to a truck and send it message `start`, we need to figure out whether to execute `Truck`'s `start` or `Vehicle`'s version:
 
 ```java
@@ -270,15 +272,11 @@ v.start(); // same thing as t.start() in this case
 From above, we know that the `start` methods will be translated to  multiple C functions such as:
 
 ```c
-void Vehicle_start(Vehicle *this)
-{
-}
-void Truck_start(Truck *this)
-{
-}
+void Vehicle_start(Vehicle *this) { }
+void Truck_start(Truck *this) { }
 ```
 
-Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start(v)` but that would be static binding not dynamic binding. We need to do the equivalent of testing the type of object referred to by `v` and then call the appropriate implementation. A  sophisticated way to do that is through a function pointer. In the following translation (not the way we will eventually do it), you can see a function pointer that will point at the appropriate function.
+Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start(v)` but that would be static binding not dynamic binding. We need to do the equivalent of testing the type of object  pointed at by `v` and then call the appropriate function implementation. A more sophisticated way to do that is through a function pointer. In the following possible translation (not the way we will eventually do it), we use a function pointer that points at the appropriate function.
 
 ```c
 typedef struct {
@@ -293,7 +291,7 @@ typedef struct {
 } Truck;
 ```
 
-Then, the translation of method calls to function calls becomes an indirection through a function pointer:
+It is important that the `start` function pointer sit at the same offset in each struct. Then, the translation of method calls to function calls becomes an indirection through a function pointer:
 
 <table border="0">
 <tr>
