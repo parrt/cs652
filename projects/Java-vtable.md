@@ -130,6 +130,10 @@ typedef struct {
 
 Don't forget the metadata pointer so that every object knows its type at runtime. Most importantly, it is through this class definition object that we can access the `vtable` to do method calls. (More later on method calls).
 
+Every reference to a field `x` within a method is really `this.x` and so field references inside methods are converted to `this->x` where `this` is the first argument of each function we define for each J method.
+
+Accesses to fields outside are always through an object reference. `o.x` &rarr; `o->x`.
+
 #### Inheritance of fields
 
 C does not support inheritance of `struct`s and so the translation needs to copy fields from all superclasses into subclasses. For example,
@@ -179,26 +183,51 @@ printf("%d\n", x);
 
 #### Polymorphism
 
-Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with a final assignment of a `Dog` to an `Animal`:
+Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with a final assignment of a `Dog` to an `Animal`.
 
-```java
+<table border="0">
+<tr>
+<td><pre>
 Animal a;
 Dog d;
 d = new Dog();
 a = d; // should cast to Animal *
-```
-
-The C code requires a cast in the assignment, as you can see in the last statement here:
-
-```c
+</td>
+<td>
+<pre>
 Animal *a;
 Dog *d;
-
 d = ((Dog *)alloc(&Dog_metadata));
 a = ((Animal *)d);
-```
+</td>
+</tr>
+</table>
 
-`Animal *` and `Dog *` are never compatible in C and so we need the typecast.
+The C code requires a cast in the assignment, as you can see in the last C statement.  `Animal *` and `Dog *` are never compatible in C and so we need the typecast. We are naturally just doing a pointer assignment but we have to hush the C compiler.
+
+#### Method translation
+
+Methods translate to functions in C. To distinguish between methods with the same name in different classes, we prefix the C function name with the class name: `foo` &rarr; `T_class` for method `foo` in class `T`. Each C function also takes the receiver object as an additional first argument as shown in the following translation.
+
+<table border="0">
+<tr>
+<td><pre>
+class T {
+    void foo() { printf("hi\n"); }
+}
+</td>
+<td>
+<pre>
+typedef struct {
+    metadata *clazz;
+} T;
+void T_foo(T *this)
+{
+    printf("hi\n");
+}
+</td>
+</tr>
+</table>
 
 #### Late binding (dynamic method dispatch)
 
@@ -211,7 +240,76 @@ Method invocation expressions in Java such as `o.m(args)` are executed as follow
 3.	Ask `T` to find an implementation for method m. If T does not define an implementation, `T` checks its superclass, and its superclass until an implementation is found.
 4.	Invoke method `m` with the argument list, `args`, and also pass `o` to the method, which will become the `this` value for method `m`.
 
-In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically.
+In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically. Lets go through an example to figure out how to implement dynamic binding of methods:
+
+```java
+class Vehicle { // implicit extends Object
+    void start() { }
+    int getColor() { return 9; }
+}
+class Car extends Vehicle {
+    void start() { }
+    void setDoors(int n) { }
+}
+class Truck extends Vehicle {
+    void start() { }
+    void setPayload(int n) { }
+}
+```
+
+If I have a reference to a truck and send it message `start`, we need to figure out whether to execute `Truck`'s `start` or `Vehicle`'s version:
+
+```java
+Vehicle v;
+Truck t = new Truck();
+v = t;
+t.start();
+v.start(); // same thing as t.start() in this case
+```
+
+From above, we know that the `start` methods will be translated to  multiple C functions such as:
+
+```c
+void Vehicle_start(Vehicle *this)
+{
+}
+void Truck_start(Truck *this)
+{
+}
+```
+
+Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start(v)` but that would be static binding not dynamic binding. We need to do the equivalent of testing the type of object referred to by `v` and then call the appropriate implementation. A  sophisticated way to do that is through a function pointer. In the following translation (not the way we will eventually do it), you can see a function pointer that will point at the appropriate function.
+
+```c
+typedef struct {
+    metadata *clazz;
+    void (*start)(); // set this to &Vehicle_start
+    ...
+} Vehicle;
+typedef struct {
+    metadata *clazz;
+    void (*start)(); // set this to &Truck_start
+    ...
+} Truck;
+```
+
+Then, the translation of method calls to function calls becomes an indirection through a function pointer:
+
+<table border="0">
+<tr>
+<td><pre>t.start();
+v.start();
+</td>
+<td>
+<pre>(*t->start)(t);
+(*v->start)(v);
+</td>
+</tr>
+</table>
+
+![late binding example](images/vtable_example.png)
+
+shown example where the order will not matter.
 
 ## Tasks
 
