@@ -311,6 +311,8 @@ shown example where the order will not matter.
 
 ## Tasks
 
+![data flow](images/vtable-data-flow.png)
+
 ### Creating the J grammar
 
 Your must fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.) Learning how to examine exemplars of a language and construct a suitable grammar is important but here are a few details that matter in terms of symbol table management and type analysis.
