@@ -110,9 +110,9 @@ x = 1;
 printf("%d\n", x);
 </td><td><tt>int main(int argc, char *argv[])
 {
-    int x;
-    x = 1;
-    printf("%d\n", x);
+    int x;<br>
+    x = 1;<br>
+    printf("%d\n", x);<br>
 }
 </td></tr>
 </table>
