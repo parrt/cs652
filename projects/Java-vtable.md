@@ -109,11 +109,13 @@ Finally, we have a function that allocates space for an instance of a class: `al
 x = 1;
 printf("%d\n", x);
 </td><td><tt>int main(int argc, char *argv[])
+```
 {
-    int x;<br>
-    x = 1;<br>
-    printf("%d\n", x);<br>
+    int x;
+    x = 1;
+    printf("%d\n", x);
 }
+```
 </td></tr>
 </table>
 
