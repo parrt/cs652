@@ -69,7 +69,23 @@ You can see all of the [sample inputs I used for testing](https://github.com/USF
 
 ## Tasks
 
-1. Fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.)
+### Creating the J grammar
+
+Mechanically, your goal is to fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.) Learning how to examine exemplars of a language and construct a suitable grammar is important but here are a few details that matter in terms of symbol table management and type analysis.
+
+* Assume all input is syntactically and semantically valid J(ava) code with the exception that statements existing outside of class definitions are considered the main program. Other than that, assume Java syntax and semantics.
+* Only integers and floating-point literals are valid. For floating-point numbers, don't worry about negation or exponents: just match and integer on either side of a decimal point.
+* Identifiers are just the usual upper and lowercase letters, underscores, and digits (but not in the first position).
+* Allow `null` and `this`
+* Constructor definitions are not allowed but we still use syntax `new T()` (without parameters) to create objects.
+* There are no access modifiers like `public`; everything is assumed to be `public`.
+* To print things out there is a single predefined function called `printf(STRING)` or with variable number of arguments `print(STRING, args...)`.
+* String literals are only allowed as the first argument of `printf()` calls. Strings should allow a single escape of `\"` but none other.
+* There are no variable initializers like `int x=1;`. You must do `int x; x=1;`.
+* There are no operators and so you don't have to worry about operator precedence but you do have to support criticize expressions for grouping.
+
+### Defining scopes and symbols
+
 2. Define J symbol table objects using `src/org/antlr/symbols` objects as superclasses as necessary:
 	JArg.java
 	JClass.java
@@ -79,8 +95,15 @@ You can see all of the [sample inputs I used for testing](https://github.com/USF
 	JPrimitiveType.java
 	JVar.java
 2. `DefineScopesAndSymbols.java`
+
+### Computing expression types
+
 3. `SetScopes.java`
 4. `ComputeTypes.java`
+
+### Constructing a model
+
+### Generating C code from the model
 
 ## Testing
 
