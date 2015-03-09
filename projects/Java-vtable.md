@@ -89,3 +89,5 @@ All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/
 ```bash
 ./bild.py -debug tests
 ```
+
+Remember, the definition of “working” is when your grammar correctly parses all of the .j files. If you use the -tree option from the command line with JTran.java that I provide, it will pop up a visual of the parse tree for you.
