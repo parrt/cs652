@@ -134,36 +134,39 @@ Don't forget the metadata pointer so that every object knows its type at runtime
 
 C does not support inheritance of `struct`s and so the translation needs to copy fields from all superclasses into subclasses. For example,
 
-```java
+<table border="0">
+<tr>
+<td><pre>
 class Animal {
     int ID;
 }
 class Dog extends Animal {
 }
-```
-
-```c
-typedef struct {
-    metadata *clazz;
+</td>
+<td>
+<pre>typedef struct {
+    metadata \*clazz;
     int ID;
 } Animal;
 typedef struct {
-    metadata *clazz;
+    metadata \*clazz;
     int ID;
 } Dog;
-```
+</td>
+</tr>
+</table>
 
 #### Main programs
 
 The statements and local variable declarations of a J program translate to the body of a `main` function in C:
 
-<table cellpadding="0" border="0" align="center" bgcolor="#999999">
+<table border="0">
 <tr>
-<td bgcolor="#ffffff"><pre>int x;
+<td><pre>int x;
 x = 1;
 printf("%d\n", x);
 </td>
-<td bgcolor="#ffffff">
+<td>
 <pre>int main(int argc, char *argv[])
 {
     int x;
