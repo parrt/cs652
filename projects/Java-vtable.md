@@ -145,11 +145,11 @@ class Dog extends Animal {
 </td>
 <td>
 <pre>typedef struct {
-    metadata \*clazz;
+    metadata *clazz;
     int ID;
 } Animal;
 typedef struct {
-    metadata \*clazz;
+    metadata *clazz;
     int ID;
 } Dog;
 </td>
