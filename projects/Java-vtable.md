@@ -100,9 +100,15 @@ object *alloc(metadata *clazz) {
 
 Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` by using this `struct` allows us to access any objects class definition pointer. To make a method call, we need to access the receiver objects `vtable`.
 
-Finally, we have a function that allocates space for an instance of a class: `alloc`. It takes class definition metadata and returns an object of the appropriate size with its class definition pointer set.
+Finally, we have a function that allocates space for an instance of a class: `alloc`. It takes class definition metadata and returns an object of the appropriate size with its class definition pointer set.  Constructor expressions such as `new Dog()` become calls to `alloc` with a typecast on the result so that it is appropriately typed for C code.
+
+```c
+((Dog *)alloc(&Dog_metadata))
+```
 
 #### Main programs
+
+The statements and local variable declarations of a J program translate to the body of a `main` function in C:
 
 <table border=0>
 <tr><td><pre>int x;
@@ -119,7 +125,22 @@ printf("%d\n", x);
 
 #### Polymorphism
 
-Polymorphism is the ability to have a single pointer refer to multiple types.
+Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarrow; `Dog * d;`.
+
+```java
+Animal a;
+Dog d;
+d = new Dog();
+a = d; // should cast to Animal *
+```
+
+```c
+Animal * a;
+Dog * d;
+
+d = ((Dog *)alloc(&Dog_metadata));
+a = ((Animal *)d);
+```
 
 #### Late binding (dynamic method dispatch)
 
