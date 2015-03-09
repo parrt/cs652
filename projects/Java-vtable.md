@@ -105,10 +105,10 @@ Finally, we have a function that allocates space for an instance of a class: `al
 #### Main programs
 
 <table>
-<tr><td><verbatim>int x;
+<tr><td><pre>int x;
 x = 1;
 printf("%d\n", x);
-</td><td><verbatim>int main(int argc, char *argv[])
+</td><td><pre>int main(int argc, char *argv[])
 {
     int x;
     x = 1;
