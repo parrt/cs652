@@ -104,7 +104,7 @@ Finally, we have a function that allocates space for an instance of a class: `al
 
 #### Main programs
 
-<table>
+<table border=0>
 <tr><td><pre>int x;
 x = 1;
 printf("%d\n", x);
