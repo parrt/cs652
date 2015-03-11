@@ -336,8 +336,7 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 
 ### Defining scopes and symbols
 
-
-2. Define J symbol table objects using `src/org/antlr/symbols` objects as superclasses as necessary:
+1. Define J symbol table objects using `src/org/antlr/symbols` objects as superclasses as necessary:
 	JArg.java
 	JClass.java
 	JField.java
@@ -346,6 +345,8 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 	JPrimitiveType.java
 	JVar.java
 2. `DefineScopesAndSymbols.java`
+
+![symtab example](images/symtab1.png)
 
 ### Computing expression types
 
