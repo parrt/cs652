@@ -381,6 +381,7 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 2. `DefineScopesAndSymbols.java`
 
 ![symtab example](images/symtab1.png)
+![scope tree](images/scope-tree.png)
 
 ### Computing expression types
 
