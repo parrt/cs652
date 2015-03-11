@@ -305,9 +305,43 @@ v.start();
 </tr>
 </table>
 
+Unfortunately this is a big waste of memory because each instance of a class requires a pointer for each method defined in the class, instead of just space for the declared fields. As the diagram here shows, it's better to factor out all those pointers as they are known statically at compile time. Then, each object simply needs a pointer to the appropriate table of method pointers, which we call a `vtable`:
+
 ![late binding example](images/vtable_example.png)
 
-shown example where the order will not matter.
+In our case, we will access the `vtable` through the `clazz` field: `o->clazz->vtable`.
+
+Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the `vtable`. The order in which subclasses defined overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in Truck should have no effect on the `vtable` order as the order of slot was defined in the superclass.
+
+```java
+class Truck extends Vehicle {
+    void setPayload(int n) { }      // slot 2
+    void start() { }				// slot 0 per class Vehicle
+}
+```
+
+Here are the `vtable`s for the three classes:
+
+```c
+void (*Vehicle_vtable[])() = {
+    (void (*)())&Vehicle_start,
+    (void (*)())&Vehicle_getColor
+};
+void (*Car_vtable[])() = {
+    (void (*)())&Car_start,
+    (void (*)())&Vehicle_getColor,
+    (void (*)())&Car_setDoors
+};
+void (*Truck_vtable[])() = {
+    (void (*)())&Truck_start,
+    (void (*)())&Vehicle_getColor,
+    (void (*)())&Truck_setPayload
+};
+```
+
+The `(void (*)())` cast converts any function pointer to a standard function pointer we use for the `vtable`. We will have to cast these back to the real function pointers with appropriate parameter and return types when we make method calls.
+
+#### Method calls
 
 ## Tasks
 
