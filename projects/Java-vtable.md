@@ -343,6 +343,44 @@ The `(void (*)())` cast converts any function pointer to a standard function poi
 
 #### Method calls
 
+To make our lives easier, we use constants instead of raw slot numbers.
+
+```c
+#define Vehicle_start_SLOT 0
+#define Vehicle_getColor_SLOT 1
+
+#define Car_start_SLOT 0
+#define Car_getColor_SLOT 1
+#define Car_setDoors_SLOT 2
+
+#define Truck_start_SLOT 0
+#define Truck_getColor_SLOT 1
+#define Truck_setPayload_SLOT 2
+```
+
+Notice how the method name slots all line up.
+
+Given pointer to `Truck` `t`, we use `t->clazz->_vtable` to access its `vtable`, but it's important to point out that `t->clazz->_vtable` is a pointer to a `vtable` so we need `*t->clazz->_vtable` to get to the actual `vtable`.
+
+Remember that a `vtable` is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function and then we need `()` to actually call a function: `(*vtable[Truck_start_SLOT])()`. Since our `vtable` is actually `*t->clazz->_vtable`, then we need the following to call `t.start()` function given a pointer to an object `t`:
+
+```c
+(*(*t->clazz->_vtable)[Truck_start_SLOT])()
+```
+
+ But of course we need to pass the `this` pointer and so it is actually:
+
+```c
+(*(*t->clazz->_vtable)[Truck_start_SLOT])(t)
+```
+
+But now we have to get the types right for C.
+
+```c
+(*(void (*)(Truck *))(*(t)->clazz->_vtable)[Truck_start_SLOT])(((Truck *)t));
+(*(void (*)(Truck *,int))(*(t)->clazz->_vtable)[Truck_setPayload_SLOT])(((Truck *)t),32);
+```
+
 ## Tasks
 
 ![data flow](images/vtable-data-flow.png)
