@@ -139,13 +139,6 @@ Lookahead computation in Pattern 3, chap 2. Then more formally [First and Follow
 * parsing II
    *	mapping grammars to recursive descent
 
-* parsing III
-   *	bottom-up parsing
-   *	predicated parsing
-   *	scannerless parsing
-
-* parse tree listeners/visitors
-
 ## Parse Trees
 
 Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
@@ -154,23 +147,29 @@ Section 5.1, 5.4, and Pattern 13 in [Language Implementation Patterns](http://ww
 
 **LAB**: [Parse Tree construction in an LL(1) Parser](https://github.com/parrt/cs652/blob/master/labs/LL1-trees.md)
 
+Section 2.5 Parse-Tree Listeners and Visitors
+
+Sections 7.2-7.4 Decoupling Grammars from Application-Specific Code in ANTLR 4 reference on Parse tree listeners/visitors.
+
+See grey box titled "Adding fields to nodes via rule arguments and return values" (rougly page 122).
+
+Read chapter 8 on building real line which applications as a contains examples of how to use listeners and visitors.
+
+
 ## Symbol tables
 
 Chapter 6 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
-* symbol tables I
-   *	what we track
-   *	scopes (lexical, dynamic)
-   *	resolving symbols
-
-* symbol tables II
+   * what we track
+   * scopes (lexical, dynamic)
+   * resolving symbols
    * monolithic scope
    * nested scopes
 
-* symbol tables III
-   * smalltalk and closures
+Section 8.4 has a subsection called a "Crash course in symbol tables" that could also be a useful supplement to Chapter 6 in LIP book.
 
-* symbol tables IV
+Chapter 7 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
    * structs
    * classes
 
