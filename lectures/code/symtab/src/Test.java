@@ -3,6 +3,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
 
@@ -15,5 +16,10 @@ public class Test {
 		SimpleParser parser = new SimpleParser(tokens);
 		ParserRuleContext tree = parser.file();
 		System.out.println(tree.toStringTree(parser));
+//		tree.inspect(parser);
+
+		DefSymbolsAndScopes def = new DefSymbolsAndScopes();
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(def, tree);
 	}
 }

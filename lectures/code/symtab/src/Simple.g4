@@ -1,14 +1,28 @@
 grammar Simple;
 
-file : (func|var)* EOF ;
+@header {
+import org.antlr.symbols.*;
+}
 
-func : 'def' ID '(' ')' ':' body ;
+file returns [Scope scope]
+  : (func|var)* EOF
+  ;
+
+func returns [Scope scope]
+  : 'def' name=ID '(' arg (',' arg)* ')' ':' block
+  ;
+
+arg : ID ;
 
 body : (var|stat)* ;
 
+block returns [Scope scope]
+     : '[' body ']'
+     ;
+
 var  : 'var' ID ;
 
-stat : 'print' ID ;
+stat : 'print' ID | block ;
 
 ID : [a-z]+ ;
 WS : [ \r\t\n] -> skip ;
