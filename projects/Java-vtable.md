@@ -442,7 +442,7 @@ Putting it all together now we get the following translations.
 ```c
 // t.start();
 (*(void (*)(Truck *))(*(t)->clazz->_vtable)[Truck_start_SLOT])(((Truck *)t));
-// t.setPayload(99);
+// t.setPayload(32);
 (*(void (*)(Truck *,int))(*(t)->clazz->_vtable)[Truck_setPayload_SLOT])(((Truck *)t),32);
 // int x; x = t.getColor();
 int x;
@@ -452,12 +452,27 @@ x = (*(int (*)(Truck *))(*(t)->clazz->_vtable)[Truck_getColor_SLOT])(((Truck *)t
 Notice how all of the slot numbers are relative to `Truck`. That is because the type of the receiver object, `t`, statically is `Truck`. Notice how the translation changes when we call the same `start` method by using a `Vehicle` reference not a `Truck` reference:
 
 ```c
+v.start();
 (*(void (*)(Vehicle *))(*v->clazz->_vtable)[Vehicle_start_SLOT])(((Vehicle *)v));
 ```
 
+To my surprise, when I left off the types of the arguments in my typecast, the function call ignored my parameters during execution. It must be some sort of compiler optimization.
+
+In comparison, the other translations are straightforward and easily discernible from looking at the input-output pairs in the test directory.
+
 ## Tasks
 
+The following diagram illustrates the overall flow of your translation. 
+
 ![data flow](images/vtable-data-flow.png)
+
+We take in J code and parse it into a parse tree using ANTLR. Then we walk the parse tree with a tree listener that defines symbols and scopes for our symbol table. It annotates the parse tree with pointers to the leaves of the scope tree so that we can recoup that information during subsequent tree passes.
+
+Once we have all of the symbols defined, we can walk the parse tree again to evaluate the type of all expressions. As we descend the tree, we need to maintain a `currentScope` pointer so that we can look up functions and variables to determine their type. I have factored out this functionality into a listener called `SetScopes.java` but you don't have to do that. Annotate the tree with type information for every subexpression and expression. We will need this information during translation so that we can create the appropriate casts and use the appropriate slot numbers.
+
+Once we have all of the information we need, we construct a model of the output that yields a model hierarchy or tree. For example, the root is a `CFile` object that contains a list of `ClassDef` model objects and a `MainMethod` model object. In a sense, you are building a parse tree of the output you want.
+
+Once you have the complete output model constructed, it's a simple matter of walking that hierarchy and generating output for each element. It is so regular that we can do this automatically using the `ModelConverter` object I have provided for you. Given a model hierarchy, it returns a hierarchy of templates. To generate actual text, we just have to call `render()` on that hierarchy of templates. The output should be written to a file according to the command line arguments to `JTrans`.
 
 ### Creating the J grammar
 
