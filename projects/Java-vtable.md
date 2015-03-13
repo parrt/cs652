@@ -613,7 +613,7 @@ This simple mechanism means we don't have to include code in every output model 
 **Assumes that you have Gnu [`gindent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
 
 ```bash
-$ brew install gnu-indent on mac os x
+$ brew install gnu-indent # on mac os x
 ```
 
 All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/tests/cs652/j) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. You can run all of the tests like this:
@@ -622,4 +622,4 @@ All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/
 ./bild.py -debug tests
 ```
 
-Remember, the definition of “working” is when your grammar correctly parses all of the .j files. If you use the -tree option from the command line with JTran.java that I provide, it will pop up a visual of the parse tree for you.
+Remember, the definition of “working” is when your grammar correctly parses all of the `.j` files. If you use the `-tree` option from the command line with `JTran.java` that I provide, it will pop up a visual of the parse tree for you.
