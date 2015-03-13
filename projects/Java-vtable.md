@@ -56,7 +56,7 @@ printf("%d\n", d.foo()); // must print 3
 
 Check out the [expected C code](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/tests/cs652/j/vtable_check.c).
 
-A file consists of zero or more class definitions file optionally by a main program followed by end of file:
+A file consists of zero or more class definitions followed optionally by a main program followed by end of file:
 
 ```
 grammar J;
@@ -405,8 +405,6 @@ t.start()
 Note that of course we need to pass the `this` pointer. In my translations, you will notice that the `t` argument is explicitly cast to `((Truck *)t)`. This is not technically necessary because the `this` pointer will always be of the appropriate type. However, I have a general mechanism that computes casts for any parameters and it just happens to make the implicit parameter explicitly typed. It was easier to do a general translation.
 
 But now we have to get the types right for C. Before calling a function through a function pointer, we have to cast the function pointer to the appropriate type, which includes the return type and all argument types including the `this` argument:
-
-*return-type* `(*)(`*object-type*, *arg-types*`)`
 
 ```c
 <return-type> (*)(<object-type>, <arg-types>)
