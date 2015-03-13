@@ -505,22 +505,21 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 	JField.java
 	JMethod.java
 	JVar.java
-
-1. JObjectType.java
-	JPrimitiveType.java
-1. `DefineScopesAndSymbols.java`
+1. JPrimitiveType.java  represents a primitive type like `int` or `float`.
+1. Fill in `DefineScopesAndSymbols.java` using the following parse tree and associated scope tree as a guide to fill in the methods. You can also look at our [lecture code that demonstrates how to define symbols and scopes](https://github.com/parrt/cs652/tree/master/lectures/code/symtab). Add `returns`  specifications to the ANTLR rules to add fields to the parse tree nodes so that you can annotate the tree with scope pointers into the scope tree.
 
 ![symtab example](images/symtab1.png)
 ![scope tree](images/scope-tree.png)
 
 ### Computing expression types
 
-3. `SetScopes.java`
-4. `ComputeTypes.java`
+1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes.
+
+ Once you have created the scopes and annotated the parse tree with scope pointers in the previous phase, you need to set the `currentScope` variable for this compute types phase. I tend to factor this functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
 
 ### Constructing a model
 
-In order to generate code, we once again walked the parse tree. But, instead of printing or buffering text output, we create model objects because it is a much more flexible mechanism. The order we create these model objects and hook them together is irrelevant. We don't generate output until the entire model has been created. Consequently, we can follow the order of the input by walking the input parse tree to construct the model. The model objects I create represent the important elements of our output C code:
+In order to generate code, we once again walk the parse tree. But, instead of printing or buffering text output, we create model objects because it is a much more flexible mechanism. The order we create these model objects and hook them together is irrelevant. We don't generate output until the entire model has been created. Consequently, we can follow the order of the input by walking the input parse tree to construct the model. The model objects I create represent the important elements of our output C code:
 
 ![output model objects](images/vtable_models.png)
 
