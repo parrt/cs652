@@ -402,7 +402,7 @@ t.start()
 </tr>
 </table>
 
-Note that of course we need to pass the `this` pointer.
+Note that of course we need to pass the `this` pointer. In my translations, you will notice that the `t` argument is explicitly cast to `((Truck *)t)`. This is not technically necessary because the `this` pointer will always be of the appropriate type. However, I have a general mechanism that computes casts for any parameters and it just happens to make the implicit parameter explicitly typed. It was easier to do a general translation.
 
 But now we have to get the types right for C. Before calling a function through a function pointer, we have to cast the function pointer to the appropriate type, which includes the return type and all argument types including the `this` argument:
 
@@ -414,7 +414,9 @@ But now we have to get the types right for C. Before calling a function through 
 
 A cast to this type would simply have parentheses around the whole thing:
 
-`(`*return-type* `(*)(`*object-type*, *arg-types*`))`
+```c
+(<return-type> (*)(<object-type>, <arg-types>))
+```
 
 Method `start` returns nothing and has no defined arguments but an implicit `Truck *this` argument, giving typecast:
 
@@ -429,9 +431,28 @@ Method `setPayload` returns nothing but takes an integer argument; its cast is:
 (void (*)(Truck *,int))
 ```
 
+Method `getColor` returns an integer but has no explicit parameters:
+
 ```c
+(int (*)(Vehicle *))
+```
+
+Putting it all together now we get the following translations.
+
+```c
+// t.start();
 (*(void (*)(Truck *))(*(t)->clazz->_vtable)[Truck_start_SLOT])(((Truck *)t));
+// t.setPayload(99);
 (*(void (*)(Truck *,int))(*(t)->clazz->_vtable)[Truck_setPayload_SLOT])(((Truck *)t),32);
+// int x; x = t.getColor();
+int x;
+x = (*(int (*)(Truck *))(*(t)->clazz->_vtable)[Truck_getColor_SLOT])(((Truck *)t));
+```
+
+Notice how all of the slot numbers are relative to `Truck`. That is because the type of the receiver object, `t`, statically is `Truck`. Notice how the translation changes when we call the same `start` method by using a `Vehicle` reference not a `Truck` reference:
+
+```c
+(*(void (*)(Vehicle *))(*v->clazz->_vtable)[Vehicle_start_SLOT])(((Vehicle *)v));
 ```
 
 ## Tasks
