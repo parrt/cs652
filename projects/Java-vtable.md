@@ -335,7 +335,7 @@ Unfortunately this is a big waste of memory because each instance of a class req
 
 In our case, we will access the vtable through the `clazz` field: `o->clazz->_vtable`.
 
-Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the vtable. The order in which subclasses defined overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in Truck should have no effect on the vtable order as the order of slot was defined in the superclass.
+Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the vtable. The order in which subclasses define overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in `Truck` should have no effect on the vtable order as the order of slot was defined in the superclass.
 
 ```java
 class Truck extends Vehicle {
@@ -363,11 +363,11 @@ void (*Truck_vtable[])() = {
 };
 ```
 
-The `(void (*)())` cast converts any function pointer to a standard function pointer we use for the vtable. We will have to cast these back to the real function pointers with appropriate parameter and return types when we make method calls.
+The `(void (*)())` cast reads as "a pointer to a function returning `void`" and converts any function pointer to a standard function pointer we use for the vtable. We will have to cast these back to the real function pointers with appropriate parameter and return types when we make method calls.
 
 #### Method calls
 
-To make our lives easier, we use constants instead of raw slot numbers.
+To make our lives easier, we use constants instead of raw slot numbers. For the classes above, we get the following slots (note how they line up for the inheritance hierarchy).
 
 ```c
 #define Vehicle_start_SLOT 0
@@ -384,15 +384,26 @@ To make our lives easier, we use constants instead of raw slot numbers.
 
 Notice how the method name slots all line up.
 
-Given pointer to `Truck` `t`, we use `t->clazz->_vtable` to access its vtable, but it's important to point out that `t->clazz->_vtable` is a pointer to a vtable so we need `*t->clazz->_vtable` to get to the actual vtable.
+Given pointer to `Truck`, `t`, we use `t->clazz->_vtable` to access its vtable, but it's important to point out that `t->clazz->_vtable` is a pointer to a vtable not the actual the table. So, we need `*t->clazz->_vtable` to get to the actual vtable, which is an array of pointers to functions returning `void`.
 
-Remember that a vtable is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function and then we need `()` to actually call a function: `(*vtable[Truck_start_SLOT])()`. Since our vtable is actually `*t->clazz->_vtable`, then we need the following to call `t.start()` function given a pointer to an object `t`:
+Because a vtable is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function, which means adding `()` on the end to make it a function call: `(*vtable[Truck_start_SLOT])()`. Since our vtable is actually `*t->clazz->_vtable`, then we need get the following translation given a pointer to an object `t`.
 
-```c
+
+<table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
+<tr>
+<td><pre>
+t.start()
+</td>
+<td>
+<pre>
 (*(*t->clazz->_vtable)[Truck_start_SLOT])()
-```
+</td>
+</tr>
+</table>
 
- But of course we need to pass the `this` pointer and so it is actually:
+
+But of course we need to pass the `this` pointer and so it is actually:
 
 ```c
 (*(*t->clazz->_vtable)[Truck_start_SLOT])(t)
