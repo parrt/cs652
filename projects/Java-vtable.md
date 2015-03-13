@@ -508,8 +508,14 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 1. JPrimitiveType.java  represents a primitive type like `int` or `float`.
 1. Fill in `DefineScopesAndSymbols.java` using the following parse tree and associated scope tree as a guide to fill in the methods. You can also look at our [lecture code that demonstrates how to define symbols and scopes](https://github.com/parrt/cs652/tree/master/lectures/code/symtab). Add `returns`  specifications to the ANTLR rules to add fields to the parse tree nodes so that you can annotate the tree with scope pointers into the scope tree.
 
+<center>
+**Annotated parse tree**<br>
 ![symtab example](images/symtab1.png)
+</center>
+<center>
+**Scope tree**<br>
 ![scope tree](images/scope-tree.png)
+</center>
 
 ### Computing expression types
 
