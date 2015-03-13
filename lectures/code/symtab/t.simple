@@ -1,0 +1,8 @@
+var x
+
+def f():
+    var y
+    print y
+
+    var x
+    print x
