@@ -408,6 +408,8 @@ But now we have to get the types right for C. Before calling a function through 
 
 *return-type* `(*)(`*object-type*, *arg-types*`)`
 
+<return-type> (*)(<object-type>, <arg-types>)
+
 A cast to this type would simply have parentheses around the whole thing:
 
 `(`*return-type* `(*)(`*object-type*, *arg-types*`))`
