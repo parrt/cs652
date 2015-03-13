@@ -2,7 +2,7 @@
 
 ## Goal
 
-In this project, you must translate a very small subset of Java to pure C using ANTLR, StringTemplate, and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about  language translation but also how polymorphism in dynamic dispatch is implemented using so-called vtables, which C++ uses. It requires a deep understanding of C pointer types as well.
+In this project, you must translate a very small subset of Java to pure C using ANTLR, StringTemplate, and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about  language translation but also how polymorphism and dynamic dispatch is implemented using so-called vtables, which C++ uses. It requires a deep understanding of C pointer types as well.
 
 To get started, please familiarize yourself with the [Java translator starter kit](https://github.com/USF-CS652-starterkits/parrt-vtable). The main program is `JTran.java`.
 
