@@ -504,10 +504,11 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 	JClass.java
 	JField.java
 	JMethod.java
-	JObjectType.java
-	JPrimitiveType.java
 	JVar.java
-2. `DefineScopesAndSymbols.java`
+
+1. JObjectType.java
+	JPrimitiveType.java
+1. `DefineScopesAndSymbols.java`
 
 ![symtab example](images/symtab1.png)
 ![scope tree](images/scope-tree.png)
@@ -519,11 +520,73 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 
 ### Constructing a model
 
+In the `C.stg` template group file, you will see the stubs for all of the templates that I personally used in my translation:
+
+```
+ClassDef(class, fields, methods, vtable) ::= <<
+>>
+
+MethodDef(m,funcName,returnType,args,body) ::= <<
+>>
+
+MainMethod(main,funcName,returnType,args,body) ::= <<
+>>
+
+Block(block, locals, instrs) ::= <<
+>>
+
+VarDef(var, type)   ::= ""
+...
+```
+
+These correspond to model objects with the same name:
+
 ![output model objects](images/vtable_models.png)
 
 ### Generating C code from the model
 
+The `ModelConverter` is an automated tool that I use for ANTLR and it is pure magic. It automatically converts an output model tree full of `OutputModelObject` objects to a template hierarchy by walking the output model (depth-first walk). Each output model object has a corresponding template of the same name.  An output model object can have nested objects identified by annotation `@ModelElement` in the class definition.  The model converter automatically creates templates for these fields and ads than is attributes to the template for the current model object. For example, here is the root of the output model hierarchy:
+
+```java
+public class CFile extends OutputModelObject {
+    public final String fileName;
+    @ModelElement public List<ClassDef> classes = new ArrayList<>();
+    @ModelElement public MainMethod main;
+
+    public CFile(String fileName) {
+        this.fileName = fileName;
+    }   
+}
+```
+
+The model converter assumes that the corresponding template has a parameter for the actual `OutputModelObject` object, followed by the names of any nested model elements. In this case, the corresponding template looks like this:
+
+```
+CFile(f, classes, main) ::= <<
+#include \<stdio.h>
+...
+<classes>
+
+<main>
+>>
+```
+
+The first object, however we name it, is always set to the model object associated with the template.
+
+|Confusion point|
+|-------------|
+|*The parameters associated with the nested model objects are templates not output model objects!* For example, `f` is a `CFile` but `classes` is an instance of a template called `ClassDef` and `main` is an instance of a template called `MainMethod`. So, `<f.name>` yields the `name` field of a `CFile` model object but `<main.foo>` will not give you access to the `foo` field of model object `MainMethod`--it is a template not a model object. Please keep this in mind; it even catches me once in a while.|
+
+This simple mechanism means we don't have to include code in every output model object that says how to create the corresponding template. One can imagine adding a `toTemplate` method to every output model object but it is inferior to this automated mechanism.
+
+
 ## Testing
+
+**Assumes that you have Gnu [`gindent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
+
+```bash
+$ brew install gnu-indent on mac os x
+```
 
 All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/tests/cs652/j) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. You can run all of the tests like this:
 
