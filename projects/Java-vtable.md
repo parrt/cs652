@@ -2,7 +2,7 @@
 
 ## Goal
 
-In this project, you must translate a very small subset of Java to pure C using ANTLR and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about  language translation but also how polymorphism is implemented using so-called `vtables`, which C++ also uses. It requires a deep understanding of C pointer types as well.
+In this project, you must translate a very small subset of Java to pure C using ANTLR, StringTemplate, and Java code that you write. The subset has very few statements and almost no expressions, focusing instead on classes and methods. You will learn not only about  language translation but also how polymorphism in dynamic dispatch is implemented using so-called vtables, which C++ uses. It requires a deep understanding of C pointer types as well.
 
 To get started, please familiarize yourself with the [Java translator starter kit](https://github.com/USF-CS652-starterkits/parrt-vtable). The main program is `JTran.java`.
 
@@ -69,7 +69,7 @@ You can see all of the [sample inputs I used for testing](https://github.com/USF
 
 ### Translation to C
 
-There are very few expression and statement constructs that you need to translate. This project is all about the translation of classes to `struct`s and methods to functions. One of the trickiest part is converting the flexible Java type system to C's much stricter type system. For example, in Java and animal can point at a dog but not in C. We have to typecast any assignment right hand side and parameter expression.  We also have to deal with function pointers so you should read the following carefully: [How To Read C Declarations](http://blog.parr.us/2014/12/29/how-to-read-c-declarations/).
+There are very few expression and statement constructs that you need to translate. This project is all about the translation of classes to `struct`s and methods to functions. One of the trickiest part is converting the flexible Java type system to C's much stricter type system. For example, in Java an Animal reference can point at a Dog but not in C. We have to typecast any assignment right hand side and parameter expression (an implicit assignment).  We also have to deal with function pointers so you should read the following carefully: [How To Read C Declarations](http://blog.parr.us/2014/12/29/how-to-read-c-declarations/).
 
 #### Boilerplate support code
 
@@ -82,6 +82,7 @@ For simplicity, generate all of the support code at the start of each file:
 typedef struct {
     char *name;
     int size;
+    // _vtable is pointer to an array of pointers to functions returning void
     void (*(*_vtable)[])();
 } metadata;
 
@@ -96,9 +97,9 @@ object *alloc(metadata *clazz) {
 }
 ```
 
-`metadata` records information about a class definition, including its name, how many bytes are required to hold an  instance of that class, and finally its `vtable`.
+`metadata` records information about a class definition, including its name, how many bytes are required to hold an instance of that class, and finally its vtable.
 
-Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` by using this `struct` allows us to access any objects class definition pointer. To make a method call, we need to access the receiver objects `vtable`.
+Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` by using this `struct` allows us to access any objects class definition pointer. To make a method call, we need to access the receiver objects vtable.
 
 Finally, we have a function that allocates space for an instance of a class: `alloc`. It takes class definition metadata and returns an object of the appropriate size with its class definition pointer set.  Constructor expressions such as `new Dog()` become calls to `alloc` with a typecast on the result so that it is appropriately typed for C code.
 
@@ -110,25 +111,27 @@ Finally, we have a function that allocates space for an instance of a class: `al
 
 Classes in J become `struct`s in C and the translation is pretty simple.
 
-```java
+<table border="0">
+<tr>
+<td><pre>
 class T {
     int x;
     Dog y;
 }
-```
-
-becomes:
-
-```c
+</td>
+<td>
+<pre>
 // D e f i n e  C l a s s  T
 typedef struct {
     metadata *clazz;
     int x;
     Dog *y;
 } T;
-```
+</td>
+</tr>
+</table>
 
-Don't forget the metadata pointer so that every object knows its type at runtime. Most importantly, it is through this class definition object that we can access the `vtable` to do method calls. (More later on method calls).
+Don't forget the `metadata` pointer. It allows every object to know its type at runtime. Most importantly, it is through this class definition object that we can access the vtable to do method calls. (More later on method calls.)
 
 Every reference to a field `x` within a method is really `this.x` and so field references inside methods are converted to `this->x` where `this` is the first argument of each function we define for each J method.
 
@@ -136,7 +139,7 @@ Accesses to fields outside are always through an object reference. `o.x` &rarr; 
 
 #### Inheritance of fields
 
-C does not support inheritance of `struct`s and so the translation needs to copy fields from all superclasses into subclasses. For example,
+C does not support inheritance of `struct`s and so your translator needs to copy fields from all superclasses into subclasses. For example,
 
 <table border="0">
 <tr>
@@ -145,6 +148,7 @@ class Animal {
     int ID;
 }
 class Dog extends Animal {
+    int legs;
 }
 </td>
 <td>
@@ -155,10 +159,13 @@ class Dog extends Animal {
 typedef struct {
     metadata *clazz;
     int ID;
+    int legs;
 } Dog;
 </td>
 </tr>
 </table>
+
+The order of inherited fields must be preserved in `struct`s for subclasses so that a reference to an object through any pointer type will access the same field offset. Any fields added in a subclass must appear after the inherited attributes.
 
 #### Main programs
 
@@ -183,7 +190,7 @@ printf("%d\n", x);
 
 #### Polymorphism
 
-Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with a final assignment of a `Dog` to an `Animal`.
+Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with an assignment of a `Dog` to reference an `Animal` reference.
 
 <table border="0">
 <tr>
@@ -207,7 +214,7 @@ The C code requires a cast in the assignment, as you can see in the last C state
 
 #### Method translation
 
-Methods translate to functions in C. To distinguish between methods with the same name in different classes, we prefix the C function name with the class name: `foo` &rarr; `T_class` for method `foo` in class `T`. Each C function also takes the receiver object as an additional first argument as shown in the following translation.
+Methods translate to functions in C. To distinguish between methods with the same name in different classes, we prefix the C function name with the class name: `foo` &rarr; `T_foo` for method `foo` in class `T`. Each C function also takes the receiver object as an additional first argument as shown in the following translation.
 
 <table border="0">
 <tr>
@@ -305,13 +312,13 @@ v.start();
 </tr>
 </table>
 
-Unfortunately this is a big waste of memory because each instance of a class requires a pointer for each method defined in the class, instead of just space for the declared fields. As the diagram here shows, it's better to factor out all those pointers as they are known statically at compile time. Then, each object simply needs a pointer to the appropriate table of method pointers, which we call a `vtable`:
+Unfortunately this is a big waste of memory because each instance of a class requires a pointer for each method defined in the class, instead of just space for the declared fields. As the diagram here shows, it's better to factor out all those pointers as they are known statically at compile time. Then, each object simply needs a pointer to the appropriate table of method pointers, which we call a vtable:
 
 ![late binding example](images/vtable_example.png)
 
-In our case, we will access the `vtable` through the `clazz` field: `o->clazz->vtable`.
+In our case, we will access the vtable through the `clazz` field: `o->clazz->_vtable`.
 
-Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the `vtable`. The order in which subclasses defined overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in Truck should have no effect on the `vtable` order as the order of slot was defined in the superclass.
+Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the vtable. The order in which subclasses defined overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in Truck should have no effect on the vtable order as the order of slot was defined in the superclass.
 
 ```java
 class Truck extends Vehicle {
@@ -320,7 +327,7 @@ class Truck extends Vehicle {
 }
 ```
 
-Here are the `vtable`s for the three classes:
+Here are the vtables for the three classes:
 
 ```c
 void (*Vehicle_vtable[])() = {
@@ -339,7 +346,7 @@ void (*Truck_vtable[])() = {
 };
 ```
 
-The `(void (*)())` cast converts any function pointer to a standard function pointer we use for the `vtable`. We will have to cast these back to the real function pointers with appropriate parameter and return types when we make method calls.
+The `(void (*)())` cast converts any function pointer to a standard function pointer we use for the vtable. We will have to cast these back to the real function pointers with appropriate parameter and return types when we make method calls.
 
 #### Method calls
 
@@ -360,9 +367,9 @@ To make our lives easier, we use constants instead of raw slot numbers.
 
 Notice how the method name slots all line up.
 
-Given pointer to `Truck` `t`, we use `t->clazz->_vtable` to access its `vtable`, but it's important to point out that `t->clazz->_vtable` is a pointer to a `vtable` so we need `*t->clazz->_vtable` to get to the actual `vtable`.
+Given pointer to `Truck` `t`, we use `t->clazz->_vtable` to access its vtable, but it's important to point out that `t->clazz->_vtable` is a pointer to a vtable so we need `*t->clazz->_vtable` to get to the actual vtable.
 
-Remember that a `vtable` is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function and then we need `()` to actually call a function: `(*vtable[Truck_start_SLOT])()`. Since our `vtable` is actually `*t->clazz->_vtable`, then we need the following to call `t.start()` function given a pointer to an object `t`:
+Remember that a vtable is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function and then we need `()` to actually call a function: `(*vtable[Truck_start_SLOT])()`. Since our vtable is actually `*t->clazz->_vtable`, then we need the following to call `t.start()` function given a pointer to an object `t`:
 
 ```c
 (*(*t->clazz->_vtable)[Truck_start_SLOT])()
