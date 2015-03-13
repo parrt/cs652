@@ -386,7 +386,7 @@ Notice how the method name slots all line up.
 
 Given pointer to `Truck`, `t`, we use `t->clazz->_vtable` to access its vtable, but it's important to point out that `t->clazz->_vtable` is a pointer to a vtable not the actual the table. So, we need `*t->clazz->_vtable` to get to the actual vtable, which is an array of pointers to functions returning `void`.
 
-Because a vtable is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function, which means adding `()` on the end to make it a function call: `(*vtable[Truck_start_SLOT])()`. Since our vtable is actually `*t->clazz->_vtable`, then we need get the following translation given a pointer to an object `t`.
+Because a vtable is an array of pointers to functions so we need something like `vtable[Truck_start_SLOT]` to get a pointer to the `Truck_start` function. Since that is a function pointer, we need to dereference it to get a function, which means adding `()` on the end to make it a function call: `(*vtable[Truck_start_SLOT])()`. Since our vtable is actually `*t->clazz->_vtable`, we need the following translation to call method `start`, given a pointer to an object `t`.
 
 
 <table border="0">
@@ -397,19 +397,33 @@ t.start()
 </td>
 <td>
 <pre>
-(*(*t->clazz->_vtable)[Truck_start_SLOT])()
+(*(*t->clazz->_vtable)[Truck_start_SLOT])(t)
 </td>
 </tr>
 </table>
 
+Note that of course we need to pass the `this` pointer.
 
-But of course we need to pass the `this` pointer and so it is actually:
+But now we have to get the types right for C. Before calling a function through a function pointer, we have to cast the function pointer to the appropriate type, which includes the return type and all argument types including the `this` argument:
+
+*return-type* `(*)(`*object-type*, *arg-types*`)`
+
+A cast to this type would simply have parentheses around the whole thing:
+
+`(`*return-type* `(*)(`*object-type*, *arg-types*`))`
+
+Method `start` returns nothing and has no defined arguments but an implicit `Truck *this` argument, giving typecast:
 
 ```c
-(*(*t->clazz->_vtable)[Truck_start_SLOT])(t)
+(void (*)(Truck *))
 ```
 
-But now we have to get the types right for C.
+Method `setPayload` returns nothing but takes an integer argument; its cast is:
+
+
+```c
+(void (*)(Truck *,int))
+```
 
 ```c
 (*(void (*)(Truck *))(*(t)->clazz->_vtable)[Truck_start_SLOT])(((Truck *)t));
