@@ -533,7 +533,18 @@ class Employee {
 
 1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes.
 
- Once you have created the scopes and annotated the parse tree with scope pointers in the previous phase, you need to set the `currentScope` variable for this compute types phase. I tend to factor this functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
+You need to compute expression types for:
+
+* Constructor calls `new T()`
+* Field references `x`, `this.x`, `a.b.c.x`
+* Variable references 'x'
+* Method calls `foo()`, `foo(x,1)`
+* Qualified method calls `a.b.foo()`, `this.foo(1,2)`
+* References to `this`
+* References to `null`, for which we can use a `void` type
+* Literal references to integers and floating-point numbers
+
+Once you have created the scopes and annotated the parse tree with scope pointers in the previous phase, you need to set the `currentScope` variable for this compute types phase. I tend to factor this functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
 
 ### Constructing a model
 
