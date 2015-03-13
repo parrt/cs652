@@ -112,6 +112,7 @@ Finally, we have a function that allocates space for an instance of a class: `al
 Classes in J become `struct`s in C and the translation is pretty simple.
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>
 class T {
@@ -142,6 +143,7 @@ Accesses to fields outside are always through an object reference. `o.x` &rarr; 
 C does not support inheritance of `struct`s and so your translator needs to copy fields from all superclasses into subclasses. For example,
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>
 class Animal {
@@ -172,6 +174,7 @@ The order of inherited fields must be preserved in `struct`s for subclasses so t
 The statements and local variable declarations of a J program translate to the body of a `main` function in C:
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>int x;
 x = 1;
@@ -193,6 +196,7 @@ printf("%d\n", x);
 Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with an assignment of a `Dog` to reference an `Animal` reference.
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>
 Animal a;
@@ -217,6 +221,7 @@ The C code requires a cast in the assignment, as you can see in the last C state
 Methods translate to functions in C. To distinguish between methods with the same name in different classes, we prefix the C function name with the class name: `foo` &rarr; `T_foo` for method `foo` in class `T`. Each C function also takes the receiver object as an additional first argument as shown in the following translation.
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>
 class T {
@@ -236,18 +241,27 @@ void T_foo(T *this)
 </tr>
 </table>
 
+To access field `x` from method `foo`, the compiler assumes `this.x`, which is then translated to `this->x` in the generated code. For example, method `getID` that accesses field `ID` gets translated like this:
+
+```c
+int Animal_getID(Animal *this)
+{
+    return this->ID;
+}
+```
+
 #### Late binding (dynamic method dispatch)
 
 According to [Wikipedia](http://en.wikipedia.org/wiki/Dynamic_dispatch), "dynamic dispatch is the process of selecting which implementation of a polymorphic operation (method or function) to call at run time." I think of this as sending messages to a receiver object that determines how to respond ala SmallTalk.
 
 Method invocation expressions in Java such as `o.m(args)` are executed as follows:
 
-1.	Ask `o` to return its type (class name); call it `T`.
+1.	Ask `o` for its type (class name); call it `T`.
 2.	Load `T.class` if `T` is not already loaded.
-3.	Ask `T` to find an implementation for method m. If T does not define an implementation, `T` checks its superclass, and its superclass until an implementation is found.
-4.	Invoke method `m` with the argument list, `args`, and also pass `o` to the method, which will become the `this` value for method `m`.
+3.	Ask `T` to find an implementation for method `m`. If `T` does not define an implementation, `T` checks its superclass, and its superclass until an implementation is found.
+4.	Invoke method `m` with the argument list, `args`, and also pass `o` to the method, which will become the `this` parameter for method `m`.
 
-In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically. Lets go through an example to figure out how to implement dynamic binding of methods:
+In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically. Let's go through an example to figure out how to implement dynamic binding of methods:
 
 ```java
 class Vehicle { // implicit extends Object
@@ -266,7 +280,7 @@ class Truck extends Vehicle {
 
 Both `Car` and `Truck` inherit `getColor`.
 
-If I have a reference to a truck and send it message `start`, we need to figure out whether to execute `Truck`'s `start` or `Vehicle`'s version:
+If I have a `Vehicle` reference and send it message `start`, we need to figure out whether to execute `Truck`'s `start` or `Vehicle`'s version. Always remember that the receiver dictates how to respond to a message/method. Consider the following J code.
 
 ```java
 Vehicle v;
@@ -298,9 +312,12 @@ typedef struct {
 } Truck;
 ```
 
-It is important that the `start` function pointer sit at the same offset in each struct. Then, the translation of method calls to function calls becomes an indirection through a function pointer:
+(It is important that the `start` function pointer sit at the same offset in each struct.)
+
+Then, the translation of method calls to function calls becomes an indirection through a function pointer:
 
 <table border="0">
+<tr><th><b>J</b></th><th><b>C</b></th></tr>
 <tr>
 <td><pre>t.start();
 v.start();
