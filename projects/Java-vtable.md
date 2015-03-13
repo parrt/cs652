@@ -442,8 +442,10 @@ Putting it all together now we get the following translations.
 ```c
 // t.start();
 (*(void (*)(Truck *))(*(t)->clazz->_vtable)[Truck_start_SLOT])(((Truck *)t));
+
 // t.setPayload(32);
 (*(void (*)(Truck *,int))(*(t)->clazz->_vtable)[Truck_setPayload_SLOT])(((Truck *)t),32);
+
 // int x; x = t.getColor();
 int x;
 x = (*(int (*)(Truck *))(*(t)->clazz->_vtable)[Truck_getColor_SLOT])(((Truck *)t));
