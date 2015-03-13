@@ -520,7 +520,11 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 
 ### Constructing a model
 
-In the `C.stg` template group file, you will see the stubs for all of the templates that I personally used in my translation:
+In order to generate code, we once again walked the parse tree. But, instead of printing or buffering text output, we create model objects because it is a much more flexible mechanism. The order we create these model objects and hook them together is irrelevant. We don't generate output until the entire model has been created. Consequently, we can follow the order of the input by walking the input parse tree to construct the model. The model objects I create represent the important elements of our output C code:
+
+![output model objects](images/vtable_models.png)
+
+In the `C.stg` template group file, you will see template stubs that correspond by name with the model objects:
 
 ```
 ClassDef(class, fields, methods, vtable) ::= <<
@@ -538,10 +542,6 @@ Block(block, locals, instrs) ::= <<
 VarDef(var, type)   ::= ""
 ...
 ```
-
-These correspond to model objects with the same name:
-
-![output model objects](images/vtable_models.png)
 
 ### Generating C code from the model
 
