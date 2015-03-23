@@ -1,0 +1,8 @@
+table(t) ::= <<
+CREATE TABLE <t.name>
+(
+    <t.columns:column(); separator=",\n">
+)
+>>
+
+column(col) ::= "<col.name> <col.type>"

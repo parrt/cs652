@@ -1,0 +1,8 @@
+table(t) ::= <<
+public <t.name> createTable_<t.name>(<t.columns:column(); separator=", ">)
+{
+    ... some code ...
+}
+>>
+
+column(col) ::= "<col.type> <col.name>"
