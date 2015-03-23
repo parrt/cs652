@@ -173,18 +173,14 @@ Chapter 7 in [Language Implementation Patterns](http://www.amazon.com/Language-I
    * structs
    * classes
 
-## Week 8
+## Model-driven translation
 
-* static typing I
-   * dynamic vs static typing
-   * computing types
+In Language implementation patterns:
 
-* static typing II
-   * type promotion
-   * checking type safety
-
-* static typing III
-   * polymorphic type safety
+* Generally Chapter 11, but specifically 11.3 *Model-driven translation*.
+* Then, 11.4 *Constructing a nested output model*.
+* Figure 11.8 *Assembling a C file model using Java AST visitor* is particularly illuminating for your vtable project.
+* Pattern 31: *Target-specific generator classes* for simple SQL table creation.
 
 ## Week 9
 
@@ -253,3 +249,17 @@ Chapter 7 in [Language Implementation Patterns](http://www.amazon.com/Language-I
 * lexing
    *	with DFA
    *	show recursive descent version
+
+
+## Optional typing
+
+* static typing I
+   * dynamic vs static typing
+   * computing types
+
+* static typing II
+   * type promotion
+   * checking type safety
+
+* static typing III
+   * polymorphic type safety
