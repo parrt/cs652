@@ -41,7 +41,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/genclasses/genclasses.iml" filepath="$PROJECT_DIR$/genclasses/genclasses.iml" />
-      <module fileurl="file://$PROJECT_DIR$/genclasses/genclasses1.iml" filepath="$PROJECT_DIR$/genclasses/genclasses1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gendot/gendot.iml" filepath="$PROJECT_DIR$/gendot/gendot.iml" />
       <module fileurl="file://$PROJECT_DIR$/sqlmodel/sqlmodel.iml" filepath="$PROJECT_DIR$/sqlmodel/sqlmodel.iml" />
       <module fileurl="file://$PROJECT_DIR$/symtab/symtab.iml" filepath="$PROJECT_DIR$/symtab/symtab.iml" />
     </modules>

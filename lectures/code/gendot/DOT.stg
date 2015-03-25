@@ -1,0 +1,11 @@
+group DOT;
+file(gname,edges) ::= <<
+digraph <gname> {
+   node [shape=plaintext, fontsize=12, fontname="Courier", height=.1];
+   ranksep=.3;
+   edge [arrowsize=.5]
+   <edges; separator="\n">
+}
+>>
+
+edge(from,to) ::= <<"<from>" -> "<to>">>
