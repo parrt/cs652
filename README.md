@@ -184,6 +184,8 @@ In Language implementation patterns:
 
 [Generating SQL sample code](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
+See Figure 35 -- Assembling a C file model using Java AST visitor in LIP book. check out the associated overall C template.
+
 polymorphic method calls: [vehicle.c](https://github.com/parrt/cs652/blob/master/lectures/code/vtable/vehicle.c).
 
 ## Week 9
