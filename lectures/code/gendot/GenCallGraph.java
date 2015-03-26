@@ -15,11 +15,11 @@ public class GenCallGraph {
 		LangLexer lexer = new LangLexer(new ANTLRInputStream(input));
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		LangParser parser = new LangParser(tokens);
-		LinkViz viz = new LinkViz();
 		ParserRuleContext tree = parser.file();
+		LinkViz graph = new LinkViz();
 		ParseTreeWalker walker = new ParseTreeWalker();
-		CollectCalls calls = new CollectCalls(viz);
+		CollectCalls calls = new CollectCalls(graph);
 		walker.walk(calls, tree);
-		System.out.println(viz.toString());
+		System.out.println(GenDOT.gen(graph));
 	}
 }

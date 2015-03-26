@@ -1,0 +1,7 @@
+file(name, fields) ::= <<
+#include \<stdio.h>
+
+struct <name> {
+    <fields:{f | <f.type> <f.name>;}; separator="\n">
+};
+>>

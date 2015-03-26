@@ -1,13 +1,13 @@
 group DOT;
-file(gname,edges) ::= <<
+file(gname,graph) ::= <<
 digraph <gname> {
    node [shape=plaintext, fontsize=12, fontname="Courier", height=.1];
    ranksep=.3;
    edge [arrowsize=.5]
-   <edges; separator="\n">
+   <graph.graph:edge(); separator="\n">
 }
 >>
 
-edge(from,to) ::= <<
-"<from>" -> "<to>"
+edge(e) ::= <<
+"<e.from>" -> "<e.to>"
 >>

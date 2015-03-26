@@ -1,3 +1,7 @@
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+
 /***
  * Excerpted from "Language Implementation Patterns",
  * published by The Pragmatic Bookshelf.
@@ -8,14 +12,35 @@
 ***/
 public class GenDOT {
     public static void main(String[] args) throws Exception {
-        LinkViz viz = new LinkViz();
-        viz.addLink("index.html", "login.html");
-        viz.addLink("index.html", "about.html");
-        viz.addLink("login.html", "error.html");
-        viz.addLink("about.html", "news.html");
-        viz.addLink("index.html", "news.html");
-        viz.addLink("logout.html", "index.html");
-        viz.addLink("index.html", "logout.html");
-        System.out.println(viz.toString());
+        LinkViz graph = new LinkViz();
+        graph.addEdge("index.html", "login.html");
+        graph.addEdge("index.html", "about.html");
+        graph.addEdge("login.html", "error.html");
+        graph.addEdge("about.html", "news.html");
+        graph.addEdge("index.html", "news.html");
+        graph.addEdge("logout.html", "index.html");
+        graph.addEdge("index.html", "logout.html");
+        System.out.println(gen2(graph));
+    }
+
+    public static String gen(LinkViz graph) {
+        STGroup templates = new STGroupFile("DOT.stg");
+        ST fileST = templates.getInstanceOf("file");
+        fileST.add("gname", "testgraph");
+        for (LinkViz.Link x : graph.links) {
+            ST edgeST = templates.getInstanceOf("edge");
+            edgeST.add("from", x.from);
+            edgeST.add("to", x.to);
+            fileST.add("edges", edgeST);
+        }
+        return fileST.render(); // render (eval) template to text
+    }
+
+    public static String gen2(LinkViz graph) {
+        STGroup templates = new STGroupFile("DOT2.stg");
+        ST fileST = templates.getInstanceOf("file");
+        fileST.add("gname", "testgraph");
+        fileST.add("graph", graph);
+        return fileST.render(); // render (eval) template to text
     }
 }

@@ -2,10 +2,10 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 public class CollectCalls extends LangBaseListener {
 	String currentFunc;
-	LinkViz links;
+	LinkViz graph;
 
-	public CollectCalls(LinkViz links) {
-		this.links = links;
+	public CollectCalls(LinkViz graph) {
+		this.graph = graph;
 	}
 
 	@Override
@@ -15,6 +15,6 @@ public class CollectCalls extends LangBaseListener {
 
 	@Override
 	public void enterStat(@NotNull LangParser.StatContext ctx) {
-		links.addLink(currentFunc, ctx.ID().getText());
+		graph.addEdge(currentFunc, ctx.ID().getText());
 	}
 }
