@@ -527,18 +527,30 @@ class Employee {
 ![scope tree](images/scope-tree.png)
 </center>
 
+### Recording type information
+
+While this is not good enough in general, for this type of school project, we can get away with recording types as we define symbols. This requires that we do not refer to types that are defined later in the file but that is an okay limitation.
+
+* As your listener visits the main program, set its return type to `ComputeTypes.JVOID_TYPE`.
+*  When you enter method declaration, set the methods return type to void if `void` is the specified return type. Otherwise, you have a type specifier: an identifier, 'int', or 'float'. In this case get a `Type` object, either a `JPrimitiveType` or a `JClass` depending on what you find when you resolve the symbol from the current scope.
+* For a field declaration or local variable declaration, set its type to `JPrimitiveType` or `JClass` depending on what you find when you resolve the symbol from the current scope.
+
+
 ### Computing expression types
 
 1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes.
 
 You need to compute expression types for:
 
-* Constructor calls `new T()`
-* Field references `x`, `this.x`, `a.b.c.x`
-* Variable references 'x'
-* Method calls `foo()`, `foo(x,1)`
-* Qualified method calls `a.b.foo()`, `this.foo(1,2)`
-* References to `this`
+* Constructor calls `new T()`. The type is `T`.
+* Field references
+  * `x` Look up `x` in the symbol table and ask for its type.
+  * `this.x`  The type of `this` is the current class. Look up `x` in the current class.
+  * `a.b.c.x` Look up `a` to get its type, say, *T*. Look up `b` in *T* and get its type, *T'*. Look up `c` in *T'*, etc...
+* Variable references 'x'. Look up `x` in the symbol table and ask for its type.
+* Method calls `foo()`, `foo(x,1)` Lookup the method and ask for its type.
+* Qualified method calls `a.b.foo()` Look up `a` to get its type, say, *T*. Look up `b` in *T* and get its type, *T'*. Look up `foo` in *T'*.
+* References to `this` Return the type of the current class.
 * References to `null`, for which we can use a `void` type
 * Literal references to integers and floating-point numbers
 
