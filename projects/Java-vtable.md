@@ -617,6 +617,35 @@ The first object, however we name it, is always set to the model object associat
 
 This simple mechanism means we don't have to include code in every output model object that says how to create the corresponding template. One can imagine adding a `toTemplate` method to every output model object but it is inferior to this automated mechanism.
 
+#### An example from ANTLR itself
+
+It might help to look at the [Java output templates for ANTLR](https://github.com/antlr/antlr4/blob/master/tool/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg). For example, here is the start of the template that generates a listener file:
+
+![listener file](images/ListenerFile.png)
+
+Take a look at the corresponding [output model object for the listener file](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/ListenerFile.java), which inherits some fields referenced in the template from [OutputFile](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/OutputFile.java). Let's walk through the template.
+
+1.  Template `ListenerFile` (line 63) takes two parameters, the first of which (`file`) refers to the model object itself. This is injected by the model converter (and it is this model converter that I have copied into your projects). The second parameter, `header`, is automatically injected by the model converter as well. It is a template created for the corresponding field in `ListenerFile`:
+```java
+@ModelElement public Action header;
+```
+The annotation is a signal to the model converter that it should create a template associated with the model object contained in that field and injected as a parameter to the template associated with the containing object (a `ListenerFile` object). [Action](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/Action.java), the type of the `header` field, is another model object with corresponding template:
+```
+Action(a, chunks) ::= "<chunks>"
+```
+(ignore the typo that has `foo` as an argument to `Action` in the source code). `Action` has a field with a signal to the model converter to create a template and inject it as parameter `chunks`:
+```java
+@ModelElement public List<ActionChunk> chunks;
+```
+1. Line 64 references another template called [fileHeader](https://github.com/antlr/antlr4/blob/master/tool/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg#L217). It accesses fields of the model object, such as `file.grammarFileName`. (*Make sure that all fields and methods you want to access are public.*) That template is pretty boring and is *not* a model object; we are calling it directly from a template.  It is a separate template so that every template can reference it and therefore all output files will have the same output at the beginning. It shows how those parameters can then be simply referenced as template parameters not fields:
+```
+fileHeader(grammarFileName, ANTLRVersion) ::= <<
+// Generated from <grammarFileName; format="java-escape"> by ANTLR <ANTLRVersion>
+>>
+```
+1. Line 66 emits `package` and then whatever value is in `genPackage`, another field of the `ListenerFile` object. Notice how it is wrapped in a conditional that only emits the package statement if there is a package field. Conditionals test the presence or absence of a value or, if Boolean, test true or false.
+1. Line 68 just says to emit the `header` template that was automatically created by the model converter (and injected as a parameter).
+1. Line 69 is just some raw text that is to be emitted.
 
 ## Testing
 
