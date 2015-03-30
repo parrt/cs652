@@ -99,4 +99,80 @@ Class methods are proceeded with the `class` keyword but are otherwise the same 
 
 Method `size` takes no parameters and is primitive. Method `at:` takes one parameter and is primitive.  Method `at:put` takes two parameters and is primitive.  Method `do:` takes one parameter, a code block, and has a Smalltalk implementation.
 
+### Virtual machine
+
+| column | column |
+Instruction
+Description
+nil
+stack[++sp] = nil
+self
+stack[++sp] = receiver
+true
+stack[++sp] = true
+false
+stack[++sp] = false
+push_char c=CHAR
+stack[++sp] = new Character(c)
+push_int i=INT
+stack[++sp] = new Integer(i)
+ 
+ 
+push_field i=SHORT
+stack[++sp] = receiver.fields[i]
+push_local n=SHORT, i=SHORT
+localCtx = n scopes up enclosingContext chain 
+stack[++sp] = localCtx.locals[i]
+push_literal i=LITERAL
+stack[++sp] = new String(method.literals[i])
+push_global i=LITERAL
+id = method.literals[i] 
+stack[++sp] = systemDict.lookup(id)
+push_array n=SHORT
+a = new Array( stack[sp-n+1]..stack[sp] ) 
+sp -= n 
+stack[++sp] = a
+store_field i=SHORT
+receiver.fields[i] = stack[sp]
+store_local n=SHORT, i=SHORT
+localCtx = n scopes up enclosingContext chain 
+localCtx.locals[i] = stack[sp]
+pop
+sp--
+ 
+ 
+send nargs=SHORT, msg=LITERAL 
+send_super nargs=SHORT, msg=LITERAL
+selector=method.literals[msg] 
+cl = receiver.classDef 
+// if receiver is a Class, must be a class method 
+if receiver.classDef == systemDict.classClass then cl = receiver 
+// if send_super, get superclass of method we're executing 
+if send_super then cl = method.enclosingClass.superClass 
+m = cl.lookup(selector) 
+if m primitive then 
+     firstArg = sp - nargs + 1
+     m.performPrimitive(ctx, firstArg) 
+else 
+     newCtx = new MethodContext(m, receiver) 
+     newCtx.locals = stack[sp-nargs+1]..stack[sp] 
+     sp -= nargs+1 // pop args and receiver from caller 
+     ctx.invokingContext = ctx 
+     ctx = newCtx
+return
+r = stack[sp--] 
+oldCtx = ctx 
+ctx = ctx.invokingContext 
+oldCtx.invokingContext = MethodContext.RETURNED 
+stack[++sp] = r
+ 
+ 
+block i=SHORT
+CompiledBlock b = method.blocks[i] 
+stack[++sp] = new BlockDescriptor(b)
+block_return
+r = stack[sp--] 
+ctx = ctx.invokingContext 
+stack[++sp] = r
+
 ## Tasks
