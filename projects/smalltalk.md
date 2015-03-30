@@ -101,6 +101,17 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 
 ### Virtual machine
 
+```java
+public class VirtualMachine {
+	/** The dictionary of global objects including class meta objects */
+	public final SystemDictionary systemDict; // singleton
+
+	/** "This is the active context itself. It is either a MethodContext
+	 *  or a BlockContext." BlueBook p 605 in pdf.
+	 */
+	public MethodContext ctx;
+```
+
 <table border="0">
 <tr><th><b>Instruction</b></th><th><b>Description</b></th></tr>
 <tr><td><pre>nil </pre></td><td><pre> stack[++sp] = nil</pre></td></tr>
@@ -109,6 +120,7 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 <tr><td><pre>false</pre></td><td><pre>stack[++sp] = false</pre></td></tr>
 <tr><td><pre>push_char c=CHAR</pre></td><td><pre>stack[++sp] = new Character(c)</pre></td></tr>
 <tr><td><pre>push_int i=INT</pre></td><td><pre>stack[++sp] = new Integer(i)</pre></td></tr>
+<tr><td><pre>push_float v=FLOAT</pre></td><td><pre>stack[++sp] = new STFloat(v))</pre></td></tr>
 <tr><td><pre>push_field i=SHORT</pre></td><td><pre>stack[++sp] = receiver.fields[i]</pre></td></tr>
 <tr><td><pre>push_local n=SHORT, i=SHORT</pre></td><td><pre>
 localCtx = n scopes up enclosingContext chain
@@ -116,7 +128,7 @@ stack[++sp] = localCtx.locals[i]
 </pre></td></tr>
 <tr><td><pre>push_literal i=LITERAL</pre></td><td><pre>
 stack[++sp] = new String(method.literals[i])</pre></td></tr>
-<tr><td><pre>push_global i=LITERAL </pre></td><td><pre> ```id = method.literals[i] 
+<tr><td><pre>push_global i=LITERAL </pre></td><td><pre>id = method.literals[i] 
 stack[++sp] = systemDict.lookup(id)</pre></td></tr>
 <tr><td><pre>push_array n=SHORT </pre></td><td><pre> a = new Array( stack[sp-n+1]..stack[sp] ) 
 sp -= n 
@@ -143,12 +155,6 @@ else
      sp -= nargs+1 // pop args and receiver from caller 
      ctx.invokingContext = ctx 
      ctx = newCtx</pre></td></tr>
-<tr><td><pre>return</pre></td><td><pre>
-r = stack[sp--] 
-oldCtx = ctx 
-ctx = ctx.invokingContext 
-oldCtx.invokingContext = MethodContext.RETURNED 
-stack[++sp] = r</pre></td></tr>
 <tr><td><pre>block i=SHORT</pre></td><td><pre>
 CompiledBlock b = method.blocks[i] 
 stack[++sp] = new BlockDescriptor(b)</pre></td></tr>
@@ -156,6 +162,13 @@ stack[++sp] = new BlockDescriptor(b)</pre></td></tr>
 r = stack[sp--] 
 ctx = ctx.invokingContext 
 stack[++sp] = r</pre></td></tr>
+<tr><td><pre>return</pre></td><td><pre>
+r = stack[sp--] 
+oldCtx = ctx 
+ctx = ctx.invokingContext 
+oldCtx.invokingContext = MethodContext.RETURNED 
+stack[++sp] = r</pre></td></tr>
+<tr><td><pre>dbg fname=LITERAL, loc=DBG_LOCATION</pre></td><td>Set current filename, line, char position.</td></tr>
 </table>
 
 ## Tasks
