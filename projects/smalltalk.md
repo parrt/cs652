@@ -30,10 +30,10 @@ we disallow globals. x:=expr will generate code for expr but not the store if x 
 |`.`|expression separator (not terminator)|
 |`x := expr|assignment to local or field (there are no global variables)|
 |^<i>expr</i>|return expression from method, even when nested in a `[...]`block|
-|`&#124;x y&#124;`|define two local variables or fields|
+|`&#0124;x y&#0124;`|define two local variables or fields|
 |`{a . 1+2 . aList size}`|dynamic array constructed from three expressions separated by periods|
-|`[:x &#124; 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, of these are called lambdas or closures.|
-|`[:x :y&#124; x*y]`|code block taking two parameters|
+|`[:x &#0124; 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, of these are called lambdas or closures.|
+|`[:x :y &#0124; x*y]`|code block taking two parameters|
 
 
 ## Tasks
