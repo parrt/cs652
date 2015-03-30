@@ -125,8 +125,8 @@ stack[++sp] = a</pre></td></tr>
 <tr><td><pre>store_local n=SHORT, i=SHORT</pre></td><td><pre>localCtx = n scopes up enclosingContext chain 
 localCtx.locals[i] = stack[sp]</pre></td></tr>
 <tr><td><pre>pop</pre></td><td><pre>sp--</pre></td></tr>
-<tr><td><pre>send nargs=SHORT, msg=LITERAL</pre></td><td><pre></pre></td></tr>
-<tr><td><pre>send_super nargs=SHORT, msg=LITERAL</pre></td><td><pre>
+<tr><td><pre>send nargs=SHORT, msg=LITERAL
+send_super nargs=SHORT, msg=LITERAL</pre></td><td><pre>
 selector=method.literals[msg] 
 cl = receiver.classDef 
 // if receiver is a Class, must be a class method 
