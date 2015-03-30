@@ -31,7 +31,7 @@ we disallow globals. x:=expr will generate code for expr but not the store if x 
 |`x := *expr*`|assignment to local or field (there are no global variables)|
 |`^`*expr*|return expression from method, even when nested in a `[...]`block|
 |`|x y|`|define two local variables or fields|
-|`{a.1+2.aList size}`|dynamic array constructed from three expressions separated by periods|
+|`{a. 1+2. aList size}`|dynamic array constructed from three expressions separated by periods|
 |`[:x | 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, of these are called lambdas or closures.|
 |`[:x :y | x*y]`|code block taking two parameters|
 
