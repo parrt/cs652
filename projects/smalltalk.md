@@ -101,30 +101,31 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 
 ### Virtual machine
 
-| Instruction | Description |
-|------------|------------|
-nil | stack[++sp] = nil
-self |stack[++sp] = receiver
-true|stack[++sp] = true
-false|stack[++sp] = false
-push_char c=CHAR | stack[++sp] = new Character(c)
-push_int i=INT | stack[++sp] = new Integer(i)
-push_field i=SHORT | stack[++sp] = receiver.fields[i]
-push_local n=SHORT, i=SHORT |
-```localCtx = n scopes up enclosingContext chain
+<table border="0">
+<tr><th><b>Instruction</b></th><th><b>Description</b></th></tr>
+<tr><td><pre>nil </pre></td><td><pre> stack[++sp] = nil</pre></td></tr>
+<tr><td><pre>self </pre></td><td><pre>stack[++sp] = receiver</pre></td></tr>
+<tr><td><pre>true</pre></td><td><pre>stack[++sp] = true</pre></td></tr>
+<tr><td><pre>false</pre></td><td><pre>stack[++sp] = false</pre></td></tr>
+<tr><td><pre>push_char c=CHAR</pre></td><td><pre>stack[++sp] = new Character(c)</pre></td></tr>
+<tr><td><pre>push_int i=INT</pre></td><td><pre>stack[++sp] = new Integer(i)</pre></td></tr>
+<tr><td><pre>push_field i=SHORT</pre></td><td><pre>stack[++sp] = receiver.fields[i]</pre></td></tr>
+<tr><td><pre>push_local n=SHORT, i=SHORT</pre></td><td><pre>
+localCtx = n scopes up enclosingContext chain
 stack[++sp] = localCtx.locals[i]
-```
-push_literal i=LITERAL
-stack[++sp] = new String(method.literals[i])
-push_global i=LITERAL | ```id = method.literals[i] 
-stack[++sp] = systemDict.lookup(id)```
-push_array n=SHORT | a = new Array( stack[sp-n+1]..stack[sp] ) 
+</pre></td></tr>
+<tr><td><pre>push_literal i=LITERAL</pre></td><td><pre>
+stack[++sp] = new String(method.literals[i])</pre></td></tr>
+<tr><td><pre>push_global i=LITERAL </pre></td><td><pre> ```id = method.literals[i] 
+stack[++sp] = systemDict.lookup(id)</pre></td></tr>
+<tr><td><pre>push_array n=SHORT </pre></td><td><pre> a = new Array( stack[sp-n+1]..stack[sp] ) 
 sp -= n 
-stack[++sp] = a
-store_field i=SHORT | receiver.fields[i] = stack[sp]
-store_local n=SHORT, i=SHORT | localCtx = n scopes up enclosingContext chain 
-localCtx.locals[i] = stack[sp]
-pop | sp--
+stack[++sp] = a</pre></td></tr>
+<tr><td><pre>store_field i=SHORT</pre></td><td><pre>receiver.fields[i] = stack[sp]</pre></td></tr>
+<tr><td><pre>store_local n=SHORT, i=SHORT</pre></td><td><pre>localCtx = n scopes up enclosingContext chain 
+localCtx.locals[i] = stack[sp]</pre></td></tr>
+<tr><td><pre>pop</pre></td><td><pre>sp--</pre></td></tr>
+</table>
 
 
 send nargs=SHORT, msg=LITERAL 
