@@ -36,6 +36,9 @@ typedef struct {
 
 void Truck_start(Vehicle *this) { printf("Truck_start\n"); }
 
+void foo(Vehicle *p) {
+	(*p->start)(p);
+}
 int main(int argc, char *argv[])
 {
 	Vehicle *v = (Vehicle *)calloc(1, sizeof(Vehicle));
@@ -44,9 +47,13 @@ int main(int argc, char *argv[])
 	Truck *t = (Truck *)calloc(1, sizeof(Truck));
 	t->start = &Truck_start;
 
-	(*v->start)(v);
-	(*t->start)(t);
+	//(*v->start)(v);
+	//(*t->start)(t);
+	foo(v);
+	foo((Vehicle *)t);
 
 	v = (Vehicle *)t;
-	(*v->start)(v);
+	//(*v->start)(v);
+	foo(v);
 }
+
