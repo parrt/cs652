@@ -110,8 +110,10 @@ false|stack[++sp] = false
 push_char c=CHAR | stack[++sp] = new Character(c)
 push_int i=INT | stack[++sp] = new Integer(i)
 push_field i=SHORT | stack[++sp] = receiver.fields[i]
-push_local n=SHORT, i=SHORT | ```localCtx = n scopes up enclosingContext chain
-stack[++sp] = localCtx.locals[i]```
+push_local n=SHORT, i=SHORT |
+```localCtx = n scopes up enclosingContext chain
+stack[++sp] = localCtx.locals[i]
+```
 push_literal i=LITERAL
 stack[++sp] = new String(method.literals[i])
 push_global i=LITERAL | ```id = method.literals[i] 
