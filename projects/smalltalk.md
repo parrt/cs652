@@ -125,11 +125,8 @@ stack[++sp] = a</pre></td></tr>
 <tr><td><pre>store_local n=SHORT, i=SHORT</pre></td><td><pre>localCtx = n scopes up enclosingContext chain 
 localCtx.locals[i] = stack[sp]</pre></td></tr>
 <tr><td><pre>pop</pre></td><td><pre>sp--</pre></td></tr>
-</table>
-
-
-send nargs=SHORT, msg=LITERAL 
-send_super nargs=SHORT, msg=LITERAL
+<tr><td><pre>send nargs=SHORT, msg=LITERAL</pre></td><td><pre></pre></td></tr>
+<tr><td><pre>send_super nargs=SHORT, msg=LITERAL</pre></td><td><pre>
 selector=method.literals[msg] 
 cl = receiver.classDef 
 // if receiver is a Class, must be a class method 
@@ -145,21 +142,20 @@ else
      newCtx.locals = stack[sp-nargs+1]..stack[sp] 
      sp -= nargs+1 // pop args and receiver from caller 
      ctx.invokingContext = ctx 
-     ctx = newCtx
-return
+     ctx = newCtx</pre></td></tr>
+<tr><td><pre>return</pre></td><td><pre>
 r = stack[sp--] 
 oldCtx = ctx 
 ctx = ctx.invokingContext 
 oldCtx.invokingContext = MethodContext.RETURNED 
-stack[++sp] = r
- 
- 
-block i=SHORT
+stack[++sp] = r</pre></td></tr>
+<tr><td><pre>block i=SHORT</pre></td><td><pre>
 CompiledBlock b = method.blocks[i] 
-stack[++sp] = new BlockDescriptor(b)
-block_return
+stack[++sp] = new BlockDescriptor(b)</pre></td></tr>
+<tr><td><pre>block_return</pre></td><td><pre>
 r = stack[sp--] 
 ctx = ctx.invokingContext 
-stack[++sp] = r
+stack[++sp] = r</pre></td></tr>
+</table>
 
 ## Tasks
