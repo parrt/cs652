@@ -1,0 +1,118 @@
+\documentclass[11pt]{article}
+\usepackage{vmargin}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{alltt}
+\usepackage{amsmath}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\newcommand{\sbt}{\,\begin{picture}(-1,1)(-1,-3)\circle*{3}\end{picture}\ }
+
+\textwidth = 6.5 in
+\textheight = 9 in
+\oddsidemargin = 0.0 in
+\evensidemargin = 0.0 in
+\topmargin = 0.0 in
+\headheight = 0.0 in
+\headsep = 0.0 in
+\parskip = 0.2in
+\parindent = 0.0in
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+\begin{table}[tbp]
+\caption{default}
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+{\tt nil}  & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt nil}])$ stack[++sp] = nil \\
+self & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s])$ stack[++sp] = receiver\\
+true & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt true}])$ stack[++sp] = true\\
+false & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt false}])$ stack[++sp] = false\\
+push\_char c=CHAR & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta c])$ stack[++sp] = new Character(c)\\
+push\_int i=INT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta i])$ stack[++sp] = new Integer(i)\\
+push\_float v=FLOAT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta v])$ stack[++sp] = new STFloat(v))\\
+push\_field i=SHORT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s.field_i])$ stack[++sp] = receiver.fields[i]\\
+push\_local n=SHORT, i=SHORT & $(\mathbb{S},...f[s,v_i,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,v_i,\delta v_i])$
+\begin{minipage}[c]{.7\linewidth}
+localCtx = n scopes up enclosingContext chain\\
+stack[++sp] = localCtx.locals[i]
+\end{minipage}\\
+push\_literal i=LITERAL & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s_{literal_i}]$ stack[++sp] = new String(method.literals[i])\\
+push\_global i=LITERAL  & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta ~\mathbb{S}[s.field_i]]$ id = method.literals[i] stack[++sp] = systemDict.lookup(id)\\
+push\_array n=SHORT  & 
+\begin{minipage}[c]{.7\linewidth}
+a = new Array( stack[sp-n+1]..stack[sp] ) 
+sp -= n 
+stack[++sp] = a\\
+\end{minipage}\\
+store\_field i=SHORT & $(\mathbb{S}, ...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S}[s.field_i = v],...f[s,,\delta])$ receiver.fields[i] = stack[sp]\\
+store\_local n=SHORT, i=SHORT & $(\mathbb{S},...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S},...f[s,v_i,\delta])$
+\begin{minipage}[c]{.7\linewidth}
+localCtx = n scopes up enclosingContext chain 
+localCtx.locals[i] = stack[sp]
+\end{minipage}\\
+pop & $(\mathbb{S},...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta])$\\
+\hline
+send n=SHORT, i=LITERAL\\
+send\_super n=SHORT, msg=LITERAL & 
+\begin{minipage}[c]{.7\linewidth}
+$(\mathbb{S},...f[s,pc,,\delta ~r~ a_1 .. a_{n}]) \Rightarrow \\
+(\mathbb{S},...f[s,pc,,\delta]~r_{class}\,\bowtie\,f_{literal_i}[r,0,a_1 .. a_{n},\epsilon])$ where $a \bowtie b$ means to resolve $b$ in $a$.\\
+selector=method.literals[msg] 
+cl = receiver.classDef 
+// if receiver is a Class, must be a class method 
+if receiver.classDef == systemDict.classClass then cl = receiver 
+// if send\_super, get superclass of method we're executing 
+if send\_super then cl = method.enclosingClass.superClass 
+m = cl.lookup(selector) 
+if m primitive then 
+     firstArg = sp - nargs + 1
+     m.performPrimitive(ctx, firstArg) 
+else 
+     newCtx = new MethodContext(m, receiver) 
+     newCtx.locals = stack[sp-nargs+1]..stack[sp] 
+     sp -= nargs+1 // pop args and receiver from caller 
+     ctx.invokingContext = ctx 
+     ctx = newCtx\\
+\end{minipage}\\
+block i=SHORT  &
+\begin{minipage}[c]{.7\linewidth}
+$(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta f_{block_i}])$\\CompiledBlock b = method.blocks[i] 
+stack[++sp] = new BlockDescriptor(b)\\
+\end{minipage}\\
+block\_return & 
+\begin{minipage}[c]{.7\linewidth}
+$(\mathbb{S},...f[,,\delta]~g_{block}[,,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta v])$\\
+r = stack[sp--] 
+ctx = ctx.invokingContext 
+stack[++sp] = r
+\end{minipage}\\
+return & 
+\begin{minipage}[c]{.7\linewidth}
+$(\mathbb{S},...f[s,,\delta] g[s',,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta v])$\\
+$(\mathbb{S},...~f[,,\delta] ~g[s,,]~ ... ~h[,,] ~ g_{block}[s,,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta v])$\\
+r = stack[sp--] \\
+oldCtx = ctx \\
+ctx = ctx.invokingContext \\
+oldCtx.invokingContext = MethodContext.RETURNED \\
+stack[++sp] = r\\
+\end{minipage}\\
+\hline
+dbg fname=LITERAL, loc=DBG\_LOCATION & Set current filename, line, char position.\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+\begin{minipage}[c]{0.25\linewidth}
+\begin{alltt}
+\end{alltt}
+\end{minipage} 
+\end{document}
