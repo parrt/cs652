@@ -118,7 +118,29 @@ public class VirtualMachine {
 <img src="images/smalltalk-notation.png" width=600>
 </center>
 
+<center>
 <img src="images/smalltalk-rules.png" width=800>
 </center>
+
+### Representing bytecodes
+
+In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
+
+```
+class T [
+	|x|
+	foo [|y| x := y.]
+]
+```
+
+and the bytecode generated for method `foo`:
+```
+0000:  push_local     0, 0
+0005:  store_field    0
+0008:  self             
+0009:  return           
+```
+
+The numbers on the left are the addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L66) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L96) that are each two bytes long.
 
 ## Tasks
