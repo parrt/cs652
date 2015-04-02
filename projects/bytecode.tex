@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 \newcommand{\sbt}{\,\begin{picture}(-1,1)(-1,-3)\circle*{3}\end{picture}\ }
+\newcommand{\ith}{$i^{th}$}
 
 \textwidth = 6.5 in
 \textheight = 9 in
@@ -25,86 +26,89 @@
 
 \begin{document}
 
+\begin{figure}
+\begin{center}
+\begin{tabular}{l p{8cm}}
+$T \bowtie x$ & Resolve $x$ in scope $T$ \\
+$\gamma \in \text{\it MethodContext}^*$ & Stack of method invocations growing to the right\\
+$\delta \in \text{\it Object}^*$ & Stack of objects growing to the right\\
+
+$\mathbb{S}$ & The state of the VM system dictionary\\
+
+$(\mathbb{S},\gamma)$ & VM state is the system dictionary and a method invocation stack with zero or more elements\\
+
+$o_{class}$ & Metaclass (type) of $o$; note: $o_{class}=o$ when $o$ is a metaclass object\\
+
+$(\mathbb{S}, \gamma) \Rightarrow (\mathbb{S}', \gamma')$ & VM state transition\\
+$f[ip,l_0,..l_{n-1},\delta]$ & Method invocation context with irrelevant receiver; $f \in \text{\it MethodContext}$; $l_i$ is local variable or argument, indexed from 0 \\
+$f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context with receiver $s$; $f_s \in \text{\it MethodContext}$\\
+\end{tabular}
+\end{center}
+\vspace{-5pt}
+\caption{\small Smalltalk VM Bytecode Specification Notation}
+\vspace{-10pt}
+\label{acfg}
+\end{figure} 
+
 \begin{table}[tbp]
 \caption{default}
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline
-{\tt nil}  & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt nil}])$ stack[++sp] = nil \\
-self & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s])$ stack[++sp] = receiver\\
-true & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt true}])$ stack[++sp] = true\\
-false & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta \text{\tt false}])$ stack[++sp] = false\\
-push\_char c=CHAR & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta c])$ stack[++sp] = new Character(c)\\
-push\_int i=INT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta i])$ stack[++sp] = new Integer(i)\\
-push\_float v=FLOAT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta v])$ stack[++sp] = new STFloat(v))\\
-push\_field i=SHORT & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s.field_i])$ stack[++sp] = receiver.fields[i]\\
-push\_local n=SHORT, i=SHORT & $(\mathbb{S},...f[s,v_i,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,v_i,\delta v_i])$
-\begin{minipage}[c]{.7\linewidth}
-localCtx = n scopes up enclosingContext chain\\
-stack[++sp] = localCtx.locals[i]
-\end{minipage}\\
-push\_literal i=LITERAL & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta s_{literal_i}]$ stack[++sp] = new String(method.literals[i])\\
-push\_global i=LITERAL  & $(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta ~\mathbb{S}[s.field_i]]$ id = method.literals[i] stack[++sp] = systemDict.lookup(id)\\
-push\_array n=SHORT  & 
-\begin{minipage}[c]{.7\linewidth}
-a = new Array( stack[sp-n+1]..stack[sp] ) 
-sp -= n 
-stack[++sp] = a\\
-\end{minipage}\\
-store\_field i=SHORT & $(\mathbb{S}, ...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S}[s.field_i = v],...f[s,,\delta])$ receiver.fields[i] = stack[sp]\\
-store\_local n=SHORT, i=SHORT & $(\mathbb{S},...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S},...f[s,v_i,\delta])$
-\begin{minipage}[c]{.7\linewidth}
-localCtx = n scopes up enclosingContext chain 
-localCtx.locals[i] = stack[sp]
-\end{minipage}\\
-pop & $(\mathbb{S},...f[s,,\delta v]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta])$\\
+{\tt nil}  & $(\mathbb{S}, \gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S}, \gamma f[ip+1,\_,\delta\, \text{\tt nil}])$\\
+
+{\tt self} & $(\mathbb{S},\gamma f_s[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f_s[ip+1,\_,\delta \,s])$ \\
+
+{\tt true} & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta \,\text{\tt true}])$\\
+
+{\tt false} & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta \,\text{\tt false}])$\\
+
+{\tt push\_char} $c$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,c])$]\\
+
+{\tt push\_int} $i$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,\_,\delta \,i])$\\
+
+{\tt push\_float} $i$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,\_,\delta \, \text{\em intBitsToFloat}(i)])$\\
+
+{\tt push\_field} $i$ & $(\mathbb{S},\gamma f_s[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S}, \gamma f_s[ip+3,\_,\delta \,s_{field_i}])$ \\
+
+{\tt push\_local} $n, i$ & $(\mathbb{S},\gamma f[ip,... l_i ...,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_i...,\delta \,l_i])$\\
+
+{\tt push\_literal} $i$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f_{literal_i}])$ \\
+
+{\tt push\_global} $i$  & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,\mathbb{S}[f_{literal_i}]])$ \\
+
+{\tt push\_array} $n$  &  $(\mathbb{S},\gamma f[ip,\_,\delta\,a_1..a_n]) ~\Rightarrow~ (\mathbb{S}, \gamma f[ip+3,\_,\delta A])$ where $A = Array(a_1..a_n)$ \\
+
+{\tt store\_field} $i$ & $(\mathbb{S}, \gamma f_s[ip,\_,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S}[s_{field_i} = {\bf v}],\gamma f_s[ip+3,\_,\delta])$ \\
+
+{\tt store\_local} $n,i$ & $(\mathbb{S},\gamma f[ip, ...l_i...,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_{i-1} {\bf v} \,l_{i+1}...,\delta])$ \\
+
+{\tt pop} & $(\mathbb{S},\gamma f[ip,\_,\delta \,v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta])$\\
 \hline
-send n=SHORT, i=LITERAL\\
-send\_super n=SHORT, msg=LITERAL & 
-\begin{minipage}[c]{.7\linewidth}
-$(\mathbb{S},...f[s,pc,,\delta ~r~ a_1 .. a_{n}]) \Rightarrow \\
-(\mathbb{S},...f[s,pc,,\delta]~r_{class}\,\bowtie\,f_{literal_i}[r,0,a_1 .. a_{n},\epsilon])$ where $a \bowtie b$ means to resolve $b$ in $a$.\\
-selector=method.literals[msg] 
-cl = receiver.classDef 
-// if receiver is a Class, must be a class method 
-if receiver.classDef == systemDict.classClass then cl = receiver 
-// if send\_super, get superclass of method we're executing 
-if send\_super then cl = method.enclosingClass.superClass 
-m = cl.lookup(selector) 
-if m primitive then 
-     firstArg = sp - nargs + 1
-     m.performPrimitive(ctx, firstArg) 
-else 
-     newCtx = new MethodContext(m, receiver) 
-     newCtx.locals = stack[sp-nargs+1]..stack[sp] 
-     sp -= nargs+1 // pop args and receiver from caller 
-     ctx.invokingContext = ctx 
-     ctx = newCtx\\
+
+{\tt send} $n,i$\\
+{\tt send\_super} $n,i$ & 
+\begin{minipage}[c]{.78\linewidth}
+$(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow 
+(\mathbb{S},\gamma f[ip+5,\_,\delta] ~(r_{class}\,{\small \bowtie} \,f_{literal_i})_r[0,p_1 .. p_{n},\epsilon])$
 \end{minipage}\\
-block i=SHORT  &
-\begin{minipage}[c]{.7\linewidth}
-$(\mathbb{S},...f[s,,\delta]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta f_{block_i}])$\\CompiledBlock b = method.blocks[i] 
-stack[++sp] = new BlockDescriptor(b)\\
-\end{minipage}\\
-block\_return & 
-\begin{minipage}[c]{.7\linewidth}
-$(\mathbb{S},...f[,,\delta]~g_{block}[,,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta v])$\\
-r = stack[sp--] 
-ctx = ctx.invokingContext 
-stack[++sp] = r
-\end{minipage}\\
-return & 
-\begin{minipage}[c]{.7\linewidth}
-$(\mathbb{S},...f[s,,\delta] g[s',,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[s,,\delta v])$\\
-$(\mathbb{S},...~f[,,\delta] ~g[s,,]~ ... ~h[,,] ~ g_{block}[s,,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,,\delta v])$\\
-r = stack[sp--] \\
-oldCtx = ctx \\
-ctx = ctx.invokingContext \\
-oldCtx.invokingContext = MethodContext.RETURNED \\
-stack[++sp] = r\\
-\end{minipage}\\
+
+{\tt block} $i$  & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f^{block_i}_s])$\\
+
+{\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\_,\delta]~g_{block}[,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta \,v])$\\
+
+({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[ip',\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[,\_,\_,\delta \,v])$\\
+
+({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[,\_,\_,\delta] ~g[s,\_,\_,]~ ... ~h[,\_,] ~ g_{block}[s,\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,\_,\_,\delta \,v])$\\
+
 \hline
-dbg fname=LITERAL, loc=DBG\_LOCATION & Set current filename, line, char position.\\
+
+{\tt dbg} $i, loc$ &
+\begin{minipage}[c]{.7\linewidth}
+$(\mathbb{S},\gamma f[ip,\_,\_]) ~\Rightarrow~\\
+ (\mathbb{S}[\text{\it file}=f_{literal_i}, \text{\it line}=loc\text{\tt>>}8, \text{\it column}=loc\text{\tt \&0xFF}],\gamma f[ip+7,\_,\_])$ \\
+Set VM current filename to $f_{literal_i}$ and split $loc$ into char position in lower eight bits and line number in the upper 24 bits.\\
+\end{minipage}\\
 \hline
 \end{tabular}
 \end{center}
