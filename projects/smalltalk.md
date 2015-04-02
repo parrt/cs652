@@ -114,8 +114,8 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-![notation](images/smalltalk-notation.png)
+<img src="images/smalltalk-notation.png" width=500>
 
-![rules](images/smalltalk-rules.png)
+<img src="images/smalltalk-rules.png" width=800>
 
 ## Tasks
