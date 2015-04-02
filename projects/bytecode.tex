@@ -12,11 +12,8 @@
 
 \textwidth = 6.5 in
 \textheight = 9 in
-\oddsidemargin = 0.0 in
-\evensidemargin = 0.0 in
-\topmargin = 0.0 in
-\headheight = 0.0 in
-\headsep = 0.0 in
+\oddsidemargin = 0.5 in
+\evensidemargin = 0.5 in
 \parskip = 0.2in
 \parindent = 0.0in
 
@@ -24,36 +21,68 @@
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}{Definition}
 
+\title{CS652 Smalltalk VM Operational Semantics}
+\author{Terence Parr}
 \begin{document}
+\maketitle
 
 \begin{figure}
 \begin{center}
 \begin{tabular}{l p{8cm}}
 $T \bowtie x$ & Resolve $x$ in scope $T$ \\
-$\gamma \in \text{\it MethodContext}^*$ & Stack of method invocations growing to the right\\
-$\delta \in \text{\it Object}^*$ & Stack of objects growing to the right\\
+
+$o \in \text{\tt X}$ & $o$ instance of $X$\\
+
+$o_{class} \in \text{\tt\small STMetaClassObject}$ & Metaclass (type) of object $o$\\
+
+$o_{class_{class}}=o_{class}$ &  A metaclass object is its own type\\
+
+$o_{superclass} \in \text{\tt\small STMetaClassObject}$ & Superclass (type) of object $o$\\
+
+$o_{field_i}$ & The \ith field of object $o$ \\
+
+$f_{literal_i}$ & The \ith literal of method $f$ \\
+
+$f^{block_i}_s \in \text{\tt\small BlockDescriptor}$ & The \ith block of method $f$ associated with instance self=$s$\\
+
+$f^{block_i}_s[\_,\_,\_] \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$\\
+
+$\gamma \in \text{\tt\small MethodContext}^*$ & Stack of method invocations growing to the right\\
+
+$\delta \in \text{\tt\small Object}^*$ &  Operand stack of objects growing to the right\\
 
 $\mathbb{S}$ & The state of the VM system dictionary\\
 
 $(\mathbb{S},\gamma)$ & VM state is the system dictionary and a method invocation stack with zero or more elements\\
 
-$o_{class}$ & Metaclass (type) of $o$; note: $o_{class}=o$ when $o$ is a metaclass object\\
-
 $(\mathbb{S}, \gamma) \Rightarrow (\mathbb{S}', \gamma')$ & VM state transition\\
-$f[ip,l_0,..l_{n-1},\delta]$ & Method invocation context with irrelevant receiver; $f \in \text{\it MethodContext}$; $l_i$ is local variable or argument, indexed from 0 \\
-$f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context with receiver $s$; $f_s \in \text{\it MethodContext}$\\
+
+$(\mathbb{S}, \gamma) \Rightarrow^* (\mathbb{S}', \gamma')$ & Zero-or-more state transitions\\
+
+$f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context that derived from sending message $f$ to receiver $s$ (self);  $f \in \text{\tt\small MethodContext}$; $l_i$ is local variable or argument, indexed from 0 and arguments first; $\delta$ is the operand stack \\
+
+$f[ip,l_0,..l_{n-1},\delta]$ & Same as previous but the receiver is unknown or irrelevant \\
+
+$f[ip,\_,\_]$ & A method invitation context with ``don't care'' for locals and operand stack\\
+
 \end{tabular}
 \end{center}
-\vspace{-5pt}
-\caption{\small Smalltalk VM Bytecode Specification Notation}
 \vspace{-10pt}
+\caption{\small Smalltalk VM Bytecode Specification Notation}
 \label{acfg}
 \end{figure} 
 
 \begin{table}[tbp]
-\caption{default}
 \begin{center}
 \begin{tabular}{|r|l|}
+\hline
+{\bf Bytecode Instruction} & {\bf Transition} \\
+\hline
+{\em initial state} &
+\begin{minipage}[c]{.7\linewidth}
+$state_0 = (\mathbb{S}[\text{\tt nil}, \text{\tt true}, \text{\tt false}, \text{\tt Transcript}], \text{\tt main}_{m}[0,\epsilon,\epsilon])$\\
+for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Rightarrow^* (\mathbb{S'}, \epsilon)$ 
+\end{minipage}\\
 \hline
 {\tt nil}  & $(\mathbb{S}, \gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S}, \gamma f[ip+1,\_,\delta\, \text{\tt nil}])$\\
 
@@ -86,32 +115,39 @@ $f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context with receiver $s$; $f
 {\tt pop} & $(\mathbb{S},\gamma f[ip,\_,\delta \,v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta])$\\
 \hline
 
-{\tt send} $n,i$\\
-{\tt send\_super} $n,i$ & 
+{\tt send} $n,i$ & 
 \begin{minipage}[c]{.78\linewidth}
 $(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow 
 (\mathbb{S},\gamma f[ip+5,\_,\delta] ~(r_{class}\,{\small \bowtie} \,f_{literal_i})_r[0,p_1 .. p_{n},\epsilon])$
 \end{minipage}\\
 
+{\tt send\_super} $n,i$ & 
+\begin{minipage}[c]{.78\linewidth}
+$(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow 
+(\mathbb{S},\gamma f[ip+5,\_,\delta] ~(r_{superclass}\,{\small \bowtie} \,f_{literal_i})_r[0,p_1 .. p_{n},\epsilon])$
+\end{minipage}\\
+
 {\tt block} $i$  & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f^{block_i}_s])$\\
 
-{\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\_,\delta]~g_{block}[,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta \,v])$\\
+{\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\delta]~g^{block}[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
 
-({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[ip',\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[,\_,\_,\delta \,v])$\\
+({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
 
-({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[,\_,\_,\delta] ~g[s,\_,\_,]~ ... ~h[,\_,] ~ g_{block}[s,\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},...f[,\_,\_,\delta \,v])$\\
+({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g_s[\_,\_,\_]~ ... ~h[\_,\_,\_] ~ g^{block}_s[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
 
 \hline
 
 {\tt dbg} $i, loc$ &
-\begin{minipage}[c]{.7\linewidth}
-$(\mathbb{S},\gamma f[ip,\_,\_]) ~\Rightarrow~\\
- (\mathbb{S}[\text{\it file}=f_{literal_i}, \text{\it line}=loc\text{\tt>>}8, \text{\it column}=loc\text{\tt \&0xFF}],\gamma f[ip+7,\_,\_])$ \\
-Set VM current filename to $f_{literal_i}$ and split $loc$ into char position in lower eight bits and line number in the upper 24 bits.\\
+\begin{minipage}[c]{.76\linewidth}
+$(\mathbb{S},\gamma f[ip,\_,\_])\Rightarrow
+ (\mathbb{S}[\text{\it file}\text{=}f_{literal_i}, \text{\it line}\text{=}loc[31\text{:}8], \text{\it col}\text{=}loc[7\text{:}0]],\gamma f[ip+7,\_,\_])$ \\
+Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (indexed from 0) from lower 8 bits and line number  from the upper 24 bits.
 \end{minipage}\\
 \hline
 \end{tabular}
 \end{center}
+\vspace{-10pt}
+\caption{Smalltalk VM State Transition Rules}
 \label{default}
 \end{table}%
 

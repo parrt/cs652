@@ -10,6 +10,8 @@ This project is to build a full compiler and interpreter / virtual machine (VM) 
 
 ### Smalltalk language definition
 
+Here is the [formal ANTLR grammar](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler/Smalltalk.g4).
+
 no class variables but allows class methods
 we disallow globals. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. no ';' extended msg send notation, no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`. Much of the implementation is not exposed to the programmer, such as method invocation contexts.
 
@@ -112,63 +114,8 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-<table border="0">
-<tr><th><b>Instruction</b></th><th><b>Description</b></th></tr>
-<tr><td><pre>nil </pre></td><td><pre> stack[++sp] = nil</pre></td></tr>
-<tr><td><pre>self </pre></td><td><pre>stack[++sp] = receiver</pre></td></tr>
-<tr><td><pre>true</pre></td><td><pre>stack[++sp] = true</pre></td></tr>
-<tr><td><pre>false</pre></td><td><pre>stack[++sp] = false</pre></td></tr>
-<tr><td><pre>push_char c=CHAR</pre></td><td><pre>stack[++sp] = new Character(c)</pre></td></tr>
-<tr><td><pre>push_int i=INT</pre></td><td><pre>stack[++sp] = new Integer(i)</pre></td></tr>
-<tr><td><pre>push_float v=FLOAT</pre></td><td><pre>stack[++sp] = new STFloat(v))</pre></td></tr>
-<tr><td><pre>push_field i=SHORT</pre></td><td><pre>stack[++sp] = receiver.fields[i]</pre></td></tr>
-<tr><td><pre>push_local n=SHORT, i=SHORT</pre></td><td><pre>
-localCtx = n scopes up enclosingContext chain
-stack[++sp] = localCtx.locals[i]
-</pre></td></tr>
-<tr><td><pre>push_literal i=LITERAL</pre></td><td><pre>
-stack[++sp] = new String(method.literals[i])</pre></td></tr>
-<tr><td><pre>push_global i=LITERAL </pre></td><td><pre>id = method.literals[i] 
-stack[++sp] = systemDict.lookup(id)</pre></td></tr>
-<tr><td><pre>push_array n=SHORT </pre></td><td><pre> a = new Array( stack[sp-n+1]..stack[sp] ) 
-sp -= n 
-stack[++sp] = a</pre></td></tr>
-<tr><td><pre>store_field i=SHORT</pre></td><td><pre>receiver.fields[i] = stack[sp]</pre></td></tr>
-<tr><td><pre>store_local n=SHORT, i=SHORT</pre></td><td><pre>localCtx = n scopes up enclosingContext chain 
-localCtx.locals[i] = stack[sp]</pre></td></tr>
-<tr><td><pre>pop</pre></td><td><pre>sp--</pre></td></tr>
-<tr><td><pre>send nargs=SHORT, msg=LITERAL
-send_super nargs=SHORT, msg=LITERAL</pre></td><td><pre>
-selector=method.literals[msg] 
-cl = receiver.classDef 
-// if receiver is a Class, must be a class method 
-if receiver.classDef == systemDict.classClass then cl = receiver 
-// if send_super, get superclass of method we're executing 
-if send_super then cl = method.enclosingClass.superClass 
-m = cl.lookup(selector) 
-if m primitive then 
-     firstArg = sp - nargs + 1
-     m.performPrimitive(ctx, firstArg) 
-else 
-     newCtx = new MethodContext(m, receiver) 
-     newCtx.locals = stack[sp-nargs+1]..stack[sp] 
-     sp -= nargs+1 // pop args and receiver from caller 
-     ctx.invokingContext = ctx 
-     ctx = newCtx</pre></td></tr>
-<tr><td><pre>block i=SHORT</pre></td><td><pre>
-CompiledBlock b = method.blocks[i] 
-stack[++sp] = new BlockDescriptor(b)</pre></td></tr>
-<tr><td><pre>block_return</pre></td><td><pre>
-r = stack[sp--] 
-ctx = ctx.invokingContext 
-stack[++sp] = r</pre></td></tr>
-<tr><td><pre>return</pre></td><td><pre>
-r = stack[sp--] 
-oldCtx = ctx 
-ctx = ctx.invokingContext 
-oldCtx.invokingContext = MethodContext.RETURNED 
-stack[++sp] = r</pre></td></tr>
-<tr><td><pre>dbg fname=LITERAL, loc=DBG_LOCATION</pre></td><td>Set current filename, line, char position.</td></tr>
-</table>
+![notation](images/smalltalk-notation.png)
+
+![rules](images/smalltalk-rules.png)
 
 ## Tasks
