@@ -5,6 +5,7 @@
 \usepackage{epstopdf}
 \usepackage{epsfig}
 \usepackage{alltt}
+\usepackage{bm}
 \usepackage{amsmath}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 \newcommand{\sbt}{\,\begin{picture}(-1,1)(-1,-3)\circle*{3}\end{picture}\ }
@@ -47,6 +48,8 @@ $f^{block_i}_s \in \text{\tt\small BlockDescriptor}$ & The \ith block of method 
 
 $f^{block_i}_s[\_,\_,\_] \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$\\
 
+$f^{block_i}_s[\_,\_,\_]^d \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$ and having depth $d$ counting from zero at the method block\\
+
 $\gamma \in \text{\tt\small MethodContext}^*$ & Stack of method invocations growing to the right\\
 
 $\delta \in \text{\tt\small Object}^*$ &  Operand stack of objects growing to the right\\
@@ -59,7 +62,7 @@ $(\mathbb{S}, \gamma) \Rightarrow (\mathbb{S}', \gamma')$ & VM state transition\
 
 $(\mathbb{S}, \gamma) \Rightarrow^* (\mathbb{S}', \gamma')$ & Zero-or-more state transitions\\
 
-$f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context that derived from sending message $f$ to receiver $s$ (self);  $f \in \text{\tt\small MethodContext}$; $l_i$ is local variable or argument, indexed from 0 and arguments first; $\delta$ is the operand stack \\
+$f_s[ip,l_0,..l_{n-1},\delta]$ & Method invocation context that derived from sending message $f$ to receiver $s$ (self);  $f \in \text{\tt\small MethodContext}$; $l_i$ is local variable or argument, indexed from 0 and arguments first; $\delta$ is the operand stack; $f$ {\em can also represent a nested code block not just a  method} \\
 
 $f[ip,l_0,..l_{n-1},\delta]$ & Same as previous but the receiver is unknown or irrelevant \\
 
@@ -74,12 +77,12 @@ $f[ip,\_,\_]$ & A method invitation context with ``don't care'' for locals and o
 
 \begin{table}[tbp]
 \begin{center}
-\begin{tabular}{|r|l|}
+\begin{tabular}[t]{|r|l|}
 \hline
 {\bf Bytecode Instruction} & {\bf Transition} \\
 \hline
 {\em initial state} &
-\begin{minipage}[c]{.7\linewidth}
+\begin{minipage}[t]{.7\linewidth}
 $state_0 = (\mathbb{S}[\text{\tt nil}, \text{\tt true}, \text{\tt false}, \text{\tt Transcript}], \text{\tt main}_{m}[0,\epsilon,\epsilon])$\\
 for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Rightarrow^* (\mathbb{S'}, \epsilon)$ 
 \end{minipage}\\
@@ -100,7 +103,14 @@ for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Right
 
 {\tt push\_field} $i$ & $(\mathbb{S},\gamma f_s[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S}, \gamma f_s[ip+3,\_,\delta \,s_{field_i}])$ \\
 
-{\tt push\_local} $n, i$ & $(\mathbb{S},\gamma f[ip,... l_i ...,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_i...,\delta \,l_i])$\\
+{\tt push\_local} $0, i$ & $(\mathbb{S},\gamma f[ip,... l_i ...,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_i...,\delta \,l_i])$\\
+
+%--------------
+{\tt push\_local} $n > 0, i$ &
+\begin{minipage}[t]{.78\linewidth}
+$(\mathbb{S},\gamma f[\_,\_,\_] \,...\, g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[ip,\_,\_]^{d-1}\,...\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
+(\mathbb{S},\gamma\, ... \,g^{block''}[ip+5,\_,\delta {\bm l_i}]^{d})$
+\end{minipage} \\
 
 {\tt push\_literal} $i$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f_{literal_i}])$ \\
 
