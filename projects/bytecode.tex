@@ -20,10 +20,9 @@
 
 \def\arraystretch{1.25}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}{Definition}
-
+\newcommand*{\tabbox}[2][t]{%
+    \vspace{0pt}\parbox[#1][3.7\baselineskip]{1cm}{\strut#2\strut}}
+    
 \title{CS652 Smalltalk VM Operational Semantics}
 \author{Terence Parr}
 \begin{document}
@@ -109,7 +108,7 @@ for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Right
 
 {\tt push\_local} $n > 0, i$ &
 \begin{minipage}[t]{.78\linewidth}
-$(\mathbb{S},\gamma f[\_,\_,\_] \,...\, g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[ip,\_,\_]^{d-1}\,...\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
+$(\mathbb{S},\gamma g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[ip,\_,\_]^{d-1}\,...\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
 (\mathbb{S},\gamma\, ... \,g^{block''}[ip+5,\_,\delta {\bm l_i}]^{d})$
 \end{minipage} \\
 
@@ -119,9 +118,9 @@ $(\mathbb{S},\gamma f[\_,\_,\_] \,...\, g^{block}[\_,... {\bm l_i} ...,\_]^{d-n}
 
 {\tt push\_array} $n$  &  $(\mathbb{S},\gamma f[ip,\_,\delta\,a_1..a_n]) ~\Rightarrow~ (\mathbb{S}, \gamma f[ip+3,\_,\delta A])$ where $A = Array(a_1..a_n)$ \\
 
-{\tt store\_field} $i$ & $(\mathbb{S}, \gamma f_s[ip,\_,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S}[s_{field_i} = {\bf v}],\gamma f_s[ip+3,\_,\delta])$ \\
+{\tt store\_field} $i$ & $(\mathbb{S}, \gamma f_s[ip,\_,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S}[s_{field_i} = {\bf v}],\gamma f_s[ip+3,\_,\delta\, {\bf v}])$ \\
 
-{\tt store\_local} $n,i$ & $(\mathbb{S},\gamma f[ip, ...l_i...,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_{i-1} {\bf v} \,l_{i+1}...,\delta])$ \\
+{\tt store\_local} $n,i$ & $(\mathbb{S},\gamma f[ip, ...l_i...,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_{i-1} {\bf v} \,l_{i+1}...,\delta \,{\bf v}])$ \\
 
 {\tt pop} & $(\mathbb{S},\gamma f[ip,\_,\delta \,v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta])$\\
 \hline
@@ -140,11 +139,11 @@ $(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow
 
 {\tt block} $i$  & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f^{block_i}_s])$\\
 
-{\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\delta]~g^{block}[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
+{\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\delta]~g^{block}[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
-({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
+({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
-({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g_s[\_,\_,\_]~ ... ~h[\_,\_,\_] ~ g^{block}_s[\_,\_,\delta' v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,v])$\\
+({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g_s[\_,\_,\_]~ ... ~h[\_,\_,\_] ~ g^{block}_s[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
 \hline
 
@@ -166,24 +165,60 @@ Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (i
 
 \begin{figure}
 \begin{center}
-\begin{tabular}[t]{|r|l|}
+\begin{tabular}[t]{|r|l| l |}
 \hline
-{\bf Smalltalk fragment} & {\bf Generated code} \\
+{\bf Smalltalk fragment} & {\bf Visitor method result} & {\bf Side-effects}\\
 \hline
-$\epsilon$ & $\epsilon$ \\
+$\epsilon$ & $\epsilon$ (object {\tt Code.None}) & \\
 
-{\tt class T : S [ ]} & $\epsilon$ \\
+{\tt class T : S [ ]} & $\epsilon$ & \\
 
-\begin{minipage}[c]{0.25\linewidth}
-$C$\\
-$main$ 
-\end{minipage}  &
-\begin{minipage}[c]{0.25\linewidth}
+$main$  & 
+\begin{minipage}[t]{0.25\linewidth}
 $main$\\
 {\tt self\\
 return}
+\end{minipage} & \\
+
+{\tt f <primitive:\#}{\it primitive-name}{\tt >} & $\epsilon$ & \\
+
+{\tt f [ }$body$ {\tt ]} & $\epsilon$&
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\tt f}_{\text{\it code}} =$ \\
+\parbox{20pt}{~}$body$\\
+\parbox{20pt}{~}{\tt self\\
+\parbox{20pt}{~}return}
 \end{minipage} \\
 
+{\it operator} {\tt [ }{\it body} {\tt ]} & $\epsilon$&
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\it operator}_{\text{\it code}} =$ \\
+\parbox{20pt}{~}$body$\\
+\parbox{20pt}{~}{\tt self\\
+\parbox{20pt}{~}return}
+\end{minipage} \\
+
+{\tt a:\,x b:\,y $...$ c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\tt a:b:c:}_{\text{\it code}} =$ \\
+\parbox{20pt}{~}$body$\\
+\parbox{20pt}{~}{\tt self\\
+\parbox{20pt}{~}return}
+\end{minipage} \\
+
+$\underbrace{\text{\tt [$args$| |$locals$|  ]}}_{\text{\tt f}^{block_i}}$ & {\tt block }$i$ &
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\tt f}_{block_i} =$\\
+\parbox{20pt}{~}{\tt nil \\
+\parbox{20pt}{~}block\_return}
+\end{minipage} \\
+
+$\underbrace{\text{\tt [ $body$ ]}}_{\text{\tt f}^{block_i}}$ & {\tt block }$i$ &
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\tt f}_{block_i}=$\\
+\parbox{20pt}{~}$body$\\
+\parbox{20pt}{~}{\tt block\_return}
+\end{minipage} \\
 \hline
 \end{tabular}
 \end{center}
@@ -193,10 +228,10 @@ return}
 \end{figure}%
 
 
-\begin{minipage}[c]{0.25\linewidth}
+\begin{minipage}[t]{0.25\linewidth}
 \end{minipage} 
 
-\begin{minipage}[c]{0.25\linewidth}
+\begin{minipage}[t]{0.25\linewidth}
 \begin{alltt}
 \end{alltt}
 \end{minipage} 
