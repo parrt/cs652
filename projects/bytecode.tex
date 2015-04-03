@@ -18,6 +18,8 @@
 \parskip = 0.2in
 \parindent = 0.0in
 
+\def\arraystretch{1.25}
+
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}{Definition}
@@ -48,7 +50,7 @@ $f^{block_i}_s \in \text{\tt\small BlockDescriptor}$ & The \ith block of method 
 
 $f^{block_i}_s[\_,\_,\_] \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$\\
 
-$f^{block_i}_s[\_,\_,\_]^d \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$ and having depth $d$ counting from zero at the method block\\
+$f^{block_i}_s[\_,\_,\_]^d \in \text{\tt\small BlockContext}$ & The \ith block of method $f$ invoked with self=$s$ and having depth $d$ counting from zero at the method block; e.g., {\tt f [|x| [|y|]]} has a method block at depth 0 with {\tt x} and a nested block at depth 1 with {\tt y} \\
 
 $\gamma \in \text{\tt\small MethodContext}^*$ & Stack of method invocations growing to the right\\
 
@@ -75,7 +77,7 @@ $f[ip,\_,\_]$ & A method invitation context with ``don't care'' for locals and o
 \label{acfg}
 \end{figure} 
 
-\begin{table}[tbp]
+\begin{figure}
 \begin{center}
 \begin{tabular}[t]{|r|l|}
 \hline
@@ -105,7 +107,6 @@ for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Right
 
 {\tt push\_local} $0, i$ & $(\mathbb{S},\gamma f[ip,... l_i ...,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_i...,\delta \,l_i])$\\
 
-%--------------
 {\tt push\_local} $n > 0, i$ &
 \begin{minipage}[t]{.78\linewidth}
 $(\mathbb{S},\gamma f[\_,\_,\_] \,...\, g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[ip,\_,\_]^{d-1}\,...\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
@@ -148,7 +149,7 @@ $(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow
 \hline
 
 {\tt dbg} $i, loc$ &
-\begin{minipage}[c]{.76\linewidth}
+\begin{minipage}[t]{.76\linewidth}
 $(\mathbb{S},\gamma f[ip,\_,\_])\Rightarrow
  (\mathbb{S}[\text{\it file}\text{=}f_{literal_i}, \text{\it line}\text{=}loc[31\text{:}8], \text{\it col}\text{=}loc[7\text{:}0]],\gamma f[ip+7,\_,\_])$ \\
 Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (indexed from 0) from lower 8 bits and line number  from the upper 24 bits.
@@ -159,10 +160,45 @@ Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (i
 \vspace{-10pt}
 \caption{Smalltalk VM State Transition Rules}
 \label{default}
-\end{table}%
+\end{figure}%
+
+%------------CODE GEN---------------------
+
+\begin{figure}
+\begin{center}
+\begin{tabular}[t]{|r|l|}
+\hline
+{\bf Smalltalk fragment} & {\bf Generated code} \\
+\hline
+$\epsilon$ & $\epsilon$ \\
+
+{\tt class T : S [ ]} & $\epsilon$ \\
+
+\begin{minipage}[c]{0.25\linewidth}
+$C$\\
+$main$ 
+\end{minipage}  &
+\begin{minipage}[c]{0.25\linewidth}
+$main$\\
+{\tt self\\
+return}
+\end{minipage} \\
+
+\hline
+\end{tabular}
+\end{center}
+\vspace{-10pt}
+\caption{Smalltalk Compilation Rules}
+\label{default}
+\end{figure}%
+
+
+\begin{minipage}[c]{0.25\linewidth}
+\end{minipage} 
 
 \begin{minipage}[c]{0.25\linewidth}
 \begin{alltt}
 \end{alltt}
 \end{minipage} 
+
 \end{document}
