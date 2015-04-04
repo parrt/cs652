@@ -18,8 +18,6 @@
 \parskip = 0.2in
 \parindent = 0.0in
 
-\def\arraystretch{1.25}
-
 \newcommand*{\tabbox}[2][t]{%
     \vspace{0pt}\parbox[#1][3.7\baselineskip]{1cm}{\strut#2\strut}}
     
@@ -28,12 +26,18 @@
 \begin{document}
 \maketitle
 
+\def\arraystretch{1.25}
+
 \begin{figure}
 \begin{center}
 \begin{tabular}{l p{8cm}}
 $T \bowtie x$ & Resolve $x$ in scope $T$ \\
 
-$o \in \text{\tt X}$ & $o$ instance of $X$\\
+$o \in \text{\tt X}$ & $o$ is instance of $X$\\
+
+${\bf v} \in \text{\tt STObject}$ & a single object \\
+
+${\bm l_i} \in \text{\tt STObject}$ & the \ith argument or local variable object \\
 
 $o_{class} \in \text{\tt\small STMetaClassObject}$ & Metaclass (type) of object $o$\\
 
@@ -53,7 +57,7 @@ $f^{block_i}_s[\_,\_,\_]^d \in \text{\tt\small BlockContext}$ & The \ith block o
 
 $\gamma \in \text{\tt\small MethodContext}^*$ & Stack of method invocations growing to the right\\
 
-$\delta \in \text{\tt\small Object}^*$ &  Operand stack of objects growing to the right\\
+$\delta \in \text{\tt\small STObject}^*$ &  Operand stack of objects growing to the right\\
 
 $\mathbb{S}$ & The state of the VM system dictionary\\
 
@@ -76,10 +80,13 @@ $f[ip,\_,\_]$ & A method invitation context with ``don't care'' for locals and o
 \label{acfg}
 \end{figure} 
 
+\def\arraystretch{1.25}
+
+%------------VM TRANSITIONS---------------------
+
 \begin{figure}
 \begin{center}
-\begin{tabular}[t]{|r|l|}
-\hline
+\begin{tabular}[t]{r | l}
 {\bf Bytecode Instruction} & {\bf Transition} \\
 \hline
 {\em initial state} &
@@ -104,12 +111,12 @@ for $m \in \text{\tt MainClass}$; program terminates if $\exists~ state_0 \Right
 
 {\tt push\_field} $i$ & $(\mathbb{S},\gamma f_s[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S}, \gamma f_s[ip+3,\_,\delta \,s_{field_i}])$ \\
 
-{\tt push\_local} $0, i$ & $(\mathbb{S},\gamma f[ip,... l_i ...,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_i...,\delta \,l_i])$\\
+{\tt push\_local} $0, i$ & $(\mathbb{S},\gamma f[ip,\cdots l_i \cdots,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,\cdots l_i\cdots,\delta \,l_i])$\\
 
 {\tt push\_local} $n > 0, i$ &
 \begin{minipage}[t]{.78\linewidth}
-$(\mathbb{S},\gamma g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[ip,\_,\_]^{d-1}\,...\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
-(\mathbb{S},\gamma\, ... \,g^{block''}[ip+5,\_,\delta {\bm l_i}]^{d})$
+$(\mathbb{S},\gamma g^{block}[\_,\cdots {\bm l_i} \cdots,\_]^{d-n} \,\cdots\, g^{block'}[ip,\_,\_]^{d-1}\,\cdots\, g^{block''}[ip,\_,\delta]^{d}) ~\Rightarrow\\
+(\mathbb{S},\gamma\, \cdots \,g^{block''}[ip+5,\_,\delta {\bm l_i}]^{d})$
 \end{minipage} \\
 
 {\tt push\_literal} $i$ & $(\mathbb{S},\gamma f[ip,\_,\delta]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+3,\_,\delta \,f_{literal_i}])$ \\
@@ -120,9 +127,9 @@ $(\mathbb{S},\gamma g^{block}[\_,... {\bm l_i} ...,\_]^{d-n} \,...\, g^{block'}[
 
 {\tt store\_field} $i$ & $(\mathbb{S}, \gamma f_s[ip,\_,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S}[s_{field_i} = {\bf v}],\gamma f_s[ip+3,\_,\delta\, {\bf v}])$ \\
 
-{\tt store\_local} $n,i$ & $(\mathbb{S},\gamma f[ip, ...l_i...,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,...l_{i-1} {\bf v} \,l_{i+1}...,\delta \,{\bf v}])$ \\
+{\tt store\_local} $n,i$ & $(\mathbb{S},\gamma f[ip, \cdots l_i\cdots,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+5,\cdots l_{i-1} {\bf v} \,l_{i+1}\cdots,\delta \,{\bf v}])$ \\
 
-{\tt pop} & $(\mathbb{S},\gamma f[ip,\_,\delta \,v]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta])$\\
+{\tt pop} & $(\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip+1,\_,\delta])$\\
 \hline
 
 {\tt send} $n,i$ & 
@@ -141,9 +148,9 @@ $(\mathbb{S},\gamma f[ip,\_,\delta \,r\, p_1 .. p_{n}]) \Rightarrow
 
 {\tt block\_return} &  $(\mathbb{S},\gamma f[ip,\_,\delta]~g^{block}[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
-({\em local method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
+({\em method local}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
-({\em nonlocal method}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g_s[\_,\_,\_]~ ... ~h[\_,\_,\_] ~ g^{block}_s[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
+({\em method nonlocal}) ~~{\tt return} & $(\mathbb{S},\gamma f[ip,\_,\delta] ~g_s[\_,\_,\_]~ \cdots ~h[\_,\_,\_] ~ g^{block}_s[\_,\_,\delta' \,{\bf v}]) ~\Rightarrow~ (\mathbb{S},\gamma f[ip,\_,\delta \,{\bf v}])$\\
 
 \hline
 
@@ -153,7 +160,6 @@ $(\mathbb{S},\gamma f[ip,\_,\_])\Rightarrow
  (\mathbb{S}[\text{\it file}\text{=}f_{literal_i}, \text{\it line}\text{=}loc[31\text{:}8], \text{\it col}\text{=}loc[7\text{:}0]],\gamma f[ip+7,\_,\_])$ \\
 Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (indexed from 0) from lower 8 bits and line number  from the upper 24 bits.
 \end{minipage}\\
-\hline
 \end{tabular}
 \end{center}
 \vspace{-10pt}
@@ -163,10 +169,11 @@ Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (i
 
 %------------CODE GEN---------------------
 
+\def\arraystretch{1.0}
+
 \begin{figure}
 \begin{center}
-\begin{tabular}[t]{|r|l| l |}
-\hline
+\begin{tabular}[t]{r | l | l }
 {\bf Smalltalk fragment} & {\bf Visitor method result} & {\bf Side-effects}\\
 \hline
 $\epsilon$ & $\epsilon$ (object {\tt Code.None}) & \\
@@ -198,7 +205,7 @@ $\text{\it operator}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}return}
 \end{minipage} \\
 
-{\tt a:\,x b:\,y $...$ c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
+{\tt a:\,x b:\,y $\cdots$ c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\tt a:b:c:}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}$body$\\
@@ -219,14 +226,122 @@ $\text{\tt f}_{block_i}=$\\
 \parbox{20pt}{~}$body$\\
 \parbox{20pt}{~}{\tt block\_return}
 \end{minipage} \\
-\hline
+
+{\tt f [$instr_1.\, instr_2. \,\cdots\, instr_n$]} &
+\begin{minipage}[t]{0.25\linewidth}
+$instr_1$\\
+{\tt pop}\\
+$instr_2$\\
+{\tt pop}\\
+$\cdots$\\
+$instr_n$\\
+{\tt pop}\\
+{\tt self}\\
+{\tt return}\vspace{5pt}
+\end{minipage} 
+& \\
+
+$\underbrace{\text{\tt [$instr_1.\, instr_2. \,\cdots\, instr_n$]}}_{\text{\tt f}^{block}}$ &
+\begin{minipage}[t]{0.25\linewidth}
+$instr_1$\\
+{\tt pop}\\
+$instr_2$\\
+{\tt pop}\\
+$\cdots$\\
+$instr_n$\\
+{\tt block\_return}\vspace{3pt}
+\end{minipage} 
+& \\
+
 \end{tabular}
 \end{center}
 \vspace{-10pt}
-\caption{Smalltalk Compilation Rules}
+\caption{Smalltalk Class/Method/Block Compilation Rules}
 \label{default}
 \end{figure}%
 
+%------------EXPRESSION GEN---------------------
+
+\def\arraystretch{1.0}
+
+\begin{figure}
+\begin{center}
+\begin{tabular}[t]{r | l | l }
+{\bf Smalltalk fragment} & {\bf Visitor method result} & {\bf Side-effects}\\
+\hline
+${\tt class~ T~[|x| }\cdots [ \cdots~ x {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_field} $i$
+\end{minipage} & \\
+
+$\text{\tt f:}{\tt x~[}\cdots~ x {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_local} $0, i$
+\end{minipage} & \\
+
+${\tt f~[|x| }\cdots~ x {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_local} $0, i$
+\end{minipage} & \\
+
+$\text{\tt f:}{\tt x~}\underbrace{{\tt [}\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_local} $\Delta, i$
+\end{minipage} & \\
+
+$\text{\tt f}\underbrace{{\tt [|x| }\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_local} $\Delta, i$
+\end{minipage} & \\
+
+{\tt\Large \verb=^=}$expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt return}\vspace{5pt}
+\end{minipage} & \\
+
+{\tt f\,[}$\cdots ~expr \,w$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt send} $0,i$\vspace{5pt}
+\end{minipage}  & $\text{\tt f}_{literal_i} = ``w$'' \\
+
+{\tt f\,[}$\cdots \,{\tt super} \,w$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt send\_super} $0,i$\vspace{5pt}
+\end{minipage}  & $\text{\tt f}_{literal_i} = ``w$'' \\
+
+{\tt f\,[}$\cdots ~expr_1~ op~ expr_2$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr_1$\\
+$expr_2$\\
+{\tt send} $1,i$\vspace{5pt}
+\end{minipage}  & $\text{\tt f}_{literal_i} = ``op$'' \\
+
+{\tt f\,[}$\cdots ~expr ~w_1{\tt :} x_1 ~ w_2{\tt :} x_2 \, \cdots \, w_n{\tt :} x_n$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt send} $n,i$\vspace{5pt}
+\end{minipage}  & $\text{\tt f}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
+
+{\tt f\,[}$\cdots ~{\tt super} ~w_1{\tt :} x_1 ~ w_2{\tt :} x_2 \, \cdots \, w_n{\tt :} x_n$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt send\_super} $n,i$\\
+\end{minipage}  & $\text{\tt f}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
+
+\end{tabular}
+\end{center}
+\vspace{-10pt}
+\caption{Smalltalk Expression Compilation Rules}
+\label{default}
+\end{figure}%
 
 \begin{minipage}[t]{0.25\linewidth}
 \end{minipage} 

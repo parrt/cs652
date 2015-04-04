@@ -114,13 +114,9 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-<center>
-<img src="images/smalltalk-notation.png" width=600>
-</center>
+<img src="images/smalltalk-notation.png" width=600 align=middle>
 
-<center>
-<img src="images/smalltalk-rules.png" width=800>
-</center>
+<img src="images/smalltalk-rules.png" width=800 align=middle>
 
 ### Representing bytecodes
 
@@ -142,5 +138,11 @@ and the bytecode generated for method `foo`:
 ```
 
 The numbers on the left are the addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L66) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L96) that are each two bytes long.
+
+### Compilation
+
+<img src="images/smalltalk-blocks.png" width=800 align=middle>
+
+<img src="images/smalltalk-expr.png" width=800 align=middle>
 
 ## Tasks
