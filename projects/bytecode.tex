@@ -193,24 +193,27 @@ return}
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\tt f}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}$body$\\
-\parbox{20pt}{~}{\tt self\\
-\parbox{20pt}{~}return}
+\parbox{20pt}{~}{\tt pop}\\
+\parbox{20pt}{~}{\tt self}\\
+\parbox{20pt}{~}{\tt return}
 \end{minipage} \\
 
 {\it operator} {\tt [ }{\it body} {\tt ]} & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\it operator}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}$body$\\
-\parbox{20pt}{~}{\tt self\\
-\parbox{20pt}{~}return}
+\parbox{20pt}{~}{\tt pop}\\
+\parbox{20pt}{~}{\tt self}\\
+\parbox{20pt}{~}{\tt return}
 \end{minipage} \\
 
 {\tt a:\,x b:\,y $\cdots$ c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\tt a:b:c:}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}$body$\\
-\parbox{20pt}{~}{\tt self\\
-\parbox{20pt}{~}return}
+\parbox{20pt}{~}{\tt pop}\\
+\parbox{20pt}{~}{\tt self}\\
+\parbox{20pt}{~}{\tt return}
 \end{minipage} \\
 
 $\underbrace{\text{\tt [$args$| |$locals$|  ]}}_{\text{\tt f}^{block_i}}$ & {\tt block }$i$ &
@@ -227,29 +230,14 @@ $\text{\tt f}_{block_i}=$\\
 \parbox{20pt}{~}{\tt block\_return}
 \end{minipage} \\
 
-{\tt f [$instr_1.\, instr_2. \,\cdots\, instr_n$]} &
+{\tt $instr_1.\, instr_2. \,\cdots\, instr_n$} &
 \begin{minipage}[t]{0.25\linewidth}
 $instr_1$\\
 {\tt pop}\\
 $instr_2$\\
 {\tt pop}\\
 $\cdots$\\
-$instr_n$\\
-{\tt pop}\\
-{\tt self}\\
-{\tt return}\vspace{5pt}
-\end{minipage} 
-& \\
-
-$\underbrace{\text{\tt [$instr_1.\, instr_2. \,\cdots\, instr_n$]}}_{\text{\tt f}^{block}}$ &
-\begin{minipage}[t]{0.25\linewidth}
-$instr_1$\\
-{\tt pop}\\
-$instr_2$\\
-{\tt pop}\\
-$\cdots$\\
-$instr_n$\\
-{\tt block\_return}\vspace{3pt}
+$instr_n$\vspace{5pt}
 \end{minipage} 
 & \\
 
