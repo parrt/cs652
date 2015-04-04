@@ -272,16 +272,16 @@ $expr$\\
 ${\tt f~[|x| }\cdots~ x {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
-{\tt store\_local} $0, i$
+{\tt store\_local} $0, i$\vspace{3pt}
 \end{minipage} & \\
 
-$\text{\tt f:}{\tt x~}\underbrace{{\tt [}\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
+$\underbrace{\text{\tt f:}{\tt x~}{\tt [}\cdots [}_{\Delta \,=\,\#scopes} \cdots\, x {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt store\_local} $\Delta, i$
 \end{minipage} & \\
 
-$\text{\tt f}\underbrace{{\tt [|x| }\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
+$\text{\tt f [}\cdots\underbrace{{\tt [|x| }\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt store\_local} $\Delta, i$
