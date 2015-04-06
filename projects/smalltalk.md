@@ -114,9 +114,9 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-<img src="images/smalltalk-notation.png" width=600 align=middle>
+<img src="images/smalltalk-notation.png" width="80%" align=middle>
 
-<img src="images/smalltalk-rules.png" width=800 align=middle>
+<img src="images/smalltalk-rules.png" width="80%" align=middle>
 
 ### Representing bytecodes
 
