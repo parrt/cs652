@@ -189,6 +189,13 @@ return}
 
 {\tt f <primitive:\#}{\it primitive-name}{\tt >} & $\epsilon$ & \\
 
+{\tt f [ } {\tt ]} & $\epsilon$&
+\begin{minipage}[t]{0.35\linewidth}
+$\text{\tt f}_{\text{\it code}} =$ \\
+\parbox{20pt}{~}{\tt self}\\
+\parbox{20pt}{~}{\tt return}
+\end{minipage} \\
+
 {\tt f [ }$body$ {\tt ]} & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\tt f}_{\text{\it code}} =$ \\
@@ -207,7 +214,7 @@ $\text{\it operator}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}{\tt return}
 \end{minipage} \\
 
-{\tt a:\,x b:\,y $\cdots$ c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
+{\tt a:\,x b:\,y c:\,z [ }{\it body} {\tt ]}  & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
 $\text{\tt a:b:c:}_{\text{\it code}} =$ \\
 \parbox{20pt}{~}$body$\\
