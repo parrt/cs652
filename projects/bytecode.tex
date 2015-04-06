@@ -297,32 +297,47 @@ $expr$\\
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt send} $0,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}_{literal_i} = ``w$'' \\
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
 
 {\tt f\,[}$\cdots \,{\tt super} \,w$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt send\_super} $0,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}_{literal_i} = ``w$'' \\
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
 
 {\tt f\,[}$\cdots ~expr_1~ op~ expr_2$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr_1$\\
 $expr_2$\\
 {\tt send} $1,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}_{literal_i} = ``op$'' \\
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``op$'' \\
 
 {\tt f\,[}$\cdots ~expr ~w_1{\tt :} x_1 ~ w_2{\tt :} x_2 \, \cdots \, w_n{\tt :} x_n$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt send} $n,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
 
 {\tt f\,[}$\cdots ~{\tt super} ~w_1{\tt :} x_1 ~ w_2{\tt :} x_2 \, \cdots \, w_n{\tt :} x_n$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
-{\tt send\_super} $n,i$\\
-\end{minipage}  & $\text{\tt f}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
+{\tt send\_super} $n,i$
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \vspace{3pt}\\
+
+\hline 
+99 & {\tt push\_int 99} & \\
+
+{\tt 1.2} & {\tt push\_float floatToIntBits(1.2)} & \\
+
+{\tt 'a string'} & {\tt push\_literal} $i$ & $\text{\tt f}^{block_j}_{literal_i} = ``a string$'' \\
+
+{\tt nil} & {\tt nil} & \\
+
+{\tt self} & {\tt self} & \\
+
+{\tt true} & {\tt true} & \\
+
+{\tt false} & {\tt false} & \\
 
 \end{tabular}
 \end{center}
