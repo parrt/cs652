@@ -103,6 +103,8 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 
 ### Virtual machine
 
+[VM starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm).
+
 ```java
 public class VirtualMachine {
 	/** The dictionary of global objects including class meta objects */
@@ -141,10 +143,32 @@ The numbers on the left are the addresses of the instructions. The first instruc
 
 ### Compilation
 
+[Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
+
+For the constructs as shown below in the compilation rules, use visitor methods to compute the `Code` result for particular construct. As a side effect, you will be tracking literals within each block/method. Further, you will be setting the `compiledBlock` field of each block/method. In a sense, the result of compilation is the decorated scope tree and is represented by the collection of `compiledBlock`s.  The constructor for `STMetaClassObject` collects all of compiled code for the methods of that class.  Also see `SystemDictionary`:
+```java
+	/** Convert the symbol table with classes, methods, and compiled code
+	 *  (as computed by the compiler) into a system dictionary that has
+	 *  meta-objects as well as the necessary predefined objects
+	 *  such as nil.
+	 *
+	 *  This method assumes that the compiler has annotated the symbol table
+	 *  symbols such as {@link STBlock} with pointers to the
+	 *  {@link smalltalk.vm.primitive.STCompiledBlock}s.
+	 */
+	public void symtabToSystemDictionary(STSymbolTable symtab) {
+```
+
 <img src="images/smalltalk-blocks.png" width="700" align=middle>
 
 <img src="images/smalltalk-expr.png" width="700" align=middle>
 
 <img src="images/smalltalk-msgs.png" width="700" align=middle>
 
+
 ## Tasks
+
+* Build `DefineSymbols` parse tree listener. This creates a scope tree per our normal procedure.
+* Build `ResolveSymbols` parse tree listener. This walks the parse tree again to verify that identifiers on the left-hand side of assignments are locals or fields. It also sets the `sym` field of any identifier node by resolving the associated identifier in the current scope.
+* Build `CodeGenerator` parse tree **visitor**. This is the meat of the compiler. 
+* Build VM by filling in all of the primitive method operations (static `perform` methods) and key classes like `SystemDictionary` and `VirtualMachine`.
