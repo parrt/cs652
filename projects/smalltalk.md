@@ -5,10 +5,7 @@
 This project is to build a full compiler and interpreter / virtual machine (VM) for a subset of Smalltalk.
 
 
-
-## Discussion
-
-### Smalltalk language definition
+## Smalltalk language definition
 
 Here is the [formal ANTLR grammar](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler/Smalltalk.g4).
 
@@ -17,7 +14,7 @@ we disallow globals. x:=expr will generate code for expr but not the store if x 
 
 Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sheet.pdf):
 
-#### Literals and keywords
+### Literals and keywords
 | Syntax | Semantics |
 |--------:|--------|
 |  `nil` | undefined object |
@@ -31,7 +28,7 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 |`123`|integer literal|
 |`1.23`|floating-point literal (single precision), no scientific notation|
 
-#### Expression syntax
+### Expression syntax
 
 | Syntax | Semantics |
 |---------:|--------|
@@ -45,7 +42,7 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 |`[99] value` |use `value` method to evaluate a block with 99|
 |`[:x | 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
 
-#### Message send expressions
+### Message send expressions
 
 Smalltalk uses the concept of message sending, which is really the same thing as method calling in Java. There are three kinds of messages:
 
@@ -76,7 +73,7 @@ opchar
 
 The keyword message `to:do:` has lowest precedence and so `myList size` is evaluated and passed as the `to:` parameter.  Similarly, `1+2` evaluates to 3 and is the receiver of the `to:do:` message. When it's unclear to the reader what the president says, use parentheses.
 
-#### Class, method syntax
+### Class, method syntax
 
 Smalltalk has no file format or syntax for class definitions because it was all done in a code browser. In our case, we need a file format and some very simple syntax will suffice. The following class definition for `Array` demonstrates all bits of the syntax:
 
@@ -101,7 +98,7 @@ Class methods are proceeded with the `class` keyword but are otherwise the same 
 
 Method `size` takes no parameters and is primitive. Method `at:` takes one parameter and is primitive.  Method `at:put` takes two parameters and is primitive.  Method `do:` takes one parameter, a code block, and has a Smalltalk implementation.
 
-### Virtual machine
+## Virtual machine
 
 [VM starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm).
 
@@ -120,7 +117,7 @@ public class VirtualMachine {
 
 <img src="images/smalltalk-rules.png" width="800" align=middle>
 
-### Representing bytecodes
+## Representing bytecodes
 
 In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
 
@@ -141,7 +138,7 @@ and the bytecode generated for method `foo`:
 
 The numbers on the left are the addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L66) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L96) that are each two bytes long.
 
-### Compilation
+## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
 
@@ -149,8 +146,7 @@ For the constructs as shown below in the compilation rules, use visitor methods 
 ```java
 	/** Convert the symbol table with classes, methods, and compiled code
 	 *  (as computed by the compiler) into a system dictionary that has
-	 *  meta-objects as well as the necessary predefined objects
-	 *  such as nil.
+	 *  meta-objects.
 	 *
 	 *  This method assumes that the compiler has annotated the symbol table
 	 *  symbols such as {@link STBlock} with pointers to the
