@@ -114,9 +114,9 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-<img src="images/smalltalk-notation.png" width="80%" align=middle>
+<img src="images/smalltalk-notation.png" width="600" align=middle>
 
-<img src="images/smalltalk-rules.png" width="80%" align=middle>
+<img src="images/smalltalk-rules.png" width="800" align=middle>
 
 ### Representing bytecodes
 
@@ -141,10 +141,10 @@ The numbers on the left are the addresses of the instructions. The first instruc
 
 ### Compilation
 
-<img src="images/smalltalk-blocks.png" width="80%" align=middle>
+<img src="images/smalltalk-blocks.png" width="800" align=middle>
 
-<img src="images/smalltalk-expr.png" width="80%" align=middle>
+<img src="images/smalltalk-expr.png" width="700" align=middle>
 
-<img src="images/smalltalk-msgs.png" width="80%" align=middle>
+<img src="images/smalltalk-msgs.png" width="700" align=middle>
 
 ## Tasks
