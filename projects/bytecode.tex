@@ -184,10 +184,13 @@ $main$  &
 \begin{minipage}[t]{0.25\linewidth}
 $main$\\
 {\tt self\\
-return}
+return}\vspace{5pt}
 \end{minipage} & \\
 
-{\tt f <primitive:\#}{\it primitive-name}{\tt >} & $\epsilon$ & \\
+{\tt f <primitive:\#}{\it primitive-name}{\tt >} &
+\begin{minipage}[t]{0.35\linewidth}
+$\epsilon$ \vspace{7pt}
+\end{minipage} &  \\
 
 {\tt f [ } {\tt ]} & $\epsilon$&
 \begin{minipage}[t]{0.35\linewidth}
@@ -264,7 +267,7 @@ $expr_n$\vspace{5pt}
 \begin{tabular}[t]{r | l | l }
 {\bf Smalltalk fragment} & {\bf Visitor method result} & {\bf Side-effects}\\
 \hline
-${\tt class~ T~[|}x_0 x_1 ..\, x_n|\cdots [ \cdots~ x_i {\tt :=} \,expr$ &
+${\tt class~ T~[|}x_0 x_1 ..\, x_n|\cdots {\tt f} \,[\, \cdots~ x_i {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt store\_field} $i$\vspace{5pt}
@@ -276,29 +279,37 @@ $expr$\\
 {\tt store\_local} $0, i$\vspace{3pt}
 \end{minipage} & \\
 
-${\tt f~[|}x_0 ..\, x_n| \cdots~ x {\tt :=} \,expr$ &
+${\tt f~[|}x_0 ..\, x_n| \cdots~ x_i {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt store\_local} $0, i$\vspace{3pt}
 \end{minipage} & \\
 
-${\tt f~[|}x_0 ..\, x_n| \cdots~ x {\tt :=} \,expr$ &
+${\tt f~[\, \cdots~ [|}x_0 ..\, x_n| \cdots~ x_i {\tt :=} \,expr$ &
 \begin{minipage}[t]{0.25\linewidth}
 $expr$\\
 {\tt store\_local} $0, i$\vspace{3pt}
 \end{minipage} & \\
 
-$\text{\tt f [}\cdots\underbrace{{\tt [|x| }\cdots [}_{\Delta}\cdots~ x {\tt :=} \,expr$ &
+$\underbrace{\text{\tt f:}{\tt x~}{\tt [}\cdots [}_{\Delta \,=\,\#scopes} \cdots\, x_i {\tt :=}\, expr$ &
 \begin{minipage}[t]{0.25\linewidth}
-$expr$\\
 {\tt store\_local} $\Delta, 0$
 \end{minipage} & \\
 
-${\tt class~ T~[|}x_0 x_1 ..\, x_n|\cdots [ \cdots~ x_i$ & {\tt push\_field} $i$ \\
+$\text{\tt f [}\cdots\underbrace{{\tt [|x| }\cdots [}_{\Delta}\cdots~ x_i {\tt :=} \,expr$ &
+\begin{minipage}[t]{0.25\linewidth}
+$expr$\\
+{\tt store\_local} $\Delta, 0$\vspace{5pt}
+\end{minipage} & \\
+
+${\tt class~ T~[|}x_0 x_1 ..\, x_n|\cdots {\tt f}\, [\, \cdots~ x_i$ & 
+\begin{minipage}[t]{0.25\linewidth}
+{\tt push\_field} $i$ \vspace{5pt}
+\end{minipage} & \\
 
 $\text{\tt a:}x_0 \,\,\text{\tt b:}x_1~{\tt [|}x_2 ..\, x_n |\cdots~ x_i$ &
 \begin{minipage}[t]{0.25\linewidth}
-{\tt push\_local} $0, i$
+{\tt push\_local} $0, i$\vspace{5pt}
 \end{minipage} & \\
 
 $\underbrace{\text{\tt f:}{\tt x~}{\tt [}\cdots [}_{\Delta \,=\,\#scopes} \cdots\, {\tt x}$ &
@@ -352,23 +363,10 @@ $expr_n$\\
 \begin{tabular}[t]{r | l | l }
 {\bf Smalltalk fragment} & {\bf Visitor results} & {\bf Side-effects}\\
 \hline
-
-{\tt\Large \verb=^=}$expr$ &
-\begin{minipage}[t]{0.2\linewidth}
-$expr$\\
-{\tt return}\vspace{5pt}
-\end{minipage} & \\
-
-(unary msg)~~~~~~~~~~~~\, {\tt f\,[}$\cdots ~expr \,w$ &
+(unary msg)~~~~~~~~~~~~\, {\tt f\,[}\,$\cdots ~expr \,w$ &
 \begin{minipage}[t]{0.2\linewidth}
 $expr$\\
 {\tt send} $0,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
-
-{\tt f\,[}$\cdots \,{\tt super} \,w$ &
-\begin{minipage}[t]{0.2\linewidth}
-$expr$\\
-{\tt send\_super} $0,i$\vspace{5pt}
 \end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
 
 (binary msg)~~~{\tt f\,[}$\cdots ~expr_1\, op~ expr_2$ &
@@ -384,11 +382,23 @@ $expr$\\
 {\tt send} $n,i$\vspace{5pt}
 \end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
 
+{\tt f\,[}$\,\cdots \,{\tt super} \,w$ &
+\begin{minipage}[t]{0.2\linewidth}
+{\tt self}\\
+{\tt send\_super} $0,i$\vspace{5pt}
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
+
 {\tt f\,[}$\cdots ~{\tt super} ~w_1{\tt :} x_1 ~ w_2{\tt :} x_2 \, \cdots \, w_n{\tt :} x_n$ &
 \begin{minipage}[t]{0.2\linewidth}
 $expr$\\
-{\tt send\_super} $n,i$
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \vspace{3pt}\\
+{\tt send\_super} $n,i$\vspace{3pt}
+\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$''\\
+
+{\tt\Large \verb=^=}$expr$ &
+\begin{minipage}[t]{0.2\linewidth}
+$expr$\\
+{\tt return}\vspace{5pt}
+\end{minipage} & \\
 
 \end{tabular}
 \end{center}
