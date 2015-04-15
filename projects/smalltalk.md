@@ -113,6 +113,14 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
+The SystemDictionary looks like this:
+
+<img src="images/smalltalk-sysdict.png" width=700 align=middle>
+
+And here is how an instance of an integer is represented. Note that `STMetaClassObject` is also an object and so has a `metaclass` pointer, but it always points at itself.
+
+<img src="images/smalltalk-integerhier.png" width=450 align=middle>
+
 <img src="images/smalltalk-notation.png" width="600" align=middle>
 
 <img src="images/smalltalk-rules.png" width="800" align=middle>
