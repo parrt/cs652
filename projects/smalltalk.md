@@ -96,7 +96,7 @@ Classes are defined using the `class` keyword followed by the name of the class.
 
 Class methods are proceeded with the `class` keyword but are otherwise the same as other methods. Both of the `new` methods are class methods and the second one, `new:` is a primitive that has no Smalltalk implementation. Instead, the VM will look for a `Primitive` called `Array_Class_NEW` and execute the associated `perform` method. The non-primitive class method `new` invokes the primitive `new:` with a parameter of 10.
 
-Method `size` takes no parameters and is primitive. Method `at:` takes one parameter and is primitive.  Method `at:put` takes two parameters and is primitive.  Method `do:` takes one parameter, a code block, and has a Smalltalk implementation.
+Method `size` takes no parameters and is primitive. Method `at:` takes one parameter and is primitive.  Method `at:put:` takes two parameters and is primitive.  Method `do:` takes one parameter, a code block, and has a Smalltalk implementation.
 
 ## Virtual machine
 
