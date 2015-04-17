@@ -102,6 +102,14 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 
 [VM starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm).
 
+### Operational semantics
+
+<img src="images/smalltalk-notation.png" width="600" align=middle>
+
+<img src="images/smalltalk-rules.png" width="800" align=middle>
+
+### Representing objects
+
 ```java
 public class VirtualMachine {
 	/** The dictionary of global objects including class meta objects */
@@ -113,17 +121,21 @@ public class VirtualMachine {
 	public MethodContext ctx;
 ```
 
-The SystemDictionary looks like this:
+The initial SystemDictionary looks like this:
 
-<img src="images/smalltalk-sysdict.png" width=700 align=middle>
+<img src="images/smalltalk-sysdict.png" width=600 align=middle>
 
-And here is how an instance of an integer is represented. Note that `STMetaClassObject` is also an object and so has a `metaclass` pointer, but it always points at itself.
+And here is how an instance of an integer is represented using a *backing class* called `STInteger`. Note that `STMetaClassObject` is also an object and so has a `metaclass` pointer, but it always points at itself.
 
-<img src="images/smalltalk-integerhier.png" width=450 align=middle>
+<img src="images/smalltalk-integerhier.png" width=350 align=middle>
 
-<img src="images/smalltalk-notation.png" width="600" align=middle>
+Here is how an instance (of `A`) is represented from Smalltalk perspective:
 
-<img src="images/smalltalk-rules.png" width="800" align=middle>
+<img src="images/smalltalk-A.png" width=350 align=middle>
+
+and then from the implementation point of view. Here `A` does not have a backing class for implementation.
+
+<img src="images/smalltalk-A-Impl.png" width=500 align=middle>
 
 ## Representing bytecodes
 
