@@ -183,6 +183,14 @@ The `value` message effectively converts a block descriptor into a block context
 
 <img src="images/smalltalk-block2.png" width=600 align=middle>
 
+Here is what the context stack looks like if the block has an argument right before the message send:
+
+<img src="images/smalltalk-blockarg1.png" width=600 align=middle>
+
+During the message send, while executing the block, the context stack looks like:
+
+<img src="images/smalltalk-blockarg2.png" width=600 align=middle>
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
