@@ -191,6 +191,10 @@ During the message send, while executing the block, the context stack looks like
 
 <img src="images/smalltalk-blockarg2.png" width=600 align=middle>
 
+And now here is an example that illustrates the critical difference between the `invokingContext` and the `enclosingContext`:
+
+<img src="images/smalltalk-block-delta.png" width=600 align=middle>
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
