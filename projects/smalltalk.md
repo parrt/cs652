@@ -137,7 +137,7 @@ and then from the implementation point of view. Here `A` does not have a backing
 
 <img src="images/smalltalk-A-Impl.png" width=500 align=middle>
 
-## Representing bytecodes
+## Representing bytecode
 
 In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
 
@@ -172,6 +172,14 @@ Then, during the execution of the message send, `+`, the context stack looks lik
 The new `BlockContext` has its own instruction pointer and stack for operands. After the `+` message send finishes, its return value will be on the operand stack of the invoking context, which is `f` in this case:
 
 <img src="images/smalltalk-add3.png" width=500 align=middle>
+
+Now let's turn to a sample block evaluation.  To evaluate a block, the `BLOCK` bytecode pushes a `BlockDescriptor` object as a kind of prototype for the context we want to create.
+
+<img src="images/smalltalk-block1.png" width=600 align=middle>
+
+The `value` message effectively converts a block descriptor into a block context and pushes it as the active context. That means that the next iteration of the fetch-decode-execute cycle will start executing the block's bytecode. Here is what the context stack looks like during the execution of the `value` message and after the first instruction of the block (`push_local`):
+
+<img src="images/smalltalk-block2.png" width=600 align=middle>
 
 ## Compilation
 
