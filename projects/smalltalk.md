@@ -195,6 +195,8 @@ And now here is an example that illustrates the critical difference between the 
 
 <img src="images/smalltalk-block-delta.png" width=600 align=middle>
 
+The enclosing context jumps and invoking context because `g` is evaluating the `f-block0`, not `f`.
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
