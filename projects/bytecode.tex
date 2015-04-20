@@ -7,6 +7,10 @@
 \usepackage{alltt}
 \usepackage{bm}
 \usepackage{amsmath}
+\usepackage{color}
+\usepackage{drawstack}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,shapes.multipart}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 \newcommand{\sbt}{\,\begin{picture}(-1,1)(-1,-3)\circle*{3}\end{picture}\ }
 \newcommand{\ith}{$i^{th}$}
@@ -169,9 +173,149 @@ Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (i
 
 %------------EXAMPLES---------------------
 
-\begin{alltt}
+\begin{tabular}[t]{l | l}
+\hspace{80pt}{\bf Smalltalk} & \hspace{80pt}{\bf Context stack at} {\color{red}$\hookleftarrow$} \\
+\hline
+\begin{minipage}[t]{0.4\linewidth}
+{\tt\small
+"Test testEvalReturnBlock"\\
+class T [\\
+\mbox{~~}f [|x| x := 1.\,\verb|^|[x := 5] ]\\
+]\\
+t := T new. \\
+t f value {\color{red}$\hookleftarrow$}
+}\\
+\end{minipage} & 
+\begin{minipage}[t]{0.5\linewidth}
+Start {\tt send 0,'value'}:
+\[
+main[\_,nil,\_]~f\verb=-=block0[\_,,]
+\]
+{\em Notes}: no $f$ on stack during eval of $f\verb|-|block0$ but enclosing scope of $f\verb|-|block0$ still points at $f$'s {\tt BlockContext}.
+\end{minipage} \\
+\end{tabular}
 
-\end{alltt}
+\begin{tabular}[t]{l | l}
+\hspace{80pt}{\bf Smalltalk} & \hspace{80pt}{\bf Context stack at} {\color{red}$\hookleftarrow$} \\
+\hline
+\begin{minipage}[t]{0.4\linewidth}
+{\tt\small
+"Test testRemoteMethodCanSetMyLocal"\\
+class T [\\
+\mbox{~~}    f [|x| self g:[x := 5]]\\
+\mbox{~~}    g: blk [ blk value {\color{red}$\hookleftarrow$}]\\
+]\\
+T new f
+}\\
+\end{minipage} &
+\begin{minipage}[t]{0.5\linewidth}
+@{\tt store\_local $\Delta$=1,$i$=0}:
+\[
+main[\_,,]~\underbrace{f[\_,nil,]~g[\_,f^{block_0},]~f}_{\overleftarrow{\text{enclosing context }} \Delta=1}\,^{block_0}[\_,,{\bf 5}]
+\]
+After {\tt block\_return}:
+\[
+main[\_,,]~f[\_,{\bf 5},]~g[\_,f^{block_0},{\bf 5}]
+\]
+\end{minipage} \\
+\end{tabular}
+
+\begin{tabular}[t]{l | l}
+\hspace{80pt}{\bf Smalltalk} & \hspace{80pt}{\bf Context stack at} {\color{red}$\hookleftarrow$} \\
+\hline
+\begin{minipage}[t]{0.4\linewidth}
+{\tt\small
+"Test testRemoteReturn"\\
+class T [\\
+\mbox{~~}    f [ self g:[\verb|^|99] ]\\
+\mbox{~~}    g:\,blk [ blk value {\color{red}$\hookleftarrow$}]\\
+]\\
+|t|\\
+t := T new.\\
+t f
+}\\
+\end{minipage} &
+\begin{minipage}[t]{0.5\linewidth}
+Start {\tt send 0,'value'}:
+\[
+main[\_,t,]~f[\_,,]~g[\_,f^{block_0},]~f^{block_0}[\_,,]
+\]
+After {\tt return} in {\tt [\verb|^|99]} block:
+\[
+main[\_,t,99]
+\]\\
+{\em Notes}: Despite eval in $g$, {\tt [\verb|^|99]} unrolls stack to $main$, the caller of $f$.
+\end{minipage} \\
+\end{tabular}
+
+% returnFromNestedCallViaBlock
+
+\begin{tabular}[t]{l | l}
+\hspace{80pt}{\bf Smalltalk} & \hspace{80pt}{\bf Context stack at} {\color{red}$\hookleftarrow$} \\
+\hline
+\begin{minipage}[t]{0.4\linewidth}
+{\tt\small
+"Test returnFromNestedCallViaBlock"\\
+class Test [\\
+\mbox{~~}  f [ self g:\,[\verb|^|99{\color{red}$\hookleftarrow$}] ]\\
+\mbox{~~}  g:\,blk [ self h:\,blk ]\\
+\mbox{~~}  h:\,blk [ blk value ]\\
+]\\
+Test new f
+}\\
+\end{minipage} &
+\begin{minipage}[t]{0.5\linewidth}
+Before {\tt return}:
+\[
+main[\_,,]~\underbrace{f[\_,,]~g[\_,f^{block_0},]~h[\_,f^{block_0},]~f}_{\text{enclosing context }\Delta=1}\,^{block_0}[\_,,99]
+\]
+After {\tt return}:
+\[
+main[\_,,99]
+\]\\
+{\em Notes}: Despite eval in $g$, {\tt [\verb|^|99]} unrolls stack to $main$, the caller of $f$.
+\end{minipage} \\
+\end{tabular}
+
+% testSendBlockBackToSameMethodAndSetLocal
+
+\tikzstyle{freecell}=[fill=blue!10,draw=blue!30!black]
+
+\begin{tabular}[t]{l | l}
+\hspace{80pt}{\bf Smalltalk} & \hspace{80pt}{\bf Context stack at} {\color{red}$\hookleftarrow$} \\
+\hline
+\begin{minipage}[t]{0.4\linewidth}
+{\tt\small
+"Test testSendBlockBackToSameMethod-\\
+ AndSetLocal"\\
+class T [\\
+\mbox{~~}    f:\,blk pass:\,p [\\
+\mbox{~~~~}       |x|\\
+\mbox{~~~~}       p=1 ifTrue:\,[self g:\,[x:=5{\color{red}$\hookleftarrow$}]]\\
+\mbox{~~~~~~~~}           ifFalse:\,[blk value].\\
+\mbox{~~~~}       \verb|^|x\\
+\mbox{~~}    ]\\
+\mbox{~~}    g:\,blk [ self f:\,blk pass:\,2 ]\\
+]\\
+T new f:\,nil pass:\,1\\
+}\\
+\end{minipage} &
+\begin{minipage}[t]{0.5\linewidth}
+At {\tt store\_local $\Delta$=2,$i$=2}:\\
+\begin{tikzpicture}
+  \small  \cell{$\text{\em f:pass:}^{block_1}[\_,,5]$}
+  \cell{$\text{\em f:pass:}^{block_2}[\_,,]$}
+  \cell{$~~~~\text{\em f:pass:}[\_,\text{\em f:pass:}^{block_1}\,2\,nil,]~~~~$}\cellptr{$2^{nd}$ call to {\em f:pass:}}
+  \cell{$g[\_,\text{\em f:pass:}^{block_1},]$}
+  \cell{$\text{\em f:pass:}^{block_0}[\_,f^{block_0},]$}
+  \cell{$\text{\em f:pass:}[\_,nil\,1\,5,]$} \cellptr{$1^{st}$ call to {\em f:pass:}}
+  \cell{$main[\_,,]$}
+\end{tikzpicture}
+{\em Notes}:
+\end{minipage} \\
+\end{tabular}
+
+
 
 
 %------------CODE GEN---------------------

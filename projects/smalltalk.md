@@ -197,6 +197,16 @@ And now here is an example that illustrates the critical difference between the 
 
 The enclosing context jumps and invoking context because `g` is evaluating the `f-block0`, not `f`.
 
+<img src="images/smalltalk-stack1.png" width=800 align=middle>
+
+<img src="images/smalltalk-stack2.png" width=800 align=middle>
+
+<img src="images/smalltalk-stack3.png" width=800 align=middle>
+
+<img src="images/smalltalk-stack4.png" width=800 align=middle>
+
+<img src="images/smalltalk-stack5.png" width=800 align=middle>
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
