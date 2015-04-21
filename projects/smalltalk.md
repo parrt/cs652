@@ -110,6 +110,8 @@ Method `size` takes no parameters and is primitive. Method `at:` takes one param
 
 ### Representing objects
 
+The VM has only two fields: a system dictionary and a reference to the active context:
+
 ```java
 public class VirtualMachine {
 	/** The dictionary of global objects including class meta objects */
@@ -137,6 +139,8 @@ and then from the implementation point of view. Here `A` does not have a backing
 
 <img src="images/smalltalk-A-Impl.png" width=500 align=middle>
 
+**Creating a new Smalltalk instance** is a simple matter of creating a Java `STObject` whose metaclass points to the appropriate Java `STMetaClassObject` object. The `STObject` constructor creates space for the appropriate number of fields as discovered by looking at the metaclass object.
+
 ## Representing bytecode
 
 In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
@@ -160,8 +164,9 @@ The numbers on the left are the byte addresses of the instructions. The first in
 
 ### Method contexts
 
-The most challenging part of the Smalltalk VM is properly handling message sends and block evaluation.  It all comes down to `BlockContext` objects. Let's take a look at a sequence of images that depict the context stack as it changes during the execution of a simple method, `f`, that returns the addition of two numbers.
-Here's what the active context looks like after the two integers have been pushed onto the stack:
+The most challenging part of the Smalltalk VM is properly handling message sends and block evaluation.  It all comes down to `BlockContext` objects, which represent the execution of a `STCompiledBlock` in response to a message send. The context holds the `locals` (with arguments first) and operand `stack` for computation.  It knows where it is within the method code block (field `ip`) and what `receiver` it's executing the method for. The virtual machine always keeps a pointer to the active context, `ctx`. Pushing and popping contexts is analogous to pushing and popping scopes when we do simple table management.
+
+Let's take a look at a sequence of images that depict the context stack as it changes during the execution of a simple method, `f`, that returns the addition of two numbers. Here's what the active context looks like after the two integers have been pushed onto the stack:
 
 <img src="images/smalltalk-add1.png" width=500 align=middle>
 
