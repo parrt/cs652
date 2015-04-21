@@ -179,9 +179,32 @@ Now let's turn to a sample block evaluation.  To evaluate a block, the `BLOCK` b
 
 <img src="images/smalltalk-block1.png" width=600 align=middle>
 
+**BLOCK instruction**. This instruction is critical to understanding how Smalltalk executes code. The `BLOCK` instruction pushes a `BlockDescriptor` onto the operand stack of the active context and is like a function pointer to a block or method. There are four fields:
+
+* `compiledBlock`. A reference to the `STCompiledBlock` containing the bytecode and liberals for this block.
+* `enclosingContext`. This refers to the active context that created the block descriptor and represents the immediately enclosing block.
+* `enclosingMethodContext`. This is a shortcut up the `enclosingContext` chain to the method enclosing this contex. To perform a return, we unwind the `invokingContext` stack until we reach one level above `enclosingMethodContext` and then push the return result on that context's stack.
+* `receiver`. This is the receiver of the enclosing method that created this block descriptor.
+
+Descriptors are created from a `STCompiledBlock` and the active `BlockContext`.
+
 The `value` message effectively converts a block descriptor into a block context and pushes it as the active context. That means that the next iteration of the fetch-decode-execute cycle will start executing the block's bytecode. Here is what the context stack looks like during the execution of the `value` message and after the first instruction of the block (`push_local`):
 
 <img src="images/smalltalk-block2.png" width=600 align=middle>
+
+**Tracing block evaluation**. Sometimes it's easier to look at the execution trace. Here is the execution trace of the Smalltalk (`main` method) fragment `^[99] value` without `dbg` instructions:
+
+```
+0000:  block    0           MainClass>>main[][main-block0]
+0003:  send     0, 'value'  MainClass>>main[][], MainClass>>main-block0[][]
+0000:  push_int 99          MainClass>>main[][], MainClass>>main-block0[][99]
+0005:  block_return         MainClass>>main[][99]
+0008:  return
+```
+
+The first instruction pushes a block descriptor, `main-block0`, onto the operand stack of the active context, which is the `main` method of `MainClass`. Sending the `value` message to that descriptor pushes a new active context for the `main-block0` to execute.
+
+You should check out all of the traces that I have inserted as comments into the [TestBlocks.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/src/smalltalk/test/TestBlocks.java) unit tests.
 
 #### Blocks with arguments
 
