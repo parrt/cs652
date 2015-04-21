@@ -203,9 +203,13 @@ The enclosing context jumps an invoking context because `g` is evaluating the `f
 
 Let's look at some other examples that reference a local outside of its scope, but using the stack notation from the operational semantics so I don't have to draw everything out.
 
-<img src="images/smalltalk-stack1.png" width=700 align=middle>
+First, here is an example that passes a code block from `f` to another method, `g:`, which evaluates the block, `[x:=5]`.  That block alters a local variable of `f`, despite executing "within" `g:`.
 
 <img src="images/smalltalk-stack2.png" width=700 align=middle>
+
+Next, we have an unusual example that alters a local variable of a function that already returned. Method `f` returns a block as a return value that the main program evaluates. The block, `[x:=5]` stores of value into a local variable for `f`, despite the fact that `f` has already returned. The semantics of Smalltalk allow this.
+
+<img src="images/smalltalk-stack1.png" width=700 align=middle>
 
 And, finally, here is a complicated example that involves recursion (method `f:pass:` is recursive). The `main` calls `f:pass:`, which passes `f:pass:-block1` to `g:`, which passes it back to `f:pass:`.  Finally, `f:pass:-block2`, `[blk value]`, evaluates the `f:pass:-block1`, `[x:=5]`, block back in the same function, `f:pass:`.
 
