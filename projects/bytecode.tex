@@ -308,8 +308,8 @@ block/.style={
 draw,
 fill=white,
 rectangle, 
-text width={4.3cm},
-align=center,
+text width={4.1cm},
+align=left,
 font=\small}]
 %  MainClass>>main[][], T>>f:pass:[nil, 1, 5][], T>>f:pass:-block0[][], T>>g:[f:pass:-block1][], T>>f:pass:[f:pass:-block1, 2, nil][], T>>f:pass:-block2[][], T>>f:pass:-block1[][5]
 
@@ -325,6 +325,10 @@ font=\small}]
 \node[draw=none,,below=0.1cm of a]{Stack};
 \draw[-latex] (a.east) -- ++(5mm,0) |- (e.east);
 \draw[-latex] ($(e.east)+(0,.1)$) -- ++(5mm,0) |- ($(f.east)$);
+\node[left=of f] {$1^{st}$ call};
+\node[left=of c] {$2^{nd}$ call};
+\node[left=of a](x) {{\tt ctx}};
+\draw[-latex] (x.east) |- (a.west);
 \end{tikzpicture}
 \end{center}
 {\em Notes}:  The enclosing block of {\tt [x:=5]} (called $\text{\em f:pass:}^{block_1}$) is {\tt [self g:[x:=5]]} (called $\text{\em f:pass:}^{block_0}$). The enclosing block of $\text{\em f:pass:}^{block_0}$ is the first call, not the second call, to $\text{\em f:pass:}$.
