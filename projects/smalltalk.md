@@ -201,15 +201,17 @@ And now here is an example that illustrates the critical difference between the 
 
 The enclosing context jumps an invoking context because `g` is evaluating the `f-block0`, not `f`.
 
-Let's look at another example that references a local outside of its scope, but using the stack notation from the operational semantics so I don't have to draw everything out. The example is complicated because method `f:pass:` is recursive. The `main` calls `f:pass:`, which passes `f:pass:-block1` to `g:`, which passes it back to `f:pass:`.  Finally, `f:pass:-block2`, `[blk value]`, evaluates the `f:pass:-block1`, `[x:=5]`, block back in the same function, `f:pass:`.
-
-<img src="images/smalltalk-stack5.png" width=800 align=middle>
-
-The critical idea is that we have to choose the appropriate `BlockContext` object for `f:pass:` since there are two recursive invocations on the stack. If we were to look up the invoking context chain delta=2 nodes, we would land at the second (recursive) call rather than the first call. Following the enclosing context chain lets us ignore the invocation chain and directs us to the appropriate enclosing context that holds the variable we need.
+Let's look at some other examples that reference a local outside of its scope, but using the stack notation from the operational semantics so I don't have to draw everything out.
 
 <img src="images/smalltalk-stack1.png" width=700 align=middle>
 
 <img src="images/smalltalk-stack2.png" width=700 align=middle>
+
+And, finally, here is a complicated example that involves recursion (method `f:pass:` is recursive). The `main` calls `f:pass:`, which passes `f:pass:-block1` to `g:`, which passes it back to `f:pass:`.  Finally, `f:pass:-block2`, `[blk value]`, evaluates the `f:pass:-block1`, `[x:=5]`, block back in the same function, `f:pass:`.
+
+<img src="images/smalltalk-stack5.png" width=800 align=middle>
+
+The critical idea is that we have to choose the appropriate `BlockContext` object for `f:pass:` since there are two recursive invocations on the stack. If we were to look up the invoking context chain delta=2 nodes, we would land at the second (recursive) call rather than the first call. Following the enclosing context chain lets us ignore the invocation chain and directs us to the appropriate enclosing context that holds the variable we need.
 
 ### Non-local returns
 
