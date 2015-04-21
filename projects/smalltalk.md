@@ -207,7 +207,7 @@ First, here is an example that passes a code block from `f` to another method, `
 
 <img src="images/smalltalk-stack2.png" width=700 align=middle>
 
-Next, we have an unusual example that alters a local variable of a function that already returned. Method `f` returns a block as a return value that the main program evaluates. The block, `[x:=5]` stores of value into a local variable for `f`, despite the fact that `f` has already returned. The semantics of Smalltalk allow this.
+Next, we have an unusual example that alters a local variable of a function that has already returned. Method `f` returns a block as a return value that the main program evaluates. The block, `[x:=5]` stores of value into a local variable for `f`, despite the fact that `f` has already returned. The semantics of Smalltalk allow this.
 
 <img src="images/smalltalk-stack1.png" width=700 align=middle>
 
@@ -219,9 +219,15 @@ The critical idea is that we have to choose the appropriate `BlockContext` objec
 
 ### Non-local returns
 
+Because blocks can execute method return instructions via `^`*expr* and we can pass blocks to other methods, it's possible to do a so-called nonlocal return. Here's an example that passes block `[^99]` from `f` to `g:`, which evaluates it. By evaluating at block, the VM must return from `f`, despite being inside `g:`.
+
 <img src="images/smalltalk-stack3.png" width=700 align=middle>
 
+Here is a variation that has `g:` passing the block deeper to `h:`.
+
 <img src="images/smalltalk-stack4.png" width=700 align=middle>
+
+Nonlocal returns basically act like exceptions and roll up the stack to the caller (invoking context) of the method surrounding the block with the return instruction.
 
 ## Compilation
 
