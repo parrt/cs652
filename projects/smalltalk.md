@@ -257,6 +257,118 @@ Here is a variation that has `g:` passing the block deeper to `h:`.
 
 Nonlocal returns basically act like exceptions and roll up the stack to the caller (invoking context) of the method surrounding the block with the return instruction.
 
+### Primitive methods
+
+Primitive methods  are like `native` methods in java and SmallTalk code can invoke them like regular methods. Although we have a great deal of our Smalltalk implementation in Smalltalk, to bootstrap we ultimately need to execute some Java. Primitive methods are the interface between Smalltalk and the underlying implementation. For example, in `image.st` you'll see a number of primitive methods:
+
+```
+class Integer : Number [
+   "this object has no fields visible from smalltalk code and is backed by Java class STInteger"
+   + y <primitive:#Integer_ADD>
+   - y <primitive:#Integer_SUB>
+   * y <primitive:#Integer_MULT>
+   / y <primitive:#Integer_DIV>
+   < y <primitive:#Integer_LT>
+   > y <primitive:#Integer_GT>
+   <= y <primitive:#Integer_LE>
+   >= y <primitive:#Integer_GE>
+   = y <primitive:#Integer_EQ>
+   to: n do: blk [
+       self <= n ifTrue: [blk value: self. self+1 to: n do: blk]
+   ]
+   hash [ ^self ]
+   mod: n <primitive:#Integer_MOD>
+]
+```
+
+As we know, there is a `STCompiledBlock` for each Smalltalk-based method, such as `hash`, but there is also one for primitive methods. The difference is that `STCompiledBlock` objects for primitive methods have the following field non-null:
+
+```java
+/** A pointer to the primitive implementing the method, if this field
+ *  is non-null.
+ */
+public final Primitive primitive;
+```
+
+This field points at an entry in [Primitive.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/Primitive.java). For example, here is the entry for integer add:
+
+```java
+Integer_ADD(STInteger::perform)
+```
+
+where `Integer_ADD` is an `enum` type with a method pointer field set to `STInteger::perform`. The method pointer is a Java 8 reference to method `perform` in class `STInteger`, although it can point at any static method for our purposes.
+
+To execute a primitive method, the VM should invoke the following method in class `Primitive` with appropriate arguments if it discovers a message to a receiver that implements the method as a primitive.
+
+```java
+public STObject perform(BlockContext ctx, int nArgs) {
+	return performer.perform(ctx, nArgs, this);
+}
+```
+
+For example, in response to message `+` sent to an integer receiver, the VM should invoke the equivalent of:
+
+```java
+Primitive.Integer_ADD.perform(ctx, 1);
+```
+
+I have not provided that implementation for you and your starter kit, but let's take a look at `perform` in the generic [STObject](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/STObject.java) class. It shows the mechanics of how to implement primitive methods. In particular, it shows how Smalltalk `Object` implements the `asString` primitive method declared as `	Object_ASSTRING(STObject::perform)`.
+
+```java
+/** Implement a primitive method in active context ctx.
+ *  A non-null return value should be pushed onto operand stack by the VM.
+ *  Primitive methods do not bother pushing a `BlockContext` object as
+ *  they are executing in Java not Smalltalk.
+ */
+public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
+	VirtualMachine vm = ctx.vm;
+	vm.assertNumOperands(nArgs+1); // ensure args + receiver
+	// index of 1st arg on opnd stack; use only if arg(s) present for primitive
+	int firstArg = ctx.sp - nArgs + 1; 
+	STObject receiver = ctx.stack[firstArg-1];
+	STObject result = null;
+	switch ( primitive ) {
+		case Object_ASSTRING:
+			ctx.sp--; // pop receiver
+			// if asString not overridden in Smalltalk, create an STString
+			// from the *java* object's toString(); see STObject.asString()
+			result = receiver.asString();
+			break;
+		case Object_SAME : // SmallTalk == op. same as == in Java (identity)
+			STObject x = receiver;
+			STObject y = ctx.stack[firstArg]; // get right operand (first arg)
+			ctx.sp -= 2; // throw out receiver and first argument
+			result = new STBoolean(x == y); // VM will push this result
+			break;
+		...
+	}
+	return result;
+}
+```
+
+Also take a look at the implementation of the `==` operator, the second case. This message/operator takes an argument (`y`) as well as a receiver.
+
+### Class methods
+
+```java
+public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
+		VirtualMachine vm = ctx.vm;
+		ctx.vm.assertNumOperands(nArgs+1); // ensure args + receiver
+		int firstArg = ctx.sp - nArgs + 1;
+		STObject receiver = null;
+		STObject result = vm.nil();
+		if ( firstArg-1 >= 0 ) receiver = ctx.stack[firstArg-1];
+		switch ( primitive ) {
+				case Object_Class_BASICNEW:
+						break;
+				case Object_Class_ERROR:
+						vm.error(ctx.stack[firstArg].asString().toString());
+						break;
+		}
+		return result;
+}
+```
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
