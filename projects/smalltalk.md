@@ -312,7 +312,7 @@ For example, in response to message `+` sent to an integer receiver, the VM shou
 Primitive.Integer_ADD.perform(ctx, 1);
 ```
 
-I have not provided that implementation for you and your starter kit, but let's take a look at `perform` in the generic [STObject](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/STObject.java) class. It shows the mechanics of how to implement primitive methods. In particular, it shows how Smalltalk `Object` implements the `asString` primitive method declared as `	Object_ASSTRING(STObject::perform)`.
+I have not provided that implementation for you in your starter kit, so let's take a look at `perform` in the generic [STObject](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/STObject.java) class. It shows the mechanics of how to implement primitive methods. In particular, it shows how Smalltalk `Object` implements the `asString` primitive method declared as `	Object_ASSTRING(STObject::perform)`.
 
 ```java
 /** Implement a primitive method in active context ctx.
@@ -346,9 +346,28 @@ public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive)
 }
 ```
 
-Also take a look at the implementation of the `==` operator, the second case. This message/operator takes an argument (`y`) as well as a receiver.
+Also take a look at the implementation of the `==` operator, the second case. Its definition and Smalltalk is:
+
+```
+== anObject <primitive:#Object_SAME>
+```
+
+This implementation illustrates a message/operator that takes an argument (`y`) as well as a receiver. All of the setup code prepares for executing the actual implementation of the equality operator: `result = new STBoolean(x == y)`.
 
 ### Class methods
+
+Smalltalk has class methods just like Java does and we use the `class` keyword on methods in our Smalltalk to indicate which methods are class methods. As with regular methods, class methods can also have primitive implementations:
+ 
+```
+class Object [
+    class basicNew <primitive:#Object_Class_BASICNEW>
+    class new [ ^self basicNew initialize ]
+    initialize ["do nothing by default" ^self]
+	...
+]
+```
+
+Class methods are treated no differently than instance methods except that we turn on `isClassMethod` in `STMethod` and then `STCompiledBlock`.  Class methods only work on Smalltalk `Class` (Java `STMetaClassInfo`) objects but we rely on the programmer to avoid sending class messages to instances (see [testClassMessageOnInstanceError](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/src/smalltalk/test/TestCore.java#L341)) and vice versa (see [testInstanceMessageOnClassError](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/src/smalltalk/test/TestCore.java#L378)). For example, `Array new` makes sense because `new` is a class method but `x new` for some instance `x` does not. Similarly, `names size` makes sense but `Array size` does not.
 
 ```java
 public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
