@@ -9,8 +9,14 @@ This project is to build a full compiler and interpreter / virtual machine (VM) 
 
 Here is the [formal ANTLR grammar](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler/Smalltalk.g4).
 
-no class variables but allows class methods
-we disallow globals. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. no ';' extended msg send notation, no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`. Much of the implementation is not exposed to the programmer, such as method invocation contexts.
+Our version of Smalltalk differs from the standard in a few ways:
+* no class variables but allows class methods
+* subclasses can see the fields of their parent classes; in ST-80 these are private
+* we disallow globals. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. Asking for the value of a global variable that is not defined, results in an error. The set of global names is readonly except class names.
+* We allow forward refs (refs to classes not yet defined)
+* no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`.
+* no ';' extended msg send notation
+* Much of the implementation is not exposed to the programmer, such as method invocation contexts.
 
 Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sheet.pdf):
 
