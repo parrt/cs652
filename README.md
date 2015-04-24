@@ -203,65 +203,17 @@ Next, study [Simple Virtual Machine (C)](https://github.com/parrt/simple-virtual
 
 Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md) also provides details about how to build a Smalltalk VM.
 
-## Week 9
+## Garbage collection
 
-* Polymorphism
-   * via symbol table
-   * via vtable
+[gc](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
 
-* Translation I
-   * syntax directed
-   * tree-rewriting
+## Misc
 
-* Translation II
-   * rule-based
-   * Token stream rewriting
-
-## Week 10
-
-* Translation III
-   * model-driven
-
-* Translation IV
-   * model-driven continued
-
-* StringTemplate
-
-## Week 11
-
-* Interpreters I
-   * syntax-directed
-
-* Interpreters II
-   * bytecode
-   * stack
-
-* Interpreters III
-   * register
-
-## Week 12
+* JNI
 
 * Java VM case study
 
 * LLVM; write some by hand for experimenting.
-
-* Generating bytecode
-
-## Week 13
-
-* smalltalk language
-
-* smalltalk closures in detail I
-
-* smalltalk closures in detail II
-
-## Week 14
-
-* GC I
-
-* GC II
-
-## Finite automata (Optional)
 
 *	NFA
 *	DFA
@@ -270,9 +222,6 @@ Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652
 * lexing
    *	with DFA
    *	show recursive descent version
-
-
-## Optional typing
 
 * static typing I
    * dynamic vs static typing

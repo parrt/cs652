@@ -9,6 +9,7 @@ Fortunately, software can help us write software. Just as we use IDEs and debugg
 Simply put, GC relieves the programmer from having to track and deallocate dynamic memory--you do not have to write code to deallocate data structures. GC reduces cognitive load. People estimate about 10% of CPU time for automatically collecting garbage. An excellent trade.
 
 ### The basic idea and terms
+
 The core GC strategy is:
 
 1. At some frequency, distinguish live from dead objects (tracing) and reclaim dead ones.
@@ -18,43 +19,95 @@ The core GC strategy is:
 
 Imagine a heap of dynamic memory for a running program. Certain variables point into the heap to your data structures. When those variables no longer point at a data structure, nothing can reach the data structure so it's garbage:
 
+![gc before](images/gc1.gif)
+
 After garbage collecting, you'd see something like this:
 
+![gc before](images/gc2.gif)
+
 GC often implicitly assumes that the objects in memory are typed so you know how to find the pointers within, say, an AST node. This does not mean that GC only works in interpreters--compiled languages such as C++ can store runtime type information now.
+
 Further, w/o type information you can still do conservative collection. If it looks like a pointer, assume it is. That unfortunately leaves some objects around because you still (erroneously) think you have a pointer to those objects (in fact they are probably just integers). Java has lots of type information in the objects as well as the bytecodes that operate on data, hence, does not have to be conservative in general. Conservative is bad in my opinion since "conversative GC implies leaking memory".
-Common Strategies
-There are two main user-perspective categories of GC: disruptive and nondisruptive (often called pauseless). I can remember SmallTalk and LISP programs halting in the middle and saying "Sorry...garbage collecting...". Ack! A disruptive GC is one that noticeably halts your program and usually means it's doing a full collection of a memory space and literally turning off your program for a bit. If you interleave little bits of collection alongside the running program, you call it an incremental collector; if it runs at the same times as the program, you call it a concurrent collector. These collectors are a lot harder to implement because you must deal with the program altering data structures while the collector sniffs the structures. If you are building a real-time system, however, incremental collectors are pretty much a requirement.
-Reference Counting
-This simplest GC strategy is reference counting, which adds a counter for every "object" in your system. When you copy a reference to that object, you increment the count by one. When a reference to an object goes away (such as when a local variable goes out of scope), the count is decremented by one. If, at that time, the count goes to 0, the object is garbage and all pointers emanating from it should be decremented. Then that object is reclaimed (as are any other objects that go to 0 during the count update phase).
+
+[Important terms defined](http://www.iecc.com/gclist/GC-algorithms.html)
+
+## Common Strategies
+
+There are two main user-perspective categories of GC: *disruptive* and *nondisruptive* (often called *pauseless*). I can remember LISP programs halting in the middle and saying "Sorry...garbage collecting...". Ack! A disruptive GC is one that noticeably halts your program and usually means it's doing a full collection of a memory space and literally turning off your program for a bit. If you interleave little bits of collection alongside the running program, you call it an incremental collector; if it runs at the same times as the program, you call it a *concurrent* collector. These collectors are a lot harder to implement because you must deal with the program altering data structures while the collector sniffs the structures. If you are building a real-time system, however, incremental collectors are pretty much a requirement.
+
+### Reference Counting
+
+This simplest GC strategy is [reference counting](http://www.brpreiss.com/books/opus5/html/page421.html), which adds a counter for every "object" in your system. When you copy a reference to that object, you increment the count by one. When a reference to an object goes away (such as when a local variable goes out of scope), the count is decremented by one. If, at that time, the count goes to 0, the object is garbage and all pointers emanating from it should be decremented. Then that object is reclaimed (as are any other objects that go to 0 during the count update phase).
+
 Reference counting is mostly nondisruptive, but can't handle cycles. A cycle looks like this:
+
+![cycle before](images/gc-cycle1.gif)
 
 and then after you dereference the object and decrement its count, it is still greater than 0 because an object inside the heap refers to it. These objects are no longer reachable from a root and will never be reclaimed.
 
+![cycle before](images/gc-cycle2.gif)
+
 Cycles occur often enough: as in circular queues, doubly-linked trees etc...
+
 The cost is also high as it is proportional to the amount of work done in program.
-Disruptive, Stop-And-Collect Schemes
-Mark and sweep collectors are two-phase collectors that first walk the live objects, marking them, and then finds all the dead objects (i.e., anything that is not live). This is pretty easy to understand and build but badly fragments memory, wastes time walking dead objects (assuming you don't have to run destructors), and has bad virtual memory characteristics.
+
+### Disruptive, Stop-And-Collect Schemes
+
+#### Mark and sweep
+
+[Mark and sweep](http://www.brpreiss.com/books/opus5/html/page424.html) collectors are two-phase collectors that first walk the live objects, marking them, and then finds all the dead objects (i.e., anything that is not live). This is pretty easy to understand and build but badly fragments memory, wastes time walking dead objects (assuming you don't have to run destructors), and has bad virtual memory characteristics.
+
 Technically, we could avoid walking the dead objects to deallocate them (add them to a freelist). We can just keep a complete list of objects and walk the dead ones looking for space to hold a new object. This would only get slow to allocate when the heap is in heavy use and/or badly fragmented.  
-We could also use a bit table that refers to objects in the heap. To free the objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each that represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every corresponding bit in the bitmap.
-Each bit in the mark bitmap corresponds to 16 bytes of heap space. For reasons that will become clear, when an object is marked mark bitmap, every bit corresponding to space taken up by the object is marked, not just the first bit.
-An improvement on this strategy is called mark and compact because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for virtual memory because objects are kept in same order in which they were allocated. Still have to walk the memory a lot and you have to update pointers since you are moving things around. We don't have to walk the dead objects to free them in this strategy. We simply pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. We do have to walk the objects in sorted address order to shift all objects "down" in the heap to compact. That implies we need to sort and that we need an object list, at least temporarily during collection. Object allocation is a simple pointer bump. Good cache characteristics.  The compact operation is fairly complicated and typically uses 3 passes and requires an extra forwardingAddr field in each object:
-Walk live objects, setting forwardingAddr = new object address. Keep a pointer to the next free spot, beginning at the start of the heap. As we wander through the live objects, an object's new address is the next free spot. bump free by size of that object.
-Replace pointers (roots and pointer fields of objects) with new forwarding address
-Do the actual move of objects to their new location.
-If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep 2 and 3 separate. We cannot move objects until all pointers have been updated. The target object is where the forwarding addresses are stored.
+
+**Marking**.  To mark an object, we either have to add a mark a bit to each object's header or keep a separate table that maps objects to a mark bit. The latter is preferable for efficiency reasons of the collector itself and it does not require alterations to the objects. This could be important with uncooperative languages like C or C++ where we cannot intrude on their layouts.
+
+[Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) has a good discussion of how this works. We could also use a bit table that refers to objects in the heap. To free the objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each bit represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every bit in the bitmap corresponding to addresses occupied by that object. From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementation, (c) 2006*:
+
+![bitmaps](images/bitmaps.png)
+
+**Sweeping**.  After marking, our bitmap knows exactly which regions of the heap are still reachable. Slava describes the sweep steps:
+
+1. Reset the free list (the list of free regions available in the heap for use by the program)
+2. Walk the mark bitmap and add a chunk to the free list for all contiguous ranges of off bits. This is much faster than walking the garbage calling free on everything, which would be necessary if mark bits were in the object headers.
+
+#### Mark and compact
+
+An improvement on this strategy is called [mark and compact](http://www.brpreiss.com/books/opus5/html/page428.html) because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for cache / virtual memory because objects are kept in same order in which they were allocated. We still have to walk the memory a lot and you have to update pointers since you are moving things around. We don't have to walk the dead objects to free them in this strategy. We simply pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. We do have to walk the objects in sorted address order to shift all objects "down" in the heap to compact. That implies we need to sort and that we need an object list, at least temporarily during collection. Object allocation is a simple pointer bump. The compact operation is fairly complicated and typically uses 3 passes and requires (in one mechanism) an extra forwarding_addr field in each object:
+
+1. Walk live objects, collecting forwarding addresses.  As usual, memory allocation is as simple as bumping a pointer in the heap. As we wander through the live objects, an object's new address is the next free spot.
+1. Replace pointers (roots and pointer fields of objects) with new forwarding address
+1. Do the actual move of objects to their new location.
+
+If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep 2 and 3 separate. We cannot move objects until all pointers have been updated.
+
 By computing all new addresses and holding them in an area outside of the heap, with the marked bits, we can reduce the number of passes to two. We can move objects and set pointers at the same time. (Collapsing steps 2 and 3 above).
-If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive and space and time. Slava Pestov explains:
-It is easy to see that the final destination of every block can be determined from the number of set bits in the mark bitmap that precede it. (TJP: the sum of on bits says how much memory is in front of you.)
+
+If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive in space and time if we're not careful. [Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) explains:
+
+<blockquote>
+It is easy to see that the final destination of every block can be determined from the number of set bits in the mark bitmap that precede it. (TJP: the sum of on bits says how much memory is needed for objects before you in the heap.)
+
 Since the forwarding map is consulted frequently -- once for every pointer in every object that is live during compaction -- it is important that lookups are as fast as possible. The forwarding map should also be space-efficient. This completely rules out using a hashtable (with many small objects in the heap, it would grow to be almost as big as the heap itself) or simply scanning the bitmap and counting bits every time (since now compaction will become an O(n^2) algorithm). The correct solution is very simple, and well-known in language implementation circles, but I wasn't aware of it until I studied the Clozure Common Lisp garbage collector. You count the bits set in every group of 32 (or 64) bits in the mark bitmap, building an array of cumulative sums as you go. Then, to count the number of bits that are set up to a given element, you look up the pre-computed population count for the nearest 32 (or 64) bit boundary, and manually compute the population count for the rest. This gives you a forwarding map with O(1) lookup time. This algorithm relies on a fast population count algorithm; I used the standard CPU-independent technique in the popcount() function of bitwise_hacks.hpp.
-I believe that we always need to compute all forwarding addresses first. If we tried to move objects without looking at all objects, we might clobber alive object. Imagine a live object sitting at the first memory location in the heap and imagine that we visited last. At least one object would be stepping on top of it.
+</blockquote>
+
+I believe that we always need to compute all forwarding addresses first. If we tried to move objects without looking at all objects, we might clobber alive object. Imagine a live object sitting at the first memory location in the heap and imagine that we visit it last. At least one object would be stepping on top of it.
+
 If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term scavenging is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement. We can simply recursively move objects and update pointers as we traverse live objects. The cost is that we can only use up to half the memory available because we have two spaces.
+
 Copying collectors have a lot of work to do moving objects at each collection!
+
 Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
+
 Allocation for any copying collector is fast because you just have to bump a pointer in the heap; all free memory is contiguous after collection.
+
 Nondisruptive, Generational Schemes
+
 The disruptive stop-and-collect schemes are so disruptive because they have so much work to do--they must deal with the entire heap. If your heap is 600M, then it has lots to do.
+
 Observation: most objects live only a short time while some tend to live a long time (think about System object in Java).
+
 A generational collector takes advantage of this observation by having a "younger" and an "older" generation. Objects that live a few "generations" (i.e., collection runs), are moved to the "older" generation, which reduces the amount of live objects the collector must traverse in the younger generation.
+
 Note the similarity to the mark and copy algorithm; here, though, the "when to copy" algorithm is very different. A generational copying collector moves objects to another generation when it has survived a few generations. Mark and copy copies all live objects upon each activation, thus, not significantly reducing its workload for future generations. Also, there may be many generations, not just two spaces as in a mark and copy scheme.
 In the end, even generational schemes must stop-and-collect the older generations. Hopefully this can be hidden from the user such as when the system is waiting for user input. Java does this by making the collector the lowest priority thread. When nothing else is running, the collector starts up (and hopefully finishes).
 Nondisruptive, Incremental Tracing Collectors
@@ -71,6 +124,11 @@ The first promise identifying the roots. One way is to trace the entire runtime 
 If we are using direct pointers to implement pointers in our source language, we need to know what offsets they are within instances of each object type. That way we can trace through all of the objects looking for live objects. The heap might have pointers to all objects, but we need to trace them to separate the living from the dead.
 Java
 Pre-JDK 1.2, Java had a conservative mark and sweep algorithm. After JDK 1.2 / HotSpot, Java uses a generational scheme with "train algorithm" for fast GC of mature generation. I find that for very little CPU cost, the -Xincr incremental collector to be very nondisruptive. The latest Java collector has a very fast allocator as well.
-Resources
-http://www.amazon.com/Garbage-Collection-Algorithms-Automatic-Management/dp/0471941484
-UT course: http://www.cs.utexas.edu/users/mckinley/395Tmm/schedule.html
+
+## Resources
+
+Paul Wilson's [Uniprocessor Garbage Collection Techniques](wilson-gc-overview.pdf)
+
+[Garbage Collection: Algorithms for Automatic Dynamic Memory Management](http://www.amazon.com/Garbage-Collection-Algorithms-Automatic-Management/dp/0471941484)
+
+[U Texas Memory Management course](http://www.cs.utexas.edu/users/mckinley/395Tmm/schedule.html)
