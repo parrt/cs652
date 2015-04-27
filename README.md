@@ -217,7 +217,7 @@ http://goog-perftools.sourceforge.net/doc/tcmalloc.html
 
 ## Bridging languages
 
-JNI
+[JNI](https://github.com/parrt/cs652/blob/master/lectures/jni.md)
 
 ## Misc
 
