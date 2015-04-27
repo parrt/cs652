@@ -92,9 +92,13 @@ Since the forwarding map is consulted frequently -- once for every pointer in ev
 
 I believe that we always need to compute all forwarding addresses first. If we tried to move objects without looking at all objects, we might clobber alive object. Imagine a live object sitting at the first memory location in the heap and imagine that we visit it last. At least one object would be stepping on top of it.
 
-If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term scavenging is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement. We can simply recursively move objects and update pointers as we traverse live objects. The cost is that we can only use up to half the memory available because we have two spaces.
+#### Mark and copy collectors
+
+If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement. We can simply recursively move objects and update pointers as we traverse live objects. The cost is that we can only use up to half the memory available because we have two spaces.
 
 Copying collectors have a lot of work to do moving objects at each collection!
+
+A super awesome mechanism for walking the live objects is called *Cheney scanning*, but requires that we can identify any pointers within an object. The algorithm first copies all objects pointed to by roots to the target space. This set then consists of all pointers we might need to walk and, since the objects are consecutive in memory, we don't need a linked list or separate array to track them. We can simply hop from object object in the target space looking for pointers back into the source space. As with other copying schemes, we have to track forwarding addresses.
 
 Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
 
