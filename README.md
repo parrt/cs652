@@ -203,13 +203,24 @@ Next, study [Simple Virtual Machine (C)](https://github.com/parrt/simple-virtual
 
 Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md) also provides details about how to build a Smalltalk VM.
 
-## Garbage collection
+## Memory management
 
-[gc](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
+**Malloc/free**
+
+https://courses.engr.illinois.edu/cs241/sp2011/lectures/21-MemoryAlloc.pdf
+http://g.oswego.edu/dl/html/malloc.html
+http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf
+http://danluu.com/malloc-tutorial/
+http://goog-perftools.sourceforge.net/doc/tcmalloc.html
+
+[Garbage collection](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
+
+## Bridging languages
+
+JNI
 
 ## Misc
 
-* JNI
 
 * Java VM case study
 
