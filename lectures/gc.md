@@ -31,6 +31,17 @@ Further, w/o type information you can still do *conservative collection*. If it 
 
 [Important terms defined](http://www.iecc.com/gclist/GC-algorithms.html)
 
+## Allocation
+
+First, how do we allocate memory. `malloc` and mark/sweep often use a *free list* but can use a bitmap. From "*Mark without much Sweep Algorithm for Garbage Collection*" by Danko Basch, Dorian Ivancic, Nikica Hlupic:
+
+<blockquote>
+Allocators may use bitmaps where each bit is mapped to several bytes in the heap. Each bit denotes whether its associated bytes are free or used. On allocation request the allocator scans the bitmaps in search for sufficiently long sequence of zeroes. To free the block, all its related bits should be cleared so the block size has to be known.
+</blockquote>
+
+Fastest is allocators for mark/compact or copying (really *moving*) collectors. Just bump pointer at highwater mark.
+
+
 ## Common Strategies
 
 There are two main user-perspective categories of GC: *disruptive* and *nondisruptive* (often called *pauseless*). I can remember LISP programs halting in the middle and saying "Sorry...garbage collecting...". Ack! A disruptive GC is one that noticeably halts your program and usually means it's doing a full collection of a memory space and literally turning off your program for a bit. If you interleave little bits of collection alongside the running program, you call it an incremental collector; if it runs at the same times as the program, you call it a *concurrent* collector. These collectors are a lot harder to implement because you must deal with the program altering data structures while the collector sniffs the structures. If you are building a real-time system, however, incremental collectors are pretty much a requirement.
@@ -59,9 +70,9 @@ The cost is also high as it is proportional to the amount of work done in progra
 
 Technically, we could avoid walking the dead objects to deallocate them (add them to a freelist). We can just keep a complete list of objects and walk the dead ones looking for space to hold a new object. This would only get slow to allocate when the heap is in heavy use and/or badly fragmented.  
 
-**Marking**.  To mark an object, we either have to add a mark a bit to each object's header or keep a separate table that maps objects to a mark bit. The latter is preferable for efficiency reasons of the collector itself and it does not require alterations to the objects. This could be important with uncooperative languages like C or C++ where we cannot intrude on their layouts.
+**Marking**.  To mark an object, we either have to add a mark a bit to each object's header or keep a separate table that maps objects to a mark bit. The latter is preferable for efficiency reasons of the collector itself and it does not require alterations to the objects. This could be important with uncooperative languages like C or C++ where we cannot intrude on their layouts. Each bit in a bitmap denotes the possible starting locations for objects.
 
-[Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) has a good discussion of how this works. We could also use a bit table that refers to objects in the heap. To free the objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each bit represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every bit in the bitmap corresponding to addresses occupied by that object. From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementation, (c) 2006*:
+[Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) has a good discussion of how allocation bitmaps work and their use with mark/sweep. We use use a bit table that refers to objects in the heap. To free objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each bit represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every bit in the bitmap corresponding to addresses occupied by that object. From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementation, (c) 2006*:
 
 ![bitmaps](images/bitmaps.png)
 
@@ -154,6 +165,7 @@ struct {
 ```
 
 That way we can trace through all of the objects looking for live objects. The heap might have pointers to all objects, but we need to trace them to separate the living from the dead.
+
 
 ## Resources
 
