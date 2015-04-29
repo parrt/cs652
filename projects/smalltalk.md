@@ -18,6 +18,8 @@ Our version of Smalltalk differs from the standard in a few ways:
 * no ';' extended msg send notation
 * Much of the implementation is not exposed to the programmer, such as method invocation contexts.
 
+A useful project with implementation information is [SOM Smalltalk](http://som-st.github.io/).
+
 Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sheet.pdf):
 
 ### Literals and keywords
