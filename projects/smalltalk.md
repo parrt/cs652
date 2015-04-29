@@ -370,12 +370,12 @@ If a primitive method returns a result, the corresponding `perform()` method mus
 | `C basicNew` |`Object_Class_BASICNEW`| Create an instance of class `C` and return it |
 | `x print` |`Object_PRINT`| `System.out.println(x.asString());`  |
 | `x asString` |`Object_ASSTRING`|  Return result of calling Java method `asString` on `x` |
-| `x className` |`Object_CLASSNAME`|  |
-| `x == y` |`Object_SAME`|  |
-| `x hash` |`Object_HASH`|  |
+| `x className` |`Object_CLASSNAME`|  Return a string containing the name of `x`'s class |
+| `x == y` |`Object_SAME`| Return a new `Boolean` that is true if `x` and `y` point at the same physical object |
+| `x hash` |`Object_HASH`| Return a new `Integer` with value `x.hashCode()` |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
-| `c asInteger` |`Character_ASINTEGER`|  |
-| `Character new: i` |`Character_Class_NEW`|  |
+| `c asInteger` |`Character_ASINTEGER`|  Return a new integer object with the 16-bit character code of `c` as the value |
+| `Character new: i` |`Character_Class_NEW`| Return a new character object with character code (integer) `i` |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
 | `x + y` |`Integer_ADD`| Pop right operand `y` and then pop the receiver, `x`, as the left operand; return a new integer with the addition result |
 | `x - y` |`Integer_SUB`| ... |
@@ -402,7 +402,7 @@ If a primitive method returns a result, the corresponding `perform()` method mus
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
 | `b ifTrue: blk` |`Boolean_IFTRUE`| Pop `blk` as the argument then pop `b` as the receiver. If `b` then evaluate `blk` as if the programmer had said `blk value`|
 | `b ifTrue: blk1 ifFalse: blk2` |`Boolean_IFTRUE_IFFALSE`| Pop `blk2` as the 2nd argument, pop `blk1` as the first argument, then pop `b` as the receiver. If `b` then evaluate `blk1` as if the programmer had said `blk1 value` else evaluate `blk2`|
-| `b not` |`Boolean_NOT`|  |
+| `b not` |`Boolean_NOT`| Return `true` if `b` is `false` and vice versa.  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
 | `String new: x` |`String_Class_NEW`| Pop `c` as the argument, pop the next value as well, which is the metaclass object for `String`; if `x` is a  string,  return a new string object from `x`; if `x` is a character, returned a new string object with that sole character|
 | `s,t` |`String_CAT`| Pop `s`,`t` and return a new string of their concatenated characters  |
