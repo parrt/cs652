@@ -360,6 +360,66 @@ Also take a look at the implementation of the `==` operator, the second case. It
 
 This implementation illustrates a message/operator that takes an argument (`y`) as well as a receiver. All of the setup code prepares for executing the actual implementation of the equality operator: `result = new STBoolean(x == y)`.
 
+#### Primitive operations
+
+If a primitive method returns a result, the corresponding `perform()` method must return non-null and then the VM will leave it on operand stack of the invoking context (which will be the active context when the primitive finishes). By default, primitive method should return `self`, which is the receiver of the message.
+
+| Smalltalk | Primitive | Description |
+|--------|--------|--------|
+| `Object error: x` |`Object_Class_ERROR`| Call `vm.error(x.asString().toString())`, which throws an exception |
+| `C basicNew` |`Object_Class_BASICNEW`| Create an instance of class `C` and return it |
+| `x print` |`Object_PRINT`| `System.out.println(x.asString());`  |
+| `x asString` |`Object_ASSTRING`|  Return result of calling Java method `asString` on `x` |
+| `x className` |`Object_CLASSNAME`|  |
+| `x == y` |`Object_SAME`|  |
+| `x hash` |`Object_HASH`|  |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `c asInteger` |`Character_ASINTEGER`|  |
+| `Character new: i` |`Character_Class_NEW`|  |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `x + y` |`Integer_ADD`| Pop right operand `y` and then pop the receiver, `x`, as the left operand; return a new integer with the addition result |
+| `x - y` |`Integer_SUB`| ... |
+| `x * y` |`Integer_MULT`| ... |
+| `x / y` |`Integer_DIV`|  |
+| `x mod: y` |`Integer_MOD`|  |
+| `x < y` |`Integer_LT`| Pop right operand `y` and then pop the receiver, `x`, as the left operand; return a new `Boolean` with the inequality result |
+| `x <= y` |`Integer_LE`| ... |
+| `x > y` |`Integer_GT`|  |
+| `x >= y` |`Integer_GE`|  |
+| `x = y` |`Integer_EQ`|  |
+| `x asFloat` |`Integer_ASFLOAT`| Return a new `Float` object with the same value as `x` if `x` is an `Integer`; return the receiver if it's already a `Float` else throw `TypeError` via `vm.error()` |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `x + y` |`Float_ADD`| Pop right operand `y` and then pop the receiver, `x`, as the left operand; return a new `Float` with the addition result |
+| `x - y` |`Float_SUB`| ... |
+| `x * y` |`Float_MULT`| ... |
+| `x / y` |`Float_DIV`|  |
+| `x < y` |`Float_LT`| Pop right operand `y` and then pop the receiver, `x`, as the left operand; return a new `Boolean` with the inequality result |
+| `x <= y` |`Float_LE`| ... |
+| `x > y` |`Float_GT`|  |
+| `x >= y` |`Float_GE`|  |
+| `x = y` |`Float_EQ`|  |
+| `x asInteger` |`Float_ASINTEGER`| Return a new `Integer` object with the rounded value of `x` if `x` is a `Float`; return the receiver if it's already an `Integer` else throw `TypeError` via `vm.error()` |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `b ifTrue: blk` |`Boolean_IFTRUE`| Pop `blk` as the argument then pop `b` as the receiver. If `b` then evaluate `blk` as if the programmer had said `blk value`|
+| `b ifTrue: blk1 ifFalse: blk2` |`Boolean_IFTRUE_IFFALSE`| Pop `blk2` as the 2nd argument, pop `blk1` as the first argument, then pop `b` as the receiver. If `b` then evaluate `blk1` as if the programmer had said `blk1 value` else evaluate `blk2`|
+| `b not` |`Boolean_NOT`|  |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `String new: x` |`String_Class_NEW`| Pop `c` as the argument, pop the next value as well, which is the metaclass object for `String`; if `x` is a  string,  return a new string object from `x`; if `x` is a character, returned a new string object with that sole character|
+| `s,t` |`String_CAT`| Pop `s`,`t` and return a new string of their concatenated characters  |
+| `s=t` |`String_EQ`| Pop `s`,`t` and return a `Boolean` indicating whether or not the two strings have the same character sequence |
+| `s asArray` |`String_ASARRAY`| Return the characters of `s` as an `Array` object filled with `Character` objects. |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `x value` |`BlockDescriptor_VALUE`| Pop `x` as the receiver. Create and push a new active `BlockContext` derived from `BlockDescriptor` `x`; there is no result from this primitive--it just pushes a new context |
+| `x value: y` |`BlockDescriptor_VALUE_1_ARG`| Create and push a new active `BlockContext` derived from `BlockDescriptor` `x`; copy argument `y` to the operand stack of the new context|
+| `x value: y value: z` |`BlockDescriptor_VALUE_2_ARGS`| Create and push a new active `BlockContext` derived from `BlockDescriptor` `x`; copy arguments `y` and `z` to the operand stack of the new context |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `Array new: n` |`Array_Class_NEW`| Return a new instance of `Array` with `n` elements initialized to `nil`  |
+| `a size` |`Array_SIZE`|  Return an `Integer` with the number of elements of `a`|
+| `a at: i` |`Array_AT`| Return the element at position `i` of `a`, counting from 1 not 0 like C-derived languages |
+| `a at: i put: v` |`Array_AT_PUT`| Store `v` in the `i`th position of `a` |
+|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
+| `Transcript show: x` |`TranscriptStream_SHOW`| Same as `x print` |
+
 ### Class methods
 
 Smalltalk has class methods just like Java does and we use the `class` keyword on methods in our Smalltalk to indicate which methods are class methods. As with regular methods, class methods can also have primitive implementations:
