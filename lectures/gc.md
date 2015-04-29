@@ -8,6 +8,7 @@ Fortunately, software can help us write software. Just as we use IDEs and debugg
 
 Simply put, GC relieves the programmer from having to track and deallocate dynamic memory--you do not have to write code to deallocate data structures. GC reduces cognitive load. People estimate about 10% of CPU time for automatically collecting garbage. An excellent trade.
 
+
 ### The basic idea and terms
 
 The core GC strategy is:
@@ -72,7 +73,7 @@ Technically, we could avoid walking the dead objects to deallocate them (add the
 
 **Marking**.  To mark an object, we either have to add a mark a bit to each object's header or keep a separate table that maps objects to a mark bit. The latter is preferable for efficiency reasons of the collector itself and it does not require alterations to the objects. This could be important with uncooperative languages like C or C++ where we cannot intrude on their layouts. Each bit in a bitmap denotes the possible starting locations for objects.
 
-[Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) has a good discussion of how allocation bitmaps work and their use with mark/sweep. We use use a bit table that refers to objects in the heap. To free objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each bit represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every bit in the bitmap corresponding to addresses occupied by that object. From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementation, (c) 2006*:
+[Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) ([his code in Factor language project](http://gitweb.factorcode.org/gitweb.cgi?p=factor-master/.git;a=tree)) has a good discussion of how allocation bitmaps work and their use with mark/sweep. We use use a bit table that refers to objects in the heap. To free objects, we can look for unmarked regions in the bit table and add the combined chunk to the freelist. This way we don't have to walk all of the dead objects.  Each bit represents a chunk of memory (16 bytes ish) in the heap, not an object. To mark an object, we mark every bit in the bitmap corresponding to addresses occupied by that object. From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementation, (c) 2006*:
 
 ![bitmaps](images/bitmaps.png)
 
@@ -123,11 +124,22 @@ Observation: most objects live only a short time while some tend to live a long 
 
 A *generational collector* takes advantage of this observation by having a "younger" and an "older" generation. Objects that live a few "generations" (i.e., collection runs), are moved to the "older" generation, which reduces the amount of live objects the collector must traverse in the younger generation.
 
+[Myths and Realities: The Performance Impact of Garbage Collection](http://www.cs.utexas.edu/users/mckinley/papers/mmtk-sigmetrics-2004.pdf): "*Our experiments show that the generational collectors provide better performance than the whole heap collectors in virtually all circumstances*."
+
 Note the similarity to the mark and copy algorithm; here, though, the "when to copy" algorithm is very different. A generational copying collector moves objects to another generation when it has survived a few generations. Mark and copy copies all live objects upon each activation, thus, not significantly reducing its workload for future generations. Also, there may be many generations, not just two spaces as in a mark and copy scheme.
 
-Generational collectors have more bookkeeping to do than the mark and compact or marketing copy collectors. To have track references that spanned generations. In general, all or most pointers will point intra-nursery or into older generations and not point from older generations into the nursery. Hopefully that means our overhead is not too bad.
+Generational collectors have more bookkeeping to do than the mark and compact or marketing copy collectors. They have track references that spanned generations. In general, all or most pointers will point intra-nursery or into older generations and not point from older generations into the nursery. Hopefully that means our overhead is not too bad.
 
-We want to reduce how many live objects we have to look at to determine what is alive and what is dead and so we want to trace only the objects in the nursery. But, we might find that there are objects pointed to from the older generation but not from the nursery itself. We can't declare those objects as dead.  That means we need a way to find pointers into the nursery from the older generation without having to walk all live objects in the older generation.  We can create pointers from the old into the nursery when we move objects to the older generation and the mutator itself can alter pointers. If you track memory writes to identify pointers that point into the nursery. These are oddly called *write barriers*.  A write barrier is literally some code generated by the compiler upon each pointer store. In both cases, the *remembered set* records the address of pointers that contain intergenerational pointers of interest.  This effectively increases the size of the root set for doing the minor collection in the nursery.
+We want to reduce how many live objects we have to look at to determine what is alive and what is dead and so we want to trace only the objects in the nursery. But, we might find that there are objects pointed to from the older generation but not from the nursery itself. We can't declare those objects as dead.  That means we need a way to find pointers into the nursery from the older generation without having to walk all live objects in the older generation.  We can create pointers from the old into the nursery when we move objects to the older generation and the mutator itself can alter pointers. If you track memory writes to identify pointers that point into the nursery. These are oddly called *write barriers*.  A write barrier is literally some code generated by the compiler upon each pointer store. In both cases, the *remembered set* records the address of pointers that contain intergenerational pointers of interest.  This effectively increases the size of the root set for doing the minor collection in the nursery. See [Slava Pestov's write barrier discussion](http://factor-language.blogspot.com/2009/10/improved-write-barriers-in-factors.html).
+
+See [Myths and Realities: The Performance Impact of Garbage Collection](http://www.cs.utexas.edu/users/mckinley/papers/mmtk-sigmetrics-2004.pdf):
+
+<blockquote>
+We carefully measure the impact of the write barrier on the
+mutator and find that their mutator cost is usually very low (often
+2% or less), and even when high (14%), the cost is outweighed by
+the improvements in collection time.
+</blockquote>
 
 In the end, even generational schemes must stop-and-collect the older generations. Hopefully this can be hidden from the user such as when the system is waiting for user input. Java does this by making the collector the lowest priority thread. When nothing else is running, the collector starts up (and hopefully finishes).
 

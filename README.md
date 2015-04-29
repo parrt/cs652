@@ -205,13 +205,11 @@ Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652
 
 ## Memory management
 
-**Malloc/free**
-
-https://courses.engr.illinois.edu/cs241/sp2011/lectures/21-MemoryAlloc.pdf
-http://g.oswego.edu/dl/html/malloc.html
-http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf
-http://danluu.com/malloc-tutorial/
-http://goog-perftools.sourceforge.net/doc/tcmalloc.html
+* https://courses.engr.illinois.edu/cs241/sp2011/lectures/21-MemoryAlloc.pdf (re: **Malloc/free**)
+* http://g.oswego.edu/dl/html/malloc.html
+* http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf
+* http://danluu.com/malloc-tutorial/
+* http://goog-perftools.sourceforge.net/doc/tcmalloc.html
 
 [Garbage collection](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
 
