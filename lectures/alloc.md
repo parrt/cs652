@@ -29,6 +29,14 @@ Allocators often use a *free list* which we can think of as just a linked list o
 
 ![Lea's bins](http://g.oswego.edu/dl/html/malloc2.gif)
 
+The space within free chunks has pointers that form a linked list within a bin of the appropriate size. This indicates there is a minimum size for any allocated chunk but it's no big deal. 
+
+See [lecture 12 from Harvard CS61: Systems Programming and Machine Organization](http://www.eecs.harvard.edu/~mdw/course/cs61/mediawiki/images/5/51/Malloc3.pdf) for more details; e.g.,
+
+![bins for dlmalloc](images/dlmalloc-bins.png)
+
+For the bins that do not have exact sizes, above 512, you can sort the elements within the bin for faster searching.
+
 ### Bitmaps
 
 Instead of a free list, allocators can use a bitmap. From "*Mark without much Sweep Algorithm for Garbage Collection*" by Danko Basch, Dorian Ivancic, Nikica Hlupic:
