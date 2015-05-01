@@ -32,17 +32,6 @@ Further, w/o type information you can still do *conservative collection*. If it 
 
 [Important terms defined](http://www.iecc.com/gclist/GC-algorithms.html)
 
-## Allocation
-
-First, how do we allocate memory. `malloc` and mark/sweep often use a *free list* but can use a bitmap. From "*Mark without much Sweep Algorithm for Garbage Collection*" by Danko Basch, Dorian Ivancic, Nikica Hlupic:
-
-<blockquote>
-Allocators may use bitmaps where each bit is mapped to several bytes in the heap. Each bit denotes whether its associated bytes are free or used. On allocation request the allocator scans the bitmaps in search for sufficiently long sequence of zeroes. To free the block, all its related bits should be cleared so the block size has to be known.
-</blockquote>
-
-Fastest is allocators for mark/compact or copying (really *moving*) collectors. Just bump pointer at highwater mark.
-
-
 ## Common Strategies
 
 There are two main user-perspective categories of GC: *disruptive* and *nondisruptive* (often called *pauseless*). I can remember LISP programs halting in the middle and saying "Sorry...garbage collecting...". Ack! A disruptive GC is one that noticeably halts your program and usually means it's doing a full collection of a memory space and literally turning off your program for a bit. If you interleave little bits of collection alongside the running program, you call it an incremental collector; if it runs at the same times as the program, you call it a *concurrent* collector. These collectors are a lot harder to implement because you must deal with the program altering data structures while the collector sniffs the structures. If you are building a real-time system, however, incremental collectors are pretty much a requirement.

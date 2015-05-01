@@ -205,20 +205,21 @@ Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652
 
 ## Memory management
 
+[Allocation](https://github.com/parrt/cs652/blob/master/lectures/alloc.md)
+
+[Garbage collection](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
+
 * https://courses.engr.illinois.edu/cs241/sp2011/lectures/21-MemoryAlloc.pdf (re: **Malloc/free**)
 * http://g.oswego.edu/dl/html/malloc.html
 * http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf
 * http://danluu.com/malloc-tutorial/
 * http://goog-perftools.sourceforge.net/doc/tcmalloc.html
 
-[Garbage collection](https://github.com/parrt/cs652/blob/master/lectures/gc.md)
-
 ## Bridging languages
 
 [JNI](https://github.com/parrt/cs652/blob/master/lectures/jni.md)
 
 ## Misc
-
 
 * Java VM case study
 
