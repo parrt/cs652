@@ -98,7 +98,7 @@ Then we fill in the definition of `Java_HelloJNI_sayHello`:
 ```c
 #include <jni.h>
 #include <stdio.h>
-#include "hello.h"
+#include "HelloJNI.h"
 
 // Implementation of native method 'void sayHello()' from HelloJNI
 JNIEXPORT void JNICALL Java_HelloJNI_sayHello(JNIEnv *env, jobject thisObj) {
