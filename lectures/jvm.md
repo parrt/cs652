@@ -21,3 +21,5 @@ Platform
 http://www.oracle.com/technetwork/java/whitepaper-135217.html
 
 ...
+
+[class file viewer](https://github.com/amosshi/freeinternals)
