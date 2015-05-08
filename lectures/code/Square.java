@@ -1,6 +1,6 @@
-public class Shape {
+class Shape {
 }
-class Square extends Shape {
+public class Square extends Shape {
     int width;
     public void print() {
         System.out.println(width);
