@@ -163,6 +163,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/genclasses/genclasses.iml" filepath="$PROJECT_DIR$/genclasses/genclasses.iml" />
       <module fileurl="file://$PROJECT_DIR$/gendot/gendot.iml" filepath="$PROJECT_DIR$/gendot/gendot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jvm/jvm.iml" filepath="$PROJECT_DIR$/jvm/jvm.iml" />
       <module fileurl="file://$PROJECT_DIR$/sqlmodel/sqlmodel.iml" filepath="$PROJECT_DIR$/sqlmodel/sqlmodel.iml" />
       <module fileurl="file://$PROJECT_DIR$/symtab/symtab.iml" filepath="$PROJECT_DIR$/symtab/symtab.iml" />
       <module fileurl="file://$PROJECT_DIR$/templates/templates.iml" filepath="$PROJECT_DIR$/templates/templates.iml" />
@@ -175,4 +176,3 @@
     <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
   </component>
 </project>
-
