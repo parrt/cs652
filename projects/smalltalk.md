@@ -400,7 +400,7 @@ If a primitive method returns a result, the corresponding `perform()` method mus
 | `x > y` |`Float_GT`|  |
 | `x >= y` |`Float_GE`|  |
 | `x = y` |`Float_EQ`|  |
-| `x asInteger` |`Float_ASINTEGER`| Return a new `Integer` object with the rounded value of `x` if `x` is a `Float`; return the receiver if it's already an `Integer` else throw `TypeError` via `vm.error()` |
+| `x asInteger` |`Float_ASINTEGER`| Return a new `Integer` object with the truncated value of `x` if `x` as a `Float`; return the receiver if it's already an `Integer` else throw `TypeError` via `vm.error()` |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|||
 | `b ifTrue: blk` |`Boolean_IFTRUE`| Pop `blk` as the argument then pop `b` as the receiver. If `b` then evaluate `blk` as if the programmer had said `blk value`|
 | `b ifTrue: blk1 ifFalse: blk2` |`Boolean_IFTRUE_IFFALSE`| Pop `blk2` as the 2nd argument, pop `blk1` as the first argument, then pop `b` as the receiver. If `b` then evaluate `blk1` as if the programmer had said `blk1 value` else evaluate `blk2`|
