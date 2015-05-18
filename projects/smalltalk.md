@@ -499,7 +499,4 @@ For the constructs as shown below in the compilation rules, use visitor methods 
 
 ## Tasks
 
-* Build `DefineSymbols` parse tree listener. This creates a scope tree per our normal procedure.
-* Build `ResolveSymbols` parse tree listener. This walks the parse tree again to verify that identifiers on the left-hand side of assignments are locals or fields. It also sets the `sym` field of any identifier node by resolving the associated identifier in the current scope.
-* Build `CodeGenerator` parse tree **visitor**. This is the meat of the compiler. 
-* Build VM by filling in all of the primitive method operations (static `perform` methods) and key classes like `SystemDictionary` and `VirtualMachine`.
+Most of the compiler is given to you, but you need to build the `CodeGenerator` parse tree **visitor**. This is the meat of the compiler.  Then, build the VM by filling in all of the primitive method operations (static `perform` methods) and key classes like `SystemDictionary`, `VirtualMachine`, `BlockContext`, ...
