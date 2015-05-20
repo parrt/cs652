@@ -496,6 +496,73 @@ For the constructs as shown below in the compilation rules, use visitor methods 
 
 <img src="images/smalltalk-msgs.png" width="700" align=middle>
 
+### DBG instructions
+
+The DBG instructions informed the VM where in the original Smalltalk source code the following bytecode instruction(s) comes from. The debug information is extremely useful when writing Smalltalk code, although it can be useful when debugging the VM itself. You need to insert DBG instructions in the following locations:
+
+1. `visitMain`. At the end of the body, before pop, self, return.
+2. `visitSmalltalkMethodBlock`.  After visiting the children, before the pop, self, ...
+3. `visitAssign`
+```java
+//At the end
+if (compiler.genDbg) {
+    code = dbg(ctx.start).join(code);
+}
+//before return
+```
+
+4. `visitKeywordSend`
+```java
+//After getLiteralIndex()
+if(compiler.genDbg){
+    code = Code.join(code, dbg(ctx.KEYWORD(0).getSymbol()));
+}
+//Before you join code for Send
+```
+
+5. `visitBinaryExpression`
+```java
+//After you join code for visitUnaryExpression(1)
+if(compiler.genDbg){
+    code = Code.join(dbg(ctx.bop(i-1).getStart()), code);
+}
+//Before you join code for Send
+```
+
+6. `visitBlock`.
+```java
+//After you join code for visitChildren()
+if(compiler.genDbg){
+    code = Code.join(code, dbgAtEndBlock(ctx.stop));
+}
+//Before you join push_block_return
+```
+7. `visitEmptyBody`
+```java
+//At the end
+if(compiler.genDbg){
+    code = Code.join(code, dbgAtEndBlock(ctx.stop));
+}
+//Before you return
+```
+
+8. `visitReturn`
+```java
+//After visitChildren
+if (compiler.genDbg) {
+    e = Code.join(e, dbg(ctx.start)); // put dbg after expression as that is when it executes
+}
+//Before you join code for method_return()
+```
+
+9. `visitUnaryMsgSend`
+```java
+//At the end
+if (compiler.genDbg) {
+    code = Code.join(dbg(ctx.ID().getSymbol()), code);
+}
+//Before return
+```
 
 ## Tasks
 
