@@ -146,6 +146,7 @@ heap_object *forward(heap_object *p) {
     if p address in target heap1, return p; // p points to real obj in heap1
     if p->forwarded, return p->forwarded;   // p is a zombie in heap0, real in heap1
     p' = next_free_forwarding + p->size;    // bump allocate in heap1
+    p->forwarded = p';                      // zombie knows real location
     for each pointer field f of p {
         f = forward(f);         // move objects reachable from the old
     }                           // and update pointer field
