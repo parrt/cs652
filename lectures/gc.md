@@ -91,7 +91,7 @@ Since the forwarding map is consulted frequently -- once for every pointer in ev
 
 I believe that we always need to compute all forwarding addresses first. If we tried to move objects without looking at all objects, we might clobber alive object. Imagine a live object sitting at the first memory location in the heap and imagine that we visit it last. At least one object would be stepping on top of it.
 
-#### Mark and copy collectors
+#### Scavenging (copying) collectors
 
 If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement. We can simply recursively move objects and update pointers as we traverse live objects. The cost is that we can only use up to half the memory available because we have two spaces.
 
@@ -102,6 +102,56 @@ A super awesome mechanism for walking the live objects is called *Cheney scannin
 Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
 
 Allocation for any copying collector is fast because you just have to bump a pointer in the heap; all free memory is contiguous after collection.
+
+### Details
+
+A scavenging collector operates on two equally sized heaps, heap0 and heap1. We ping-pong between heaps by swapping heap0 and heap1 pointers. That way we can always be scavenging from heap0 to heap1. 
+
+At each collection, all live objects are scavenged from one space and copied to the start of the second space. The roots are updated and we flip from one heap to the other. Scavenging leaves the current heap, heap0, completely empty.  New allocations (after collection) are done in target heap at the address beyond all of the objects that we copied from heap0. In other words, if we scavenge 1000 bytes from heap0, new allocations in heap1 occur at address 1000. Because we swap heap0 and heap1 at the end of collection, however, new allocations (by the user program) always occur in heap0.
+
+We have:
+
+```C
+static void *heap0;
+static void *heap1;
+```
+
+in addition to the pointers we use in mark and compact:
+
+```C
+static void *start_of_heap;
+static void *end_of_heap;
+static void *next_free;
+static void *next_free_forwarding;
+```
+
+`end_of_heap` can be easily computed on demand. `next_free` and `next_free_forwarding` operate in `heap0` and `heap1`, respectively.
+
+Scavenging uses a bump pointer allocator.
+
+Scavenging does not require a mark bit field or a forwarding address field in live objects. However, we do need a forwarding address field in zombie objects. A zombie object is one that has been copied into the new space but before the end of the collection process. Zombies hang around for the sole purpose of updating pointers from other objects (and roots) to the forwarding address in heap1. For our purposes, perhaps it's best to just force every object to have a forwarding address field.
+
+The algorithm can be done recursively, and all in one function, without additional data structures. It is in some ways simpler than the market and compact, at the cost of twice as much memory.
+
+```C
+heap_object **_roots[MAX_ROOTS];
+For each root {
+	*_roots[i] = _forward(*_roots[i]);
+}
+```
+
+```C
+heap_object *forward(heap_object *p) {
+    // first check to see if we have already processed this object
+    if p address in target heap1, return p; // p points to real obj in heap1
+    if p->forwarded, return p->forwarded;   // p is a zombie in heap0, real in heap1
+    p' = next_free_forwarding + p->size;    // bump allocate in heap1
+    for each pointer field f of p {
+        f = forward(f);         // move objects reachable from the old
+    }                           // and update pointer field
+    return p';                  // return new location in heap1
+}
+```
 
 ### Nondisruptive, Generational Schemes
 
