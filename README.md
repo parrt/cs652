@@ -1,7 +1,7 @@
 CS652 -- Programming Languages
 =====
 
-This is the home page for Computer Science 652, Graduate Programming Languages, at the University of San Francisco.
+This is the home page for Computer Science 652, Graduate Programming Languages, at the University of San Francisco. [Catalog entry](https://www.usfca.edu/catalog/course/programming-languages)
 
 # Abstract
 
@@ -17,9 +17,9 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 **ROOM.** Lo Schiavo Science 307.
 
-**TIME.** MWF 2:15pm - 3:20pm,  January 26 (Mon) - May 13 (Wed).
+**TIME.** MWF 2:15pm - 3:20pm,  January 25 (Mon) - May 11 (Wed).
 
-**EXAMS.** There will be 2 exams but no final exam.
+**EXAMS.** There will be 3 exams but no final exam.
 
 ### Instruction Format
 
