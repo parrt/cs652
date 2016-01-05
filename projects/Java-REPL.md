@@ -281,14 +281,12 @@ If it helps, here is my list of methods
 
 ## Deliverables
 
-You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above.  For example, you can see the starter kit I created here:
+You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above. 
 
-https://github.com/USF-CS652-S15/parrt-repl
+Make sure your repository has all classes you build for this project.
 
-Make sure your repository has any other classes needed for this project.
-
-Do not add `.class` files or any other build artifacts.
+**Do not add `.class` files or any other build artifacts.**
 
 ## Submission
 
-You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S15](https://github.com/USF-CS652-S15).
+You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16).
