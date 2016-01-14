@@ -10,7 +10,7 @@ This project teaches you about dynamic compilation, class loaders, and simple le
 Your goal is to create an interactive "shell" tool that mimics the behavior of the Python interpreter shell. In other words you should be able to type the following, hit return, and see the result immediately:
 
 ```bash
-$ java JavaREPL
+$ java cs652.JavaREPL
 > System.out.println("Hi");
 Hi
 ^D
@@ -207,7 +207,8 @@ Just to summarize, keep in mind the following requirements.
 1.  Accept as a declaration, anything that will compile with `public static` in front of it as a field of a class, which would include variable, function, and class definitions.
 1. Your program must not require more than a single newline character after the end of a valid statement or declaration. In other words, I shouldn't have to hit extra newlines to make your program execute my code.
 1.  Allow a blank line as a "do nothing" statement
-1. Accept `print `*expr*`;` as a statement and converted to the usual Java `print()` call before processing.
+1. Accept `print `*expr*`;` as a statement and converted to a call to `Collector.println()` before processing so the unit test rig can test the output.
+1. You must also convert `System.out.println()` calls to `Collector.println()`.
 1.  Comments on the end of the line should not present execution of the line:
 `print "hi"; // a comment`.
 1.  Anything that does not parse as a valid declaration, should be assumed to be a statement and compiled/executed as such.
@@ -225,7 +226,7 @@ Just to summarize, keep in mind the following requirements.
 
 You are free to use Java 8, as that is how I will test your code.
 
-As usual, you should try sending in all sorts of random input in an effort to make your program robust. Expect that I will do something like that during testing. If I were you, I would try sending in lots of random Java code to ensure your program operates correctly.
+As usual, you should try sending in all sorts of random input in an effort to make your program robust. If I were you, I would try sending in lots of random Java code to ensure your program operates correctly.
 
 ## Resources
 
@@ -279,13 +280,94 @@ If it helps, here is my list of methods
 * exec()
 * writeFile()
 
+## Getting started
+
+I have provided a [starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
+
+```bash
+$ git clone git@github.com:USF-CS652-S16/USERID-repl.git
+Cloning into 'USERID-regex'...
+warning: You appear to have cloned an empty repository.
+Checking connectivity... done.
+$ cd USERID-regex
+$ git checkout -b master
+Switched to a new branch 'master'
+$ git remote add starterkit git@github.com:USF-CS652-starterkits/parrt-repl.git
+$ git pull starterkit master
+...
+From github.com:USF-CS652-starterkits/parrt-repl
+ * branch            master     -> FETCH_HEAD
+ * [new branch]      master     -> starterkit/master
+$ git push origin master
+...
+To git@github.com:USF-CS652-S16/USERID-repl.git
+ * [new branch]      master -> master
+```
+
+**NOTE**: If you're doing this project as part of CS345 not CS652, note that your repo will live in USF-CS345-XX but you will pull the starterkit from `git@github.com:USF-CS652-starterkits/parrt-repl.git`. The package will be `cs652.repl`, which you can leave as-is instead of changing to `cs345.repl`.
+
+## Building and testing
+
+The build assumes Java 8.
+
+I suggest that you use Intellij, which knows how to deal with maven (`mvn`) builds. You can run the unit tests with a simple click. It should work on UNIX (including Mac) and Windows.
+
+You can build and test from the command line too:
+
+```bash
+$ mvn compile
+...
+$ java -cp target/classes:$CLASSPATH cs345.repl.JavaREPL
+> print "hi";
+hi
+> ^D
+$ 
+```
+
+Or to run all tests:
+
+```bash
+$ mvn test
+...
+Running cs652.repl.TestREPL
+> line 7: not a statement
+line 7: ';' expected
+
+> > line 7: ';' expected
+
+> line 7: illegal start of expression
+
+> > line 7: illegal start of expression
+
+> > line 7: ';' expected
+
+> > > > > 8> 60> > > > > > > > > > > T:f> > > > > > 123456789> > > > > > > > fruits 1 : Pineapplefruits 2 : Applefruits 3 : Orangefruits 4 : Banana> > > > > 8> > > > > hi> > > 3> > > > 7> > > > > > > > > 18> > Tests run: 18, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.776 sec
+
+Results :
+
+Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.174 s
+[INFO] Finished at: 2016-01-13T18:15:10-08:00
+[INFO] Final Memory: 17M/367M
+[INFO] ------------------------------------------------------------------------
+```
+
+Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven.
+
+Check out [https://travis-ci.com/USF-CS652-S16/USERID-regex](https://travis-ci.com/USF-CS652-S16/USERID-regex) or [https://travis-ci.com/USF-CS345-S16/USERID-regex](https://travis-ci.com/USF-CS345-S16/USERID-regex) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+
 ## Deliverables
 
-You must deliver class `JavaREPL` that is in the default (i.e., unnamed) package and it must contains a `main()` method that embodies the interactive shell described above. 
+* `JavaREPL.exec()`
+* Any supporting classes you write or pull in from the starterkit
 
 Make sure your repository has all classes you build for this project.
 
-**Do not add `.class` files or any other build artifacts.**
+**Do not add `.class` files or any other build artifacts to your repository.**
 
 ## Submission
 
