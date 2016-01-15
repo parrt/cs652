@@ -356,7 +356,18 @@ Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 ```
 
-Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven.
+Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven. Success looks like:
+
+<img src=images/travis-repl.png width=500>
+
+You must have a `.travis.yml` file (already included in starter kit):
+
+```
+jdk:
+  - oraclejdk8
+script: mvn clean verify
+language: java
+```
 
 Check out [https://travis-ci.com/USF-CS652-S16/USERID-regex](https://travis-ci.com/USF-CS652-S16/USERID-regex) or [https://travis-ci.com/USF-CS345-S16/USERID-regex](https://travis-ci.com/USF-CS345-S16/USERID-regex) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
