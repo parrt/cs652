@@ -30,7 +30,7 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/Java-vtable.md) |20%| 3 parts: J grammar: Fri,  Feb 19; symbol table Fri, Mar 4; code gen Fri, Mar 25|
 |[smalltalk compiler/VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md)| 20%| Wed, Apr 15 |
 |Garbage collector| 5% | Fri, May 6|
-|Exam 1| 15%| Mon, March 29 |
+|Exam 1| 15%| Mon, Feb 29 |
 |Exam 2| 15%| Fri, Apr 22 |
 |Final| 20%| 3pm Monday, May 16|
 
