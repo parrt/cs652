@@ -26,7 +26,7 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 | Artifact | Grade Weight | Due date |
 |--------|--------|--------|
 |[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 3%| Friday, Feb 5, 2016 |
-|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md)|2%| Fri, Feb 12|
+|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md) (borrowed from CS345)|2%| Fri, Feb 12|
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/Java-vtable.md) |20%| 3 parts: J grammar: Fri,  Feb 19; symbol table Fri, Mar 4; code gen Fri, Mar 25|
 |[smalltalk compiler/VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md)| 20%| Wed, Apr 15 |
 |Garbage collector| 5% | Fri, May 6|
