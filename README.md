@@ -163,6 +163,7 @@ Watch [How to build a virtual machine (video)](https://www.youtube.com/watch?v=O
 Read Chapter 10 in Language implementation patterns. Study the difference between a stack and register machine. Particularly relevant to the Smalltalk project, you want to look at the section on *Storing large constants in the constant pool*. We do something similar with the `push_literal` bytecode.
 
 Study [Simple Virtual Machine (Java)](https://github.com/parrt/simple-virtual-machine):
+
 * [master](https://github.com/parrt/simple-virtual-machine). Basic instructions only (no function calls).
 * [add-functions](https://github.com/parrt/simple-virtual-machine/tree/add-functions). Includes CALL/RET instructions, runs factorial test function.
 * [split-stack](https://github.com/parrt/simple-virtual-machine/tree/split-stack). Split into operand stack and function call stack. The virtual machines in LIP book have split stacks.
