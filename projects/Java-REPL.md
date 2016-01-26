@@ -145,11 +145,33 @@ public class Interp_0 {
 }
 ```
 
-Finally, before you try to analyze the Java code and execute it, translate statements such as `print` *expr*`;` to `Collector.println(`*expr*`);`.  I provide class `Collector` for you. For simplicity, assume that this print statement only works as the first characters a line and only a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
+Finally, before you try to analyze the Java code and execute it, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.  For simplicity, assume that this print statement only works as the first characters of a line and only as a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
 
 ###  Handling stderr and stdout
 
-For invalid Java, or at least what we can't handle, the compiler will generate errors. The Java compiler API does not emit errors automatically to standard error so you must collect these messages and emit them yourself to `stderr` using `Collector.error()`, just like we do for `println` to `stdout`. Here are some examples (notice that the errors are not necessarily intuitive because of the way we generate classes with the user input.):
+For invalid Java, or at least what we can't handle, the compiler will generate errors. The Java compiler API does not emit errors automatically to standard error so you must collect these messages and emit them yourself to `stderr` using `System.err.println()`.
+
+For automated testing purposes we need to capture that stuff. Please examine the `TestREPL` class and its methods that redirect stdout/stderr to buffers it can examine:
+
+```java
+@Before
+public void setup() {
+	save_stdout = System.out;
+	save_stderr = System.err;
+	stdout = new ByteArrayOutputStream();
+	stderr = new ByteArrayOutputStream();
+	System.setOut(new PrintStream(stdout));
+	System.setErr(new PrintStream(stderr));
+}
+
+@After
+public void teardown() {
+	System.setOut(save_stdout);
+	System.setErr(save_stderr);
+}
+```
+
+Here are some examples (notice that the errors are not necessarily intuitive because of the way we generate classes with the user input.):
 
 ![repl errors](images/repl-compile-errors.png)
 
@@ -162,8 +184,6 @@ If there is an error during execution, the Java virtual machine will emit errors
 The Java code entered by the user might also generate `stderr` or `stdout`. You have to make sure that this output is still sent to the user. Fortunately, you don't have to do anything to make that happen. Because we are operating within the same process, and indeed the same thread, standard streams will go to their usual places. For example, you might see something like this:
 
 ![repl errors](images/repl-stderr.png)
-
-You don't need to track writes to `stderr`.
 
 ###  Recognizing nested character streams
 
