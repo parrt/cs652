@@ -293,10 +293,13 @@ public static boolean isDeclaration(String line) throws IOException {
 
 Here's some information on dynamic class loading:
 
-* http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
-* http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
+* [Dynamic class loading](http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html)
+* [What is the difference between Class.forName() and ClassLoader.loadClass()?](http://www.javaworld.com/article/2077332/core-java/get-a-load-of-that-name.html)
+* [ClassLoader API](http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html)
 
-I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method.
+I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method. Then `invoke()` to call our `exec()` method. Call `exec()` even if it is blank because the user typed a declaration like `int i=1;`.
+
+**You must use a single instance of a `ClassLoader` during a single run of your REPL.**
 
 If it helps, here is my list of methods
 
@@ -313,10 +316,10 @@ I have provided a [cs652 starter kit](https://github.com/USF-CS652-starterkits/p
 
 ```bash
 $ git clone git@github.com:USF-CS652-S16/USERID-repl.git
-Cloning into 'USERID-regex'...
+Cloning into 'USERID-repl'...
 warning: You appear to have cloned an empty repository.
 Checking connectivity... done.
-$ cd USERID-regex
+$ cd USERID-repl
 $ git checkout -b master
 Switched to a new branch 'master'
 $ git remote add starterkit git@github.com:USF-CS652-starterkits/parrt-repl.git
@@ -335,10 +338,10 @@ To git@github.com:USF-CS652-S16/USERID-repl.git
 
 ```bash
 $ git clone git@github.com:USF-CS345-S16/USERID-repl.git
-Cloning into 'USERID-regex'...
+Cloning into 'USERID-repl'...
 warning: You appear to have cloned an empty repository.
 Checking connectivity... done.
-$ cd USERID-regex
+$ cd USERID-repl
 $ git checkout -b master
 Switched to a new branch 'master'
 $ git remote add starterkit git@github.com:USF-CS345-starterkits/parrt-repl.git
@@ -424,7 +427,7 @@ script: mvn clean verify
 language: java
 ```
 
-Check out [https://travis-ci.com/USF-CS652-S16/USERID-regex](https://travis-ci.com/USF-CS652-S16/USERID-regex) or [https://travis-ci.com/USF-CS345-S16/USERID-regex](https://travis-ci.com/USF-CS345-S16/USERID-regex) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+Check out [https://travis-ci.com/USF-CS652-S16/USERID-repl](https://travis-ci.com/USF-CS652-S16/USERID-repl) or [https://travis-ci.com/USF-CS345-S16/USERID-repl](https://travis-ci.com/USF-CS345-S16/USERID-repl) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
 ## Deliverables
 
