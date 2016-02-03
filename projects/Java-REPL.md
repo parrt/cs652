@@ -347,7 +347,7 @@ Switched to a new branch 'master'
 $ git remote add starterkit git@github.com:USF-CS345-starterkits/parrt-repl.git
 $ git pull starterkit master
 ...
-From github.com:USF-CS652-starterkits/parrt-repl
+From github.com:USF-CS345-starterkits/parrt-repl
  * branch            master     -> FETCH_HEAD
  * [new branch]      master     -> starterkit/master
 $ git push origin master
