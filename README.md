@@ -138,6 +138,8 @@ Chapter 6 in Language Implementation Patterns (LIP)
 
 (ANTLR 4 ref Section 8.4 has a subsection called a "Crash course in symbol tables" that could also be a useful supplement to Chapter 6 in LIP book.)
 
+See [Declarative Name Binding and Scope Rules](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2012-015.pdf) for another description of symbol table management.
+
 Chapter 7 in LIP: structs, classes
 
 Chapter 8 in LIP: type computation, promotion, type checking
