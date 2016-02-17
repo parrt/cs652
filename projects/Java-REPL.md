@@ -10,14 +10,14 @@ This project teaches you about dynamic compilation, class loaders, and simple le
 Your goal is to create an interactive "shell" tool that mimics the behavior of the Python interpreter shell. In other words you should be able to type the following, hit return, and see the result immediately:
 
 ```bash
-$ java cs652.JavaREPL
+$ java cs652.repl.JavaREPL
 > System.out.println("Hi");
 Hi
 ^D
 $
 ```
 
-where ^D is "control-D". That sends end-of-file to standard input on UNIX. It's ^Z on Windows.
+where ^D is "control-D". That sends end-of-file to standard input on UNIX. It's ^Z on Windows. Assumes your repl-1.0.jar is in the `CLASSPATH`.
 
 You should print a line with a "> " prompt for the user.
 
@@ -91,6 +91,9 @@ public class Interp_0 {
     public static void exec() {
     }
 }
+```
+
+```java
 import java.io.*;
 import java.util.*;
 public class Interp_1 extends Interp_0 {
@@ -98,6 +101,9 @@ public class Interp_1 extends Interp_0 {
     public static void exec() {
     }
 }
+```
+
+```java
 import java.io.*;
 import java.util.*;
 public class Interp_2 extends Interp_1 {
@@ -139,11 +145,33 @@ public class Interp_0 {
 }
 ```
 
-Finally, before you try to and analyze the Java code and executed, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.   For simplicity, assume that this print statement only works as the first characters a line and only a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
+Finally, before you try to analyze the Java code and execute it, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.  For simplicity, assume that this print statement only works as the first characters of a line and only as a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
 
 ###  Handling stderr and stdout
 
-For invalid Java, or at least what we can't handle, the compiler will generate errors to `stderr`. The Java compiler API does not emit errors automatically to standard error so you must collect these messages and emit them yourself to `stderr`. Here are some examples (notice that the errors are not necessarily intuitive because of the way we generate classes with the user input.):
+For invalid Java, or at least what we can't handle, the compiler will generate errors. The Java compiler API does not emit errors automatically to standard error so you must collect these messages and emit them yourself to `stderr` using `System.err.println()`.
+
+For automated testing purposes we need to capture that stuff. Please examine the `TestREPL` class and its methods that redirect stdout/stderr to buffers it can examine:
+
+```java
+@Before
+public void setup() {
+	save_stdout = System.out;
+	save_stderr = System.err;
+	stdout = new ByteArrayOutputStream();
+	stderr = new ByteArrayOutputStream();
+	System.setOut(new PrintStream(stdout));
+	System.setErr(new PrintStream(stderr));
+}
+
+@After
+public void teardown() {
+	System.setOut(save_stdout);
+	System.setErr(save_stderr);
+}
+```
+
+Here are some examples (notice that the errors are not necessarily intuitive because of the way we generate classes with the user input.):
 
 ![repl errors](images/repl-compile-errors.png)
 
@@ -197,7 +225,7 @@ void consume() throws IOException {
 }
 ```
 
-The basic idea is as follows. When asked to do so, my code looks at each character in turn and processes it accordingly. If it is an opening curly brace, bracket, or parenthesis, I push the appropriate closing character onto a stack. Upon closing character, I checked the top of the stack to make sure that it's the right symbol. If not, I declare and improperly nested piece of code and return the current buffer to my JavaREPL. When I see the start of a string or character literal, I consume characters until the closing character. Upon `//`, I consume characters until the end of line and in fact I strip away these comments and do not send them to the compiler. Upon `\n` and an empty stack, I returned the current buffer to the invoking code otherwise I keep consuming characters.
+The basic idea is as follows. When asked to do so, my code looks at each character in turn and processes it accordingly. If it is an opening curly brace, bracket, or parenthesis, I push the appropriate closing character onto a stack. Upon closing character, I check the top of the stack to make sure that it's the right symbol. If not, I declare an improperly nested piece of code and return the current buffer to my JavaREPL. When I see the start of a string or character literal, I consume characters until the closing character. Upon `//`, I consume characters until the end of line and in fact I strip away these comments and do not send them to the compiler. Upon `\n` and an empty stack, I return the current buffer to the invoking code otherwise I keep consuming characters.
 
 ## Requirements
 
@@ -207,12 +235,11 @@ Just to summarize, keep in mind the following requirements.
 1.  Accept as a declaration, anything that will compile with `public static` in front of it as a field of a class, which would include variable, function, and class definitions.
 1. Your program must not require more than a single newline character after the end of a valid statement or declaration. In other words, I shouldn't have to hit extra newlines to make your program execute my code.
 1.  Allow a blank line as a "do nothing" statement
-1. Accept `print `*expr*`;` as a statement and converted to a call to `Collector.println()` before processing so the unit test rig can test the output.
-1. You must also convert `System.out.println()` calls to `Collector.println()`.
+1. Accept `print `*expr*`;` as a statement and converted to a call to `System.out.println()` before processing so the unit test rig can test the output.
 1.  Comments on the end of the line should not present execution of the line:
 `print "hi"; // a comment`.
 1.  Anything that does not parse as a valid declaration, should be assumed to be a statement and compiled/executed as such.
-1.  All code execution must occur within the same user thread and within the same process; i.e., you cannot use `Runtime.exec()` or anything like it to launch Java and another process. It won't do you any good but I wanted to prevent you from wasting time going down that path.
+1.  All code execution must occur within the same user thread and within the same process; i.e., you **cannot** use `Runtime.exec()` or anything like it to launch Java and another process. It won't do you any good but I wanted to prevent you from wasting time going down that path.
 1. You must use the Java compiler API to parse and compile code.
 1. You must use a `ClassLoader` to bring in the compiled class that you generate and then use standard reflection to execute that code (i.e., call `exec()` on the class object you bring in).
 1. Users must see standard output and standard error as they would normally expect from compiler errors and run-time errors.
@@ -266,10 +293,13 @@ public static boolean isDeclaration(String line) throws IOException {
 
 Here's some information on dynamic class loading:
 
-* http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html
-* http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html
+* [Dynamic class loading](http://tutorials.jenkov.com/java-reflection/dynamic-class-loading-reloading.html)
+* [What is the difference between Class.forName() and ClassLoader.loadClass()?](http://www.javaworld.com/article/2077332/core-java/get-a-load-of-that-name.html)
+* [ClassLoader API](http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html)
 
-I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method.
+I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method. Then `invoke()` to call our `exec()` method. Call `exec()` even if it is blank because the user typed a declaration like `int i=1;`.
+
+**You must use a single instance of a `ClassLoader` during a single run of your REPL.**
 
 If it helps, here is my list of methods
 
@@ -282,14 +312,14 @@ If it helps, here is my list of methods
 
 ## Getting started
 
-I have provided a [starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
+I have provided a [cs652 starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) and [cs345 starter kit](https://github.com/USF-CS345-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
 
 ```bash
 $ git clone git@github.com:USF-CS652-S16/USERID-repl.git
-Cloning into 'USERID-regex'...
+Cloning into 'USERID-repl'...
 warning: You appear to have cloned an empty repository.
 Checking connectivity... done.
-$ cd USERID-regex
+$ cd USERID-repl
 $ git checkout -b master
 Switched to a new branch 'master'
 $ git remote add starterkit git@github.com:USF-CS652-starterkits/parrt-repl.git
@@ -304,7 +334,27 @@ To git@github.com:USF-CS652-S16/USERID-repl.git
  * [new branch]      master -> master
 ```
 
-**NOTE**: If you're doing this project as part of CS345 not CS652, note that your repo will live in USF-CS345-XX but you will pull the starterkit from `git@github.com:USF-CS652-starterkits/parrt-repl.git`. The package will be `cs652.repl`, which you can leave as-is instead of changing to `cs345.repl`.
+**NOTE**: If you're doing this project as part of CS345 not CS652, note that your repo will live in USF-CS345-XX and you will pull the starterkit from `git@github.com:USF-CS345-starterkits/parrt-repl.git`. The package will be `cs345.repl`. Here is what the "pull" looks like to get started for CS345:
+
+```bash
+$ git clone git@github.com:USF-CS345-S16/USERID-repl.git
+Cloning into 'USERID-repl'...
+warning: You appear to have cloned an empty repository.
+Checking connectivity... done.
+$ cd USERID-repl
+$ git checkout -b master
+Switched to a new branch 'master'
+$ git remote add starterkit git@github.com:USF-CS345-starterkits/parrt-repl.git
+$ git pull starterkit master
+...
+From github.com:USF-CS345-starterkits/parrt-repl
+ * branch            master     -> FETCH_HEAD
+ * [new branch]      master     -> starterkit/master
+$ git push origin master
+...
+To git@github.com:USF-CS345-S16/USERID-repl.git
+ * [new branch]      master -> master
+```
 
 ## Building and testing
 
@@ -324,7 +374,15 @@ hi
 $ 
 ```
 
-Or to run all tests:
+You will need to add
+
+```
+/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/lib/*`
+```
+
+to your `CLASSPATH` so that the java compiler tools classes are available.
+
+Or to run all tests with maven (w/o worrying about `CLASSPATH`):
 
 ```bash
 $ mvn test
@@ -369,7 +427,7 @@ script: mvn clean verify
 language: java
 ```
 
-Check out [https://travis-ci.com/USF-CS652-S16/USERID-regex](https://travis-ci.com/USF-CS652-S16/USERID-regex) or [https://travis-ci.com/USF-CS345-S16/USERID-regex](https://travis-ci.com/USF-CS345-S16/USERID-regex) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+Check out [https://travis-ci.com/USF-CS652-S16/USERID-repl](https://travis-ci.com/USF-CS652-S16/USERID-repl) or [https://travis-ci.com/USF-CS345-S16/USERID-repl](https://travis-ci.com/USF-CS345-S16/USERID-repl) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
 ## Deliverables
 
