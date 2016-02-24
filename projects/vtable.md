@@ -10,7 +10,11 @@ To get started, please familiarize yourself with:
 * [vtable semantics starter kit](https://github.com/USF-CS652-starterkits/parrt-vtable-symtab)
 * [vtable codegen starter kit](https://github.com/USF-CS652-starterkits/parrt-vtable).
 
-The main program is `JTran.java` for the 3rd and final piece of the project.
+The main program is `JTran.java` for the 3rd and final piece of the project, which we can run from the commandline as:
+
+```
+$ java cs652.j.JTran [-print] [-tree] [-inspect] [-o output-file] file.j
+```
 
 ## Discussion
 
@@ -38,7 +42,7 @@ a.speak(); // prints woof!
 d.speak(); // prints woof!
 ```
 
-Check out the [expected C code](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/tests/cs652/j/polymorph.c).
+Check out the [expected C code](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/resources/samples/polymorph.c).
 
 ```java
 // tests/cs652/j/vtable_check.j
@@ -60,7 +64,7 @@ d = new Pekinese();
 printf("%d\n", d.foo()); // must print 3
 ```
 
-Check out the [expected C code](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/tests/cs652/j/vtable_check.c).
+Check out the [expected C code](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/resources/samples/vtable_check.c).
 
 A file consists of zero or more class definitions followed optionally by a main program followed by end of file:
 
@@ -71,7 +75,7 @@ file:   classDeclaration* main EOF
     ;
 ```
 
-You can see all of the [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/tests/cs652/j).
+You can see all of the [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/blob/master/resources/samples).
 
 ### Translation to C
 
