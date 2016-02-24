@@ -109,7 +109,7 @@ object *alloc(metadata *clazz) {
 
 `metadata` records information about a class definition, including its name, how many bytes are required to hold an instance of that class, and finally its vtable.
 
-Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` by using this `struct` allows us to access any objects class definition pointer. To make a method call, we need to access the receiver objects vtable.
+Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` but by using this `struct` we can access any object's class definition pointer. To make a method call, we need to access the receiver object's *vtable*.
 
 Finally, we have a function that allocates space for an instance of a class: `alloc`. It takes class definition metadata and returns an object of the appropriate size with its class definition pointer set.  Constructor expressions such as `new Dog()` become calls to `alloc` with a typecast on the result so that it is appropriately typed for C code.
 
@@ -484,7 +484,7 @@ Once we have all of the information we need, we construct a model of the output 
 
 Once you have the complete output model constructed, it's a simple matter of walking that hierarchy and generating output for each element. It is so regular that we can do this automatically using the `ModelConverter` object I have provided for you. Given a model hierarchy, it returns a hierarchy of templates. To generate actual text, we just have to call `render()` on that hierarchy of templates. The output should be written to a file according to the command line arguments to `JTrans`.
 
-### Creating the J grammar
+### 1. Creating the J grammar
 
 Your must fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.) Learning how to examine exemplars of a language and construct a suitable grammar is important but here are a few details that matter in terms of symbol table management and type analysis.
 
@@ -505,7 +505,7 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 * `a.b.c.foo()` style calls are allowed outside of classes and inside methods of classes.
 * `t.y` and `this.y` and `y` field access is allowed inside methods and `t.y` is allowed outside of methods. `x` without qualifications is a local variable outside of a method (and could be within a method).
 
-### Defining scopes and symbols
+### 2a. Defining scopes and symbols
 
 1. Define J symbol table objects using `src/org/antlr/symbols` objects as superclasses as necessary:
 	JArg.java
@@ -537,7 +537,7 @@ class Employee {
 ![scope tree](images/scope-tree.png)
 </center>
 
-### Recording type information
+### 2b. Recording type information
 
 While this is not good enough in general, for this type of school project, we can get away with recording types as we define symbols. This requires that we do not refer to types that are defined later in the file but that is an okay limitation.
 
@@ -546,7 +546,7 @@ While this is not good enough in general, for this type of school project, we ca
 * For a field declaration or local variable declaration, set its type to `JPrimitiveType` or `JClass` depending on what you find when you resolve the symbol from the current scope.
 
 
-### Computing expression types
+### 2c. Computing expression types
 
 1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes.
 
@@ -566,7 +566,7 @@ You need to compute expression types for:
 
 Once you have created the scopes and annotated the parse tree with scope pointers in the previous phase, you need to set the `currentScope` variable for this compute types phase. I tend to factor this functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
 
-### Constructing a model
+### 3a. Constructing a model
 
 In order to generate code, we once again walk the parse tree. But, instead of printing or buffering text output, we create model objects because it is a much more flexible mechanism. The order we create these model objects and hook them together is irrelevant. We don't generate output until the entire model has been created. Consequently, we can follow the order of the input by walking the input parse tree to construct the model. The model objects I create represent the important elements of our output C code:
 
@@ -591,7 +591,7 @@ VarDef(var, type)   ::= ""
 ...
 ```
 
-### Generating C code from the model
+### 3b. Generating C code from the model
 
 The `ModelConverter` is an automated tool that I use for ANTLR and it is pure magic. It automatically converts an output model tree full of `OutputModelObject` objects to a template hierarchy by walking the output model (depth-first walk). Each output model object has a corresponding template of the same name.  An output model object can have nested objects identified by annotation `@ModelElement` in the class definition.  The model converter automatically creates templates for these fields and ads than is attributes to the template for the current model object. For example, here is the root of the output model hierarchy:
 
@@ -659,13 +659,56 @@ fileHeader(grammarFileName, ANTLRVersion) ::= <<
 
 ## Testing
 
-**Assumes that you have Gnu [`gindent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
+### Required applications
+
+**This project requires that you have Gnu [`gindent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
 
 ```bash
 $ brew install gnu-indent # on mac os x
 ```
 
-All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/tests/cs652/j) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. You can run all of the tests like this:
+### Testing the grammar
+
+Jump into the root of your `vtable-grammar` repository and use maven to build and test:
+
+```
+$ cd vtable-grammar
+$ mvn test
+...
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running cs652.j.TestParser
+Working dir: /var/folders/93/9kzk2ccm8xj8k70059b28jk80000gp/T/junit2858125363876143181
+Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.16 sec
+
+Results :
+
+Tests run: 26, Failures: 0, Errors: 0, Skipped: 0
+...
+```
+
+### Testing the symbol table
+
+Jump into the root of your `vtable-symtab` repository and use maven to build and test:
+
+```
+$ cd vtable-symtab
+$ mvn test
+...
+```
+
+### Testing the code generator
+
+Jump into the root of your `vtable` repository and use maven to build and test:
+
+```
+$ cd vtable
+$ mvn test
+...
+```
+
+All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/resources/samples) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. You can run all of the tests like this:
 
 ```bash
 ./bild.py -debug tests
