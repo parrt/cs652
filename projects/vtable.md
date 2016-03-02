@@ -116,6 +116,8 @@ _a:
 
 Note that `pa` is a pointer to an array of `int` not an array of `int`. `pa` is also not a pointer to an `int`, hence, `p=a;` is legal but `pa=a` is not.
 
+Also see [Are pointers and arrays equivalent in C?](http://eli.thegreenplace.net/2009/10/21/are-pointers-and-arrays-equivalent-in-c).
+
 #### Boilerplate support code
 
 For simplicity, generate all of the support code at the start of each file:
