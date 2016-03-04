@@ -146,7 +146,7 @@ object *alloc(metadata *clazz) {
 
 `metadata` records information about a class definition, including its name, how many bytes are required to hold an instance of that class, and finally its vtable.
 
-Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `class`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` but by using this `struct` we can access any object's class definition pointer. To make a method call, we need to access the receiver object's *vtable*.
+Each instance of a class starts with a single pointer of overhead, a pointer to its class definition "object" called `clazz`. This memory template is described by `object`. All instances that have data fields will be bigger than `object` but by using this `struct` we can access any object's class definition pointer. To make a method call, we need to access the receiver object's *vtable*.
 
 Finally, we have a function that allocates space for an instance of a class: `alloc`. It takes class definition metadata and returns an object of the appropriate size with its class definition pointer set.  Constructor expressions such as `new Dog()` become calls to `alloc` with a typecast on the result so that it is appropriately typed for C code.
 
@@ -183,7 +183,7 @@ Don't forget the `metadata` pointer. It allows every object to know its type at 
 
 Every reference to a field `x` within a method is really `this.x` and so field references inside methods are converted to `this->x` where `this` is the first argument of each function we define for each J method.
 
-Accesses to fields outside are always through an object reference. `o.x` &rarr; `o->x`.
+Accesses to fields outside of instance methods are always through an object reference; e.g., `o.x` &rarr; `o->x`.
 
 #### Inheritance of fields
 
@@ -214,7 +214,7 @@ typedef struct {
 </tr>
 </table>
 
-The order of inherited fields must be preserved in `struct`s for subclasses so that a reference to an object through any pointer type will access the same field offset. Any fields added in a subclass must appear after the inherited attributes.
+*The order of inherited fields must be preserved* in `struct`s for subclasses so that a reference to an object through any pointer type will access the same field offset. Any fields added in a subclass must appear after the inherited fields.
 
 #### Main programs
 
