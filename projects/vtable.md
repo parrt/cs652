@@ -308,6 +308,29 @@ Method invocation expressions in Java such as `o.m(args)` are executed as follow
 3.	Ask `T` to find an implementation for method `m`. If `T` does not define an implementation, `T` checks its superclass, and its superclass until an implementation is found.
 4.	Invoke method `m` with the argument list, `args`, and also pass `o` to the method, which will become the `this` parameter for method `m`.
 
+For example, consider the following Java method:
+
+```java
+void f() {
+	String s = "hi";
+	s.trim();
+}
+```
+
+The java compiler generates the following bytecode (output of `javap`):
+
+```
+void f();
+Code:
+   0: ldc           #2                  // String hi
+   2: astore_1
+   3: aload_1
+   4: invokevirtual #3                  // Method java/lang/String.trim:()Ljava/lang/String;
+...
+```
+
+The first 2 bytecode do the assignment: `String s = "hi";`. Then `aload_1` pushes `s` onto the operand stack. Next, `invokevirtual` calls method `String::trim()` using `s` as the first argument (`this`).
+
 In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically. Let's go through an example to figure out how to implement dynamic binding of methods:
 
 ```java
