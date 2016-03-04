@@ -329,7 +329,7 @@ Code:
 ...
 ```
 
-The first 2 bytecode do the assignment: `String s = "hi";`. Then `aload_1` pushes `s` onto the operand stack. Next, `invokevirtual` calls method `String::trim()` using `s` as the first argument (`this`).
+The first 2 bytecode do the assignment: `String s = "hi";`. Then `aload_1` pushes `s` onto the operand stack. Finally, all of the magic happens in `invokevirtual`, which performs operations 1-4 from above, calling method `String::trim()` using `s` as the first argument (`this`).
 
 In C++, and in our translation of Java, we will do something very similar but of course we do not need to load `T` dynamically. Let's go through an example to figure out how to implement dynamic binding of methods:
 
