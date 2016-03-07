@@ -526,9 +526,11 @@ v.start();
 (*(void (*)(Vehicle *))(*v->clazz->_vtable)[Vehicle_start_SLOT])(((Vehicle *)v));
 ```
 
+Because `Truck` inherits from `Vehicle`, `Vehicle_start_SLOT` and `Truck_start_SLOT` are the same index.
+
 To my surprise, when I left off the types of the arguments in my typecast, the function call ignored my parameters during execution. It must be some sort of compiler optimization.
 
-In comparison, the other translations are straightforward and easily discernible from looking at the input-output pairs in the test directory.
+In comparison, the other, non-dynamic-dispatch translations are straightforward and easily discernible from looking at the input-output pairs in the test directory.
 
 ## Tasks
 
@@ -632,7 +634,7 @@ In order to generate code, we once again walk the parse tree. But, instead of pr
 
 ![output model objects](images/vtable_models.png)
 
-In the `C.stg` template group file, you will see template stubs that correspond by name with the model objects:
+In the `C.stg` [StringTemplate](http://www.stringtemplate.org) group file, you will see template stubs that correspond by name with the model objects:
 
 ```
 ClassDef(class, fields, methods, vtable) ::= <<
@@ -651,9 +653,15 @@ VarDef(var, type)   ::= ""
 ...
 ```
 
+I have created a [StringTemplate plugin for Intellij](https://plugins.jetbrains.com/plugin/8041) which helps a lot. For example:
+
+<center>
+<img src="https://plugins.jetbrains.com/files/8041/screenshot_15460.png" width=430>
+</center>
+
 ### 3b. Generating C code from the model
 
-The `ModelConverter` is an automated tool that I use for ANTLR and it is pure magic. It automatically converts an output model tree full of `OutputModelObject` objects to a template hierarchy by walking the output model (depth-first walk). Each output model object has a corresponding template of the same name.  An output model object can have nested objects identified by annotation `@ModelElement` in the class definition.  The model converter automatically creates templates for these fields and ads than is attributes to the template for the current model object. For example, here is the root of the output model hierarchy:
+The `ModelConverter` is an automated tool that I use for ANTLR and it is pure magic. It automatically converts an output model tree full of `OutputModelObject` objects to a template hierarchy by walking the output model (depth-first walk). Each output model object has a corresponding template of the same name.  An output model object can have nested objects identified by annotation `@ModelElement` in the class definition.  The model converter automatically creates templates for these fields and adds them as attributes to the template for the current model object. For example, here is the root of the output model hierarchy:
 
 ```java
 public class CFile extends OutputModelObject {
@@ -683,7 +691,7 @@ The first object, however we name it, is always set to the model object associat
 
 |Confusion point|
 |-------------|
-|*The parameters associated with the nested model objects are templates not output model objects!* For example, `f` is a `CFile` but `classes` is an instance of a template called `ClassDef` and `main` is an instance of a template called `MainMethod`. So, `<f.name>` yields the `name` field of a `CFile` model object but `<main.foo>` will not give you access to the `foo` field of model object `MainMethod`--it is a template not a model object. Please keep this in mind; it even catches me once in a while.|
+|*The parameters associated with the nested model objects are templates not output model objects!* For example, `f` is a `CFile` but `classes` is a `List<StringTemplate>` of instances of a template called `ClassDef` and `main` is an instance of a template called `MainMethod`. So, `<f.name>` yields the `name` field of a `CFile` model object but `<main.foo>` will not give you access to the `foo` field of model object `MainMethod`--`main` is a template reference not a model object. Please keep this in mind; it even catches me once in a while.|
 
 This simple mechanism means we don't have to include code in every output model object that says how to create the corresponding template. One can imagine adding a `toTemplate` method to every output model object but it is inferior to this automated mechanism.
 
@@ -693,17 +701,41 @@ It might help to look at the [Java output templates for ANTLR](https://github.co
 
 ![listener file](images/ListenerFile.png)
 
-Take a look at the corresponding [output model object for the listener file](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/ListenerFile.java), which inherits some fields referenced in the template from [OutputFile](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/OutputFile.java). Let's walk through the template.
+Take a look at the corresponding [output model object for the listener file](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/ListenerFile.java), which inherits some fields referenced in the template from [OutputFile](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/OutputFile.java). Here are the fields:
+
+```java
+/** A model object representing a parse tree listener file.
+ *  These are the rules specific events triggered by a parse tree visitor.
+ */
+public class ListenerFile extends OutputFile {
+	public String genPackage; // from -package cmd-line
+	public String grammarName;
+	public String parserName;
+	/**
+	 * The names of all listener contexts.
+	 */
+	public Set<String> listenerNames = new LinkedHashSet<String>();
+	/**
+	 * For listener contexts created for a labeled outer alternative, maps from
+	 * a listener context name to the name of the rule which defines the
+	 * context.
+	 */
+	public Map<String, String> listenerLabelRuleNames = new LinkedHashMap<String, String>();
+
+	@ModelElement public Action header;
+```
+
+Let's walk through the template.
 
 1.  Template `ListenerFile` (line 63) takes two parameters, the first of which (`file`) refers to the model object itself. This is injected by the model converter (and it is this model converter that I have copied into your projects). The second parameter, `header`, is automatically injected by the model converter as well. It is a template created for the corresponding field in `ListenerFile`:
 ```java
 @ModelElement public Action header;
 ```
-The annotation is a signal to the model converter that it should create a template associated with the model object contained in that field and injected as a parameter to the template associated with the containing object (a `ListenerFile` object). [Action](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/Action.java), the type of the `header` field, is another model object with corresponding template:
+The annotation is a signal to the model converter that it should create a template associated with the model object contained in that field and inject it as a parameter to the template associated with the containing object (a `ListenerFile` object). [Action](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/codegen/model/Action.java), the type of the `header` field, is another model object with corresponding template:
 ```
 Action(a, chunks) ::= "<chunks>"
 ```
-(ignore the typo that has `foo` as an argument to `Action` in the source code). `Action` has a field with a signal to the model converter to create a template and inject it as parameter `chunks`:
+`Action` has a field with a signal to the model converter to create a list of templates, one per model object in `chunks`, and inject it as parameter `chunks`:
 ```java
 @ModelElement public List<ActionChunk> chunks;
 ```
@@ -768,10 +800,14 @@ $ mvn test
 ...
 ```
 
-All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/resources/samples) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. You can run all of the tests like this:
+All [sample inputs I used for testing](https://github.com/USF-CS652-starterkits/parrt-vtable/tree/master/resources/samples) are available. For each test `T`, you will find `T.j`, `T.c`, and `T.txt` where `T.txt` is the expected output after you compile and execute the program. 
 
-```bash
-./bild.py -debug tests
-```
+### Debugging support
 
-Remember, the definition of “working” is when your grammar correctly parses all of the `.j` files. If you use the `-tree` option from the command line with `JTran.java` that I provide, it will pop up a visual of the parse tree for you.
+If you use the `-tree` option from the command line with `JTran.java` that I provide, it will pop up a visual of the parse tree for you.
+
+If you use `-inspect` option, it will pop up a StringTemplate debugger. E.g., here is what it looks like for `Args.j`:
+
+<center>
+<img src="images/Args-inspect.png" width=700>
+</center>
