@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this lecture, we will explore a simple interpreter architecture for a real language called PostScript, a page description language created by Adobe Systems circa 1985. PostScript (*PS*) is stack-based and all operands go onto a stack and results go back onto the stack. It has no keywords!
+In this lecture, we will explore a simple interpreter architecture for a real language called PostScript, a page description language created by Adobe Systems circa 1982. PostScript (*PS*) is stack-based and all operands go onto a stack and results go back onto the stack. It has no keywords!
 
 PDF (Acrobat) files are essentially a restricted form of PostScript that makes rendering more efficient, so postscript is an actively-used programming language. It is worthwhile learning how PostScript's interpreter works and how to code a little PostScript to impress your friends. The most interesting feature of PostScript is that it's a programming language, not a data file.
 
