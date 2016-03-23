@@ -753,10 +753,10 @@ fileHeader(grammarFileName, ANTLRVersion) ::= <<
 
 ### Required applications
 
-**This project requires that you have Gnu [`gindent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
+**This project requires that you have Gnu [`indent`](http://www.gnu.org/software/indent/manual) installed.** On a Mac this is easy to do:
 
 ```bash
-$ brew install gnu-indent # on mac os x
+$ brew install gnu-indent --with-default-names # on mac os x
 ```
 
 ### Testing the grammar

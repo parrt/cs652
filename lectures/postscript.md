@@ -6,11 +6,11 @@ In this lecture, we will explore a simple interpreter architecture for a real la
 
 PDF (Acrobat) files are essentially a restricted form of PostScript that makes rendering more efficient, so postscript is an actively-used programming language. It is worthwhile learning how PostScript's interpreter works and how to code a little PostScript to impress your friends. The most interesting feature of PostScript is that it's a programming language, not a data file.
 
-Postscript is very similar to the [Forth programming language](http://www.forth.org/) and is in the class of languages like SmallTalk and LISP that use programming language constructs to extend the language. Forth could add new operations at will, SmallTalk could add a new instance variable by calling a method (`addInstanceVar` or some such), a LISP program is essentially just data so you can do whatever you want. Java goes part of the way, by letting you query object definitions at run-time, but you cannot add an instance variables at run-time (you cannot define new keywords either).
+Postscript is very similar and was influenced indirectly by the [Forth programming language](http://www.forth.org/) and is in the class of languages like SmallTalk and LISP that use programming language constructs to extend the language. Forth could add new operations at will, SmallTalk could add a new instance variable by calling a method (`addInstanceVar` or some such), a LISP program is essentially just data so you can do whatever you want. Java goes part of the way, by letting you query object definitions at run-time, but you cannot add an instance variables at run-time (you cannot define new keywords either).
 
-PostScript is dynamically scoped (the set of visible symbols is determined at runtime not according to a lexical reference point) and likely the most common one still in use. Perl, Tcl, and TeX also still have dynamic scoping.
+PostScript is dynamically scoped (the set of visible symbols is determined at runtime not according to a lexical reference point) and is likely the most common one still in use. Perl, Tcl, and TeX also still have dynamic scoping.
 
-Just to give you a taste of the project associated with this lecture, you will build an interpreter for a simplified version of PostScript, but one that can actually draw pictures and so on. Your goal will be to get the interpreter functional enough to display the following:
+Building a PS interpreter sufficient to handle some sophisticated images is actually pretty easy I used to have students do this as a lab in class. It could display images like this:
 
 ![nozzle](images/nozzle.png )
 
@@ -49,6 +49,9 @@ A PostScript program must begin with a magic line and generally has a trailer th
 ... instructions ...
 %%EOF
 ```
+
+(To try these commands out, see the GhostScript discussion below.)
+
 Single-line comments start with `%` and, hence, these "commands" are just special comments.
 
 The grammatical structure of the language is so simple that you can summarize the executable instructions in one rule:
@@ -368,7 +371,9 @@ Objects are copied onto the stack when pushed, unless they are composite element
 
 ### GhostScript in interactive mode
 
-When exploring PostScript, it is useful to use the [GhostScript](http://www.ghostscript.com/) interpreter, which you can install with `brew install ghostscript` on mac. (If you get an error that it cannot find an image/lib, see the [fix](http://stackoverflow.com/questions/24690800/imagemagick-ghostscript-dyld-library-not-loaded-usr-local-lib-libjbig2dec)). On the other hand, I found that it wasn't working for me, possibly because of an X11 issue.  I installed [Richard Koch's GhostScript package](http://pages.uoregon.edu/koch/) and it worked. You will find the following commands useful:
+When exploring PostScript, it is useful to use the [GhostScript](http://www.ghostscript.com/) interpreter, which you can install with `brew install ghostscript` on mac. (If you get an error that it cannot find an image/lib, see the [fix](http://stackoverflow.com/questions/24690800/imagemagick-ghostscript-dyld-library-not-loaded-usr-local-lib-libjbig2dec)). On the other hand, I found that it wasn't working for me, possibly because of an X11 issue.  I installed [Richard Koch's GhostScript package](http://pages.uoregon.edu/koch/) and it worked. Also, if no window pops up when you try to draw something, use `gs-X11` from the command line, not just `gs`, and it should work.
+
+You will find the following commands useful:
 
 * `=`: pop something off the stack and print a text representation.
 * `==`: pop something off the stack and print a text representation, but print data structures and elements in PS syntax.
