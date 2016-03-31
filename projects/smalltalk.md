@@ -55,22 +55,23 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 Smalltalk uses the concept of message sending, which is really the same thing as method calling in Java. There are three kinds of messages:
 
 1. **Unary messages**.  These are messages with no arguments. For example, Smalltalk `myList size` is just `myList.size()` in Java. The most common unary message is probably `new`, which creates a new object. For example, `Array new`, which is more or less `new Array()` in Java.
-1. **Binary operator messages**.  These messages take one argument and take the form of one or more special symbols. For example, `1+2` is the usual addition and `x->y` creates an association object used by `Dictionary`.
-```java
-/** "A binary message selector is composed of one or
-     two nonalphanumeric characters. The only restriction is
-     that the second character cannot be a minus sign."
-     BlueBlook p49 in pdf.
- */
-bop : (opchar|'-') opchar? ;
-opchar
-	:	'+'
-	|	'/' | '\\'
-	|	'*' | '~'
-	|	'<' | '>'
-	|	'=' | '@' | '%' | '|' | '&' | '?' | ','
-	;
-```
+2. **Binary operator messages**.  These messages take one argument and take the form of one or more special symbols. For example, `1+2` is the usual addition and `x->y` creates an association object used by `Dictionary`.
+	```java
+	/** "A binary message selector is composed of one or
+	     two nonalphanumeric characters. The only restriction is
+	     that the second character cannot be a minus sign."
+	     BlueBlook p49 in pdf.
+	 */
+	bop : (opchar|'-') opchar? ;
+	opchar
+		:	'+'
+		|	'/' | '\\'
+		|	'*' | '~'
+		|	'<' | '>'
+		|	'=' | '@' | '%' | '|' | '&' | '?' | ','
+		;
+	```
+	
 3. **Keyword messages**. These messages take one or more arguments, but unlike Java, the argument names are used in the call. For example, here's how to execute code block over the values from 1 to 5: `1 to: 5 do: [:i | ...]`.  Method `to:do:` passes the iteration number as an argument to the code block when it evaluates it. Here's how to take the conjunction of two booleans: `true and: false`.
 
 **Precedence**.  Unary operators have higher precedence than binary operators, which have higher precedence than keyword operators.  Operators within the same type (unary, binary, keyword) group left to right. That means that `1+2*3` is `(1+2)*3` not `1+(2*3)` as we use in arithmetic and most other programming languages. Parentheses override the default precedence as usual. Here's an example that uses all three operators:
