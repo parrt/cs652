@@ -12,7 +12,7 @@ Here is the [formal ANTLR grammar](https://github.com/USF-CS652-starterkits/parr
 Our version of Smalltalk differs from the standard in a few ways:
 * no class variables but allows class methods
 * subclasses can see the fields of their parent classes; in ST-80 these are private
-* we disallow globals. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. Asking for the value of a global variable that is not defined, results in an error. The set of global names is readonly except class names.
+* we disallow globals variables. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. There is a `push_global` instruction but it is for looking up class names and other globally-visible symbols (only one so far is `Transcript` object).
 * We allow forward refs (refs to classes not yet defined)
 * no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`.
 * no ';' extended msg send notation
@@ -45,7 +45,7 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 |`^`*expr*|return expression from method, even when nested in a `[...]`block|
 |`|x y|`|define two local variables or fields|
 |`{a. 1+2. aList size}`|dynamic array constructed from three expressions separated by periods|
-|`[:x | 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, of these are called lambdas or closures.|
+|`[:x | 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, these are called lambdas or closures.|
 |`[:x :y | x*y]`|code block taking two parameters|
 |`[99] value` |use `value` method to evaluate a block with 99|
 |`[:x | 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
@@ -72,7 +72,7 @@ Smalltalk uses the concept of message sending, which is really the same thing as
 		;
 	```
 	
-3. **Keyword messages**. These messages take one or more arguments, but unlike Java, the argument names are used in the call. For example, here's how to execute code block over the values from 1 to 5: `1 to: 5 do: [:i | ...]`.  Method `to:do:` passes the iteration number as an argument to the code block when it evaluates it. Here's how to take the conjunction of two booleans: `true and: false`.
+3. **Keyword messages**. These messages take one or more arguments, but unlike Java, the argument names are used in the call. For example, here's how to execute a code block over the values from 1 to 5: `1 to: 5 do: [:i | ...]`.  Method `to:do:` passes the iteration number as an argument to the code block when it evaluates it. Here's how to take the conjunction of two booleans: `true and: false`.
 
 **Precedence**.  Unary operators have higher precedence than binary operators, which have higher precedence than keyword operators.  Operators within the same type (unary, binary, keyword) group left to right. That means that `1+2*3` is `(1+2)*3` not `1+(2*3)` as we use in arithmetic and most other programming languages. Parentheses override the default precedence as usual. Here's an example that uses all three operators:
 
@@ -80,7 +80,7 @@ Smalltalk uses the concept of message sending, which is really the same thing as
 1+2 to: myList size do: [:i | ...]
 ```
 
-The keyword message `to:do:` has lowest precedence and so `myList size` is evaluated and passed as the `to:` parameter.  Similarly, `1+2` evaluates to 3 and is the receiver of the `to:do:` message. When it's unclear to the reader what the president says, use parentheses.
+The keyword message `to:do:` has lowest precedence and so `myList size` is evaluated and passed as the `to:` parameter.  Similarly, `1+2` evaluates to 3 and is the receiver of the `to:do:` message. When it's unclear to the reader what the precedence is, use parentheses.
 
 ### Class, method syntax
 
