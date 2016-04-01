@@ -41,7 +41,7 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 | Syntax | Semantics |
 |---------:|--------|
 |`.`|expression separator (not terminator)|
-|`x := *expr*`|assignment to local or field (there are no global variables)|
+|`x :=` *expr*|assignment to local or field (there are no global variables)|
 |`^`*expr*|return expression from method, even when nested in a `[...]`block|
 |`|x y|`|define two local variables or fields|
 |`{a. 1+2. aList size}`|dynamic array constructed from three expressions separated by periods|
