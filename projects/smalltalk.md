@@ -244,7 +244,7 @@ First, here is an example that passes a code block from `f` to another method, `
 
 <img src="images/smalltalk-stack2.png" width=700 align=middle>
 
-Next, we have an unusual example that alters a local variable of a function that has already returned. Method `f` returns a block as a return value that the main program evaluates. The block, `[x:=5]` stores of value into a local variable for `f`, despite the fact that `f` has already returned. The semantics of Smalltalk allow this.
+Next, we have an unusual example that alters a local variable of a function that has already returned. Method `f` returns a block as a return value that the main program evaluates. The block, `[x:=5]` stores a value into a local variable for `f`, despite the fact that `f` has already returned. The semantics of Smalltalk allow this.
 
 <img src="images/smalltalk-stack1.png" width=700 align=middle>
 
