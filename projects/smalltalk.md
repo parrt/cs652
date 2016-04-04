@@ -12,7 +12,7 @@ Here is the [formal ANTLR grammar](https://github.com/USF-CS652-starterkits/parr
 Our version of Smalltalk differs from the standard in a few ways:
 * no class variables but allows class methods
 * subclasses can see the fields of their parent classes; in ST-80 these are private
-* we disallow globals variables. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. There is a `push_global` instruction but it is for looking up class names and other globally-visible symbols (only one so far is `Transcript` object).
+* we disallow definition of globals variables. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. There is a `push_global` instruction but it is for looking up class names and other globally-visible symbols (only one so far is `Transcript` object).
 * We allow forward refs (refs to classes not yet defined)
 * no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`.
 * no ';' extended msg send notation
@@ -195,14 +195,14 @@ Now let's turn to a sample block evaluation.  To evaluate a block, the `BLOCK` b
 
 **BLOCK instruction**. This instruction is critical to understanding how Smalltalk executes code. The `BLOCK` instruction pushes a `BlockDescriptor` onto the operand stack of the active context and is like a function pointer to a block or method. There are four fields:
 
-* `compiledBlock`. A reference to the `STCompiledBlock` containing the bytecode and liberals for this block.
+* `compiledBlock`. A reference to the `STCompiledBlock` containing the bytecode and literals for this block.
 * `enclosingContext`. This refers to the active context that created the block descriptor and represents the immediately enclosing block.
-* `enclosingMethodContext`. This is a shortcut up the `enclosingContext` chain to the method enclosing this contex. To perform a return, we unwind the `invokingContext` stack until we reach one level above `enclosingMethodContext` and then push the return result on that context's stack.
+* `enclosingMethodContext`. This is a shortcut up the `enclosingContext` chain to the method enclosing this contex. To perform a return, we unwind the `invokingContext` stack until we reach one level before `enclosingMethodContext` and then push the return result on that context's stack.
 * `receiver`. This is the receiver of the enclosing method that created this block descriptor.
 
 Descriptors are created from a `STCompiledBlock` and the active `BlockContext`.
 
-The `value` message effectively converts a block descriptor into a block context and pushes it as the active context. That means that the next iteration of the fetch-decode-execute cycle will start executing the block's bytecode. Here is what the context stack looks like during the execution of the `value` message and after the first instruction of the block (`push_local`):
+The `value` message effectively converts a block descriptor into a block context and pushes it as the active context. That means that the next iteration of the VM fetch-decode-execute cycle will start executing the block's bytecode. Here is what the context stack looks like during the execution of the `value` message and after the first instruction of the block (`push_local`):
 
 <img src="images/smalltalk-block2.png" width=600 align=middle>
 
@@ -236,7 +236,7 @@ And now here is an example that illustrates the critical difference between the 
 
 <img src="images/smalltalk-block-delta.png" width=600 align=middle>
 
-The enclosing context jumps an invoking context because `g` is evaluating the `f-block0`, not `f`.
+The enclosing context jumps an invoking context because `g` is evaluating the `f-block0`, not `f`.  The enclosing context is used to reference locals. The delta is a statically-determined constant during code generation.
 
 Let's look at some other examples that reference a local outside of its scope, but using the stack notation from the operational semantics so I don't have to draw everything out.
 
