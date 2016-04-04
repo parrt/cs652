@@ -511,7 +511,6 @@ if (compiler.genDbg) {
 }
 //before return
 ```
-
 4. `visitKeywordSend`
 ```java
 //After getLiteralIndex()
@@ -520,7 +519,6 @@ if(compiler.genDbg){
 }
 //Before you join code for Send
 ```
-
 5. `visitBinaryExpression`
 ```java
 //After you join code for visitUnaryExpression(1)
@@ -529,7 +527,6 @@ if(compiler.genDbg){
 }
 //Before you join code for Send
 ```
-
 6. `visitBlock`.
 ```java
 //After you join code for visitChildren()
@@ -546,7 +543,6 @@ if(compiler.genDbg){
 }
 //Before you return
 ```
-
 8. `visitReturn`
 ```java
 //After visitChildren
@@ -555,7 +551,6 @@ if (compiler.genDbg) {
 }
 //Before you join code for method_return()
 ```
-
 9. `visitUnaryMsgSend`
 ```java
 //At the end
