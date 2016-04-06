@@ -321,7 +321,7 @@ For example, in response to message `+` sent to an integer receiver, the VM shou
 Primitive.Integer_ADD.perform(ctx, 1);
 ```
 
-I have not provided that implementation for you in your starter kit, so let's take a look at `perform` in the generic [STObject](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/STObject.java) class. It shows the mechanics of how to implement primitive methods. In particular, it shows how Smalltalk `Object` implements the `asString` primitive method declared as `	Object_ASSTRING(STObject::perform)`.
+I have provided that implementation for you in your starter kit, so let's take a look at another `perform` in the generic [STObject](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/primitive/STObject.java) class. It shows the mechanics of how to implement primitive methods. In particular, it shows how Smalltalk `Object` implements the `asString` primitive method declared as `	Object_ASSTRING(STObject::perform)`.
 
 ```java
 /** Implement a primitive method in active context ctx.
