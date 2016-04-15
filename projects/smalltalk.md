@@ -240,7 +240,7 @@ The enclosing context jumps an invoking context because `g` is evaluating the `f
 
 Let's look at some other examples that reference a local outside of its scope, but using the stack notation from the operational semantics so I don't have to draw everything out.
 
-First, here is an example that passes a code block from `f` to another method, `g:`, which evaluates the block, `[x:=5]`.  That block alters a local variable of `f`, despite executing "within" `g:`.
+First, here is a similar example using the formal notation that passes a code block from `f` to another method, `g:`, which evaluates the block, `[x:=5]`.  That block alters a local variable of `f`, despite executing "within" `g:`.
 
 <img src="images/smalltalk-stack2.png" width=700 align=middle>
 
