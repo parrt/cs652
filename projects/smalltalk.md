@@ -197,7 +197,7 @@ Now let's turn to a sample block evaluation.  To evaluate a block, the `BLOCK` b
 
 * `compiledBlock`. A reference to the `STCompiledBlock` containing the bytecode and literals for this block.
 * `enclosingContext`. This refers to the active context that created the block descriptor and represents the immediately enclosing block.
-* `enclosingMethodContext`. This is a shortcut up the `enclosingContext` chain to the method enclosing this contex. To perform a return, we unwind the `invokingContext` stack until we reach one level before `enclosingMethodContext` and then push the return result on that context's stack.
+* `enclosingMethodContext`. This is a shortcut up the `enclosingContext` chain to the method enclosing this contex. To perform a method return from a block, we unwind the `invokingContext` stack until we reach one level below `enclosingMethodContext` on stack and then push the return result on that context's stack. That context is the context that invoked method enclosing the block executing the method return.
 * `receiver`. This is the receiver of the enclosing method that created this block descriptor.
 
 Descriptors are created from a `STCompiledBlock` and the active `BlockContext`.
@@ -218,7 +218,7 @@ The `value` message effectively converts a block descriptor into a block context
 
 The first instruction pushes a block descriptor, `main-block0`, onto the operand stack of the active context, which is the `main` method of `MainClass`. Sending the `value` message to that descriptor pushes a new active context for the `main-block0` to execute.
 
-You should check out all of the traces that I have inserted as comments into the [TestBlocks.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/src/smalltalk/test/TestBlocks.java) unit tests.
+You should check out all of the traces that I have inserted as comments into the [TestBlocks.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/smalltalk/test/TestBlocks.java) unit tests.
 
 #### Blocks with arguments
 
