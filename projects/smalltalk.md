@@ -459,7 +459,7 @@ public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive)
 }
 ```
 
-Please note that `self` in a class method refers to the class definition object and not an instance of the class. Or, if you prefer, think of it as referring to an instance of the class definition object.
+Please note that `self` in a class method refers to the class definition object and not an instance of the class.
 
 ## Compilation
 
