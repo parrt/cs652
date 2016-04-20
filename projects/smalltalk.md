@@ -332,16 +332,14 @@ I have provided that implementation for you in your starter kit, so let's take a
 public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
 	VirtualMachine vm = ctx.vm;
 	vm.assertNumOperands(nArgs+1); // ensure args + receiver
-	// index of 1st arg on opnd stack; use only if arg(s) present for primitive
-	int firstArg = ctx.sp - nArgs + 1; 
+	int firstArg = ctx.sp - nArgs + 1;
 	STObject receiver = ctx.stack[firstArg-1];
-	STObject result = null;
+	STObject result = vm.nil();
 	switch ( primitive ) {
 		case Object_ASSTRING:
 			ctx.sp--; // pop receiver
-			// if asString not overridden in Smalltalk, create an STString
-			// from the *java* object's toString(); see STObject.asString()
-			result = receiver.asString();
+			// if not overridden (we got here), ask the *java* backing object for an st string
+			result =  receiver.asString();
 			break;
 		case Object_SAME : // SmallTalk == op. same as == in Java (identity)
 			STObject x = receiver;
