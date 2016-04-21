@@ -353,7 +353,7 @@ public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive)
 }
 ```
 
-Also take a look at the implementation of the `==` operator, the second case. Its definition and Smalltalk is:
+Also take a look at the implementation of the `==` operator, the second case. Its definition in Smalltalk is:
 
 ```
 == anObject <primitive:#Object_SAME>
