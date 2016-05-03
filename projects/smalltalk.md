@@ -165,8 +165,9 @@ and the bytecode generated for method `foo`:
 ```
 0000:  push_local     0, 0
 0005:  store_field    0
-0008:  self             
-0009:  return           
+0008:  pop
+0009:  self             
+0010:  return           
 ```
 
 The numbers on the left are the byte addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L66) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L96) that are each two bytes long.

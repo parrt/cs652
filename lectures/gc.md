@@ -73,15 +73,17 @@ The cost is also high as it is proportional to the amount of work done in progra
 
 An improvement on this strategy is called [mark and compact](http://www.brpreiss.com/books/opus5/html/page428.html) because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for cache / virtual memory because objects are kept in same order in which they were allocated. We still have to walk the memory a lot and you have to update pointers since you are moving things around. We don't explicitly walk the dead objects to free them in this strategy, but we have to walk all objects in the heap during the compaction phase. We pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. We do have to walk the objects in sorted address order to shift all objects "down" in the heap to compact. We don't have to sort though. We just "heap hop" from the start of the heap, hopping by `p->size`. Object allocation is a simple pointer bump. The compact operation is fairly complicated and typically uses 3 passes and requires (in one mechanism) an extra forwarding_addr field in each object:
 
-1. Walk live objects, collecting forwarding addresses.  As usual, memory allocation is as simple as bumping a pointer in the heap. As we wander through the live objects, an object's new address is the next free spot.
-1. Replace pointers (roots and pointer fields of objects) with new forwarding address
-1. Do the actual move of objects to their new location.
+1. Walk object graph starting from roots, marking live objects.
+2. Walk all live objects and compute their forwarding addresses starting from start_of_heap (bumping a pointer).
+3. Alter all non-NULL roots to point to the object's forwarding address.
+4. For each live object:
+  *	    a) alter all non-NULL managed pointer fields to point to the forwarding addresses.
+  * 	b) unmark object
+5. Physically move object to forwarding address towards front of heap and reset marked. This phase must be last as the object stores the forwarding address. When we move, we overwrite objects and could kill a forwarding address in a live object.
+ 
+If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep 5 separate and after the others. We cannot move objects until all pointers have been updated.
 
-If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep 2 and 3 separate. We cannot move objects until all pointers have been updated.
-
-By computing all new addresses and holding them in an area outside of the heap, with the marked bits, we can reduce the number of passes to two. We can move objects and set pointers at the same time. (Collapsing steps 2 and 3 above).
-
-If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive in space and time if we're not careful. [Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) explains:
+By computing all new addresses and holding them in an area outside of the heap, with the marked bits, we can reduce the number of passes to two. We can move objects and set pointers at the same time.  If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive in space and time if we're not careful. [Slava Pestov](http://factor-language.blogspot.com/2009/11/mark-compact-garbage-collection-for.html) explains:
 
 <blockquote>
 It is easy to see that the final destination of every block can be determined from the number of set bits in the mark bitmap that precede it. (TJP: the sum of on bits says how much memory is needed for objects before you in the heap.)
