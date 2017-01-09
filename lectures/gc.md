@@ -52,6 +52,8 @@ Cycles occur often enough: as in circular queues, doubly-linked trees etc...
 
 The cost is also high as it is proportional to the amount of work done in program.
 
+Atomicity of `p = ...; p->ref++` operations etc must be atomic. hard in threaded environments.
+
 ### Disruptive, Stop-And-Collect Schemes
 
 #### Mark and sweep
