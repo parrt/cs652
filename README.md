@@ -1,7 +1,7 @@
 CS652 -- Programming Languages
 =====
 
-This is the home page for Computer Science 652, Graduate Programming Languages, at the University of San Francisco. [Catalog entry](https://www.usfca.edu/catalog/course/programming-languages)
+This is the home page for Computer Science 652, Graduate Programming Languages, at the University of San Francisco. [Catalog entry](https://www.usfca.edu/catalog/course/652-programming-languages)
 
 # Abstract
 
@@ -17,7 +17,7 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 **ROOM.** Lo Schiavo Science 307.
 
-**TIME.** MWF 2:15pm - 3:20pm,  January 25 (Mon) - May 11 (Wed).
+**TIME.** MWF January 23 (Mon) - May 10 (Wed). Section 01 11:45am - 12:50pm, Section 02 3:30pm - 4:35pm
 
 **EXAMS.** There will be 2 exams and 1 final exam.
 
@@ -25,14 +25,14 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 | Artifact | Grade Weight | Due date |
 |--------|--------|--------|
-|[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 3%| Friday, Feb 5, 2016 |
-|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md) (borrowed from CS345)|2%| Fri, Feb 12|
+|[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 4%| Friday, Feb 5, 2016 |
+|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md) (borrowed from CS345)|3%| Fri, Feb 12|
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |20%| 3 parts|
 |&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Java subset grammar](https://github.com/parrt/cs652/blob/master/projects/vtable-grammar.md) |5%| Fri, Feb 19|
 |&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Semantic analysis](https://github.com/parrt/cs652/blob/master/projects/vtable-symtab.md) |7%| Fri, Mar 4|
 |&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Code generation](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |8%| Fri, Mar 25|
-|[smalltalk compiler/VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md)| 20%| Sun, May 1 midnight |
-|Garbage collector| cancelled | |
+|[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| ?? |
+|[smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| ?? |
 |Exam 1| 15%| Mon, Feb 29 |
 |Exam 2| 15%| Fri, Apr 22 |
 |Final| 20%| 3pm Monday, May 16|
@@ -176,7 +176,7 @@ Study [Simple Virtual Machine (Java)](https://github.com/parrt/simple-virtual-ma
 
 Next, study [Simple Virtual Machine (C)](https://github.com/parrt/simple-virtual-machine-C). Specifically, look at the master branch, which is a C port of [split-stack branch (Java)](https://github.com/parrt/simple-virtual-machine/tree/split-stack). Then, look at the [computed-goto branch (C)](https://github.com/parrt/simple-virtual-machine-C/tree/computed-goto).
 
-Your [Smalltalk compiler and interpreter project](https://github.com/parrt/cs652/blob/master/projects/smalltalk.md) also provides details about how to build a Smalltalk VM.
+Your [Smalltalk compiler project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md) and [Smalltalk-vm project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md) also provides details about how to build a Smalltalk VM.
 
 ## Part V -- Memory management
 
