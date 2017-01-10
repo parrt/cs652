@@ -2,7 +2,32 @@
 
 ## Goal
 
-This project is to build an interpreter / virtual machine (VM) for a subset of Smalltalk compiled by your Smalltalk compiler.
+The goal of this project is to build an interpreter / virtual machine (VM) for a subset of Smalltalk compiled by your Smalltalk compiler.   Your interpreter will read in JSON-formatted `.sto` bytecode files and execute them starting at method `main` in class `MainClass`.
+
+```bash
+$ stc test.st # has code "Transcript show: 'hello'." yields MainClass.sto
+$ stvm -trace MainClass.sto 
+0000:  push_global    'Transcript'      MainClass>>main[][a TranscriptStream]
+0003:  push_literal   'hello'           MainClass>>main[][a TranscriptStream, 'hello']
+0006:  send           1, 'show:'        MainClass>>main[][a TranscriptStream]
+hello
+0011:  pop                              MainClass>>main[][]
+0012:  self                             MainClass>>main[][a MainClass]
+0013:  return                           
+```
+
+For ease of testing, the junit tests reuse your compiler from the previous project. E.g., here is a sample test:
+
+```java
+@Test public void testAssign() {
+	String input =
+		"| x |\n" +
+		"x := 1." +
+		"^x";
+	String expecting = "1";
+	execAndCheck(input, expecting); // compile and exec
+}
+```
 
 ## Representing bytecode
 

@@ -2,7 +2,45 @@
 
 ## Goal
 
-This project is to build a full compiler for a subset of Smalltalk.
+This project is to build a full compiler for a subset of Smalltalk. For example, you will read in a small program such as:
+
+```
+Transcript show: 'hello'.
+```
+
+and compile it to symbol table information and bytecode using:
+
+```bash
+$ stc test.st # emits MainClass.sto for implied main class
+```
+
+The compiler emits `.sto` files JSON format:
+
+```json
+{
+  "name": "MainClass",
+  "superClassName": "Object",
+  "literals": [
+    "Transcript",
+    "hello",
+    "show:"
+  ],
+  "fields": [],
+  "methods": [
+    {
+      "name": "main",
+      "isClassMethod": false,
+      "qualifiedName": "MainClass>>main",
+      "nargs": 0,
+      "nlocals": 0,
+      "bytecode": [ 16, 0, 0, 15, 0, 1, 25, 0, 1, 0, 2, 20, 2, 29 ],
+      "blocks": []
+    }
+  ]
+}
+```
+
+The virtual machine you build in the next project will read in this "code" and execute starting at method `main` in class `MainClass`.
 
 ## Smalltalk language definition
 
