@@ -43,7 +43,7 @@ Class periods of 1:05min each 3 times per week for 15 weeks. Instructor-student 
 
 ### Books
 
-We will make heavy use of [Language Implementation Patterns](http://amzn.com/193435645X) and, to a lessor extent, [The ANTLR 4 reference book](http://0-proquest.safaribooksonline.com.ignacio.usfca.edu/book/programming/9781941222621) (free via USF’s “safari online” as part of your tuition. Log in via the USF library site.)
+We will make heavy use of [Language Implementation Patterns](http://amzn.com/193435645X) and, to a lesser extent, [The ANTLR 4 reference book](Link: http://a.co/7Nv5jZi) because there is [online doc for ANTLR 4](https://github.com/antlr/antlr4/blob/master/doc/index.md).
 
 Language Implementation Patterns is cheap at $24 in printed form. (A reminder that using an unpaid-for copy of the electronic version is uncool and violates our academic honesty policy and is illegal.)
 
@@ -53,7 +53,7 @@ All projects are due precisely at the start of class on the due date. You do not
 
 For repl, vtable, smalltalk projects, I provide you with the complete set of tests your implementation must pass. Passing all tests as specified (i.e., don't modify them) gets you 90%. You get the other 10% after I sign off on your code. If there are changes to be made, I will submit a github *pull request* with comments inline in your code. Merge the pull request and then respond to each comment by fixing your code. Please remove my comments as you make changes.  Please try to submit all of your changes in a single commit beyond the last commit you did for original submission of the project.  Once you have fixed the code or if I did not require any changes, I will mark you down as 100%. Please email me when you have submitted your changes.  **In order for me to get email indicating you've finished,** please use `@parrt` in your commit message or, if you've already committed your finished update, add a comment. For example, `finished responding to @parrt review.`  Be advised that I might require you to make multiple passes over your code to fix things until I'm satisfied.  **Any required changes must be done prior to submission of your next project or the last day of class, whichever comes first.**  I will not do code reviews on incomplete projects so the maximum would be < 90%.
 
-You must submit each project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16). The repositories are always named `userid-projectname`. For example, my ps project would be `parrt-ps`.
+You must submit each project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16). The repositories are always named `userid-projectname`. For example, my repl project would be `parrt-repl`.
 
 *I expect to see proper git commit messages and github usage so I can track your development.* Commits must be consistent with developing the software for each project. For example, a single large commit of the entire project at once could be considered circumstantial evidence of academic dishonesty.
 
