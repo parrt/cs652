@@ -17,24 +17,26 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 
 **ROOM.** Lo Schiavo Science 307.
 
-**TIME.** MWF January 23 (Mon) - May 10 (Wed). Section 01 11:45am - 12:50pm, Section 02 3:30pm - 4:35pm
+**TIME.** MWF January 23 (Mon) - May 10 (Wed). Section 01 11:45am - 12:50pm, Section 02 3:30pm - 4:35pm  Spring break is 13 - 17 March 2017. Apr 14, Good Friday, no class.
 
-**EXAMS.** There will be 2 exams and 1 final exam.
+**EXAMS.** There will be 2 exams and 1 final exam. **You must pass the final with C or better to pass the class!**
+
+**TA.** Min Chen `mchen53@dons.usfca.edu` will be available to answer questions about projects and course content.
 
 ## Student evaluation
 
 | Artifact | Grade Weight | Due date |
 |--------|--------|--------|
-|[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 4%| Friday, Feb 5, 2016 |
-|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md) (borrowed from CS345)|3%| Fri, Feb 12|
+|[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 4%| Friday, Feb 3, 2016 |
+|[C declaration to English translator](https://github.com/parrt/cs345/blob/master/projects/cdecl.md) (borrowed from CS345)|3%| Fri, Feb 10|
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |20%| 3 parts|
-|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Java subset grammar](https://github.com/parrt/cs652/blob/master/projects/vtable-grammar.md) |5%| Fri, Feb 19|
-|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Semantic analysis](https://github.com/parrt/cs652/blob/master/projects/vtable-symtab.md) |7%| Fri, Mar 4|
-|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Code generation](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |8%| Fri, Mar 25|
+|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Java subset grammar](https://github.com/parrt/cs652/blob/master/projects/vtable-grammar.md) |5%| Fri, Feb 17|
+|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Semantic analysis](https://github.com/parrt/cs652/blob/master/projects/vtable-symtab.md) |7%| Fri, Mar 3|
+|&nbsp;&nbsp;&nbsp;&nbsp;[vtable -- Code generation](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |8%| Fri, Mar 24|
 |[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| ?? |
 |[smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| ?? |
-|Exam 1| 15%| Mon, Feb 29 |
-|Exam 2| 15%| Fri, Apr 22 |
+|Exam 1| 15%| Wed, Feb 22 |
+|Exam 2| 15%| Fri, Apr 21 |
 |Final| 20%| 3pm Monday, May 16|
 
 ## Instruction Format
