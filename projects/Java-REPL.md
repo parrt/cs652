@@ -312,11 +312,13 @@ If it helps, here is my list of methods
 
 ## Getting started
 
-I have provided a [cs652 starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) and [cs345 starter kit](https://github.com/USF-CS345-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
+I have provided a [cs652 starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
+
+**I'm shifting to github education this year so I'm not sure how this will work exactly until you guys accept the project invitation. stay tuned.**
 
 ```bash
-$ git clone git@github.com:USF-CS652-S16/USERID-repl.git
-Cloning into 'USERID-repl'...
+$ git clone git@github.com:USF-CS652-S16/repl-USERID.git
+Cloning into 'repl-USERID'...
 warning: You appear to have cloned an empty repository.
 Checking connectivity... done.
 $ cd USERID-repl
@@ -330,29 +332,7 @@ From github.com:USF-CS652-starterkits/parrt-repl
  * [new branch]      master     -> starterkit/master
 $ git push origin master
 ...
-To git@github.com:USF-CS652-S16/USERID-repl.git
- * [new branch]      master -> master
-```
-
-**NOTE**: If you're doing this project as part of CS345 not CS652, note that your repo will live in USF-CS345-XX and you will pull the starterkit from `git@github.com:USF-CS345-starterkits/parrt-repl.git`. The package will be `cs345.repl`. Here is what the "pull" looks like to get started for CS345:
-
-```bash
-$ git clone git@github.com:USF-CS345-S16/USERID-repl.git
-Cloning into 'USERID-repl'...
-warning: You appear to have cloned an empty repository.
-Checking connectivity... done.
-$ cd USERID-repl
-$ git checkout -b master
-Switched to a new branch 'master'
-$ git remote add starterkit git@github.com:USF-CS345-starterkits/parrt-repl.git
-$ git pull starterkit master
-...
-From github.com:USF-CS345-starterkits/parrt-repl
- * branch            master     -> FETCH_HEAD
- * [new branch]      master     -> starterkit/master
-$ git push origin master
-...
-To git@github.com:USF-CS345-S16/USERID-repl.git
+To git@github.com:USF-CS652-S16/repl-USERID.git
  * [new branch]      master -> master
 ```
 
@@ -367,7 +347,7 @@ You can build and test from the command line too:
 ```bash
 $ mvn compile
 ...
-$ java -cp target/classes:$CLASSPATH cs345.repl.JavaREPL
+$ java -cp target/classes:$CLASSPATH cs652.repl.JavaREPL
 > print "hi";
 hi
 > ^D
@@ -427,7 +407,7 @@ script: mvn clean verify
 language: java
 ```
 
-Check out [https://travis-ci.com/USF-CS652-S16/USERID-repl](https://travis-ci.com/USF-CS652-S16/USERID-repl) or [https://travis-ci.com/USF-CS345-S16/USERID-repl](https://travis-ci.com/USF-CS345-S16/USERID-repl) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+Check out [https://travis-ci.com/USF-CS652-S16/repl-USERID](https://travis-ci.com/USF-CS652-S16/repl-USERID) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
 ## Deliverables
 
