@@ -1,1 +1,0 @@
-# vtable -- Java subset grammar
