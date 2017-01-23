@@ -45,7 +45,10 @@ Class periods of 1:05min each 3 times per week for 15 weeks. Instructor-student 
 
 ### Books
 
-We will make heavy use of [Language Implementation Patterns](http://amzn.com/193435645X) and, to a lesser extent, [The ANTLR 4 reference book](Link: http://a.co/7Nv5jZi) because there is [online doc for ANTLR 4](https://github.com/antlr/antlr4/blob/master/doc/index.md).
+We will make heavy use of [Language Implementation Patterns](http://amzn.com/193435645X) and, to a lesser extent, [The ANTLR 4 reference book](http://a.co/0iQoObl) because there is [online doc for ANTLR 4](https://github.com/antlr/antlr4/blob/master/doc/index.md).
+
+<img src="https://images-na.ssl-images-amazon.com/images/I/51RpSZjUx5L._SX413_BO1,204,203,200_.jpg" width=130>&nbsp;
+<img src="https://images-na.ssl-images-amazon.com/images/I/41bREmDQ9cL._SX415_BO1,204,203,200_.jpg" width=130>
 
 Language Implementation Patterns is cheap at $24 in printed form. (A reminder that using an unpaid-for copy of the electronic version is uncool and violates our academic honesty policy and is illegal.)
 
