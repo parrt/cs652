@@ -1,11 +1,12 @@
 class Test {
 	public static void main(String[] args) {
+		Test t = new Test();
 		// call f()
-		// call g() and print result
-		// call f(8)
+		// call t.g() and print result
+		// call t.f(8)
 	}
 
-	public void f() {
+	public static void f() {
 		System.out.println("Hi from f()\n");
 	}
 
