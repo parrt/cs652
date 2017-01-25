@@ -19,9 +19,9 @@ $
 
 where ^D is "control-D". That sends end-of-file to standard input on UNIX. It's ^Z on Windows. Assumes your repl-1.0.jar is in the `CLASSPATH`.
 
-You should print a line with a "> " prompt for the user.
+You should print a "> " prompt for the user.
 
-One of the tricky bits is figuring out when the user has finished typing a complete declaration or statement. For example, we would not want to have to type complete functions all on a single line. You'll notice that Python tracks the nesting level of parentheses, brackets, etc. and executes whenever it sees a newline and it is not nested or comment. Your should behave in a similar fashion:
+One of the tricky bits is figuring out when the user has finished typing a complete declaration or statement. For example, we would not want to have to type complete functions all on a single line. You'll notice that Python tracks the nesting level of parentheses, brackets, etc. and executes what you've typed whenever its reader sees a newline and it is not in nested code or a comment. Yours should behave in a similar fashion:
 
 ```java
 > // do nothing
@@ -73,7 +73,7 @@ For simplicity, I will use the term *line* to mean whatever complete declaration
 
 Here's the trick you need to make this work without having to do much. When the user enters a statement or declaration (*line*), generate a class definition with that line and then compile it using Java's built-in compiler API; see packages `javax.tools.*`, `com.sun.source.util.JavacTask`. Once you compile the class just conjured up, use the `ClassLoader` to bring back code into memory and execute it.
 
-Each line results in a new class definition, such as `class` name Interp_*i*. Each class inherits from the previous class, except for the first one of course which has no explicit superclass. For declarations, such as variables and functions, make them `static` members of the generated class. Put statements into a method some called such as `exec()`. For example, let's translate the following commands.
+Each line results in a new class definition, such as `class` name Interp_*i*. Each class inherits from the previous class, except for the first one of course which has no explicit superclass. For declarations, such as variables and functions, make them `static` members of the generated class. Put statements into a method called something like `exec()`. For example, let's translate the following commands.
 
 ```java
 int i = 3;
@@ -81,7 +81,7 @@ void f() { System.out.println(i); }
 f();
 ```
 
-We'd get the following class definitions:
+We'd get the following 3 class definitions (one per input line):
 
 ```java
 import java.io.*;
@@ -145,7 +145,7 @@ public class Interp_0 {
 }
 ```
 
-Finally, before you try to analyze the Java code and execute it, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.  For simplicity, assume that this print statement only works as the first characters of a line and only as a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression.
+Finally, before you try to analyze the Java code and execute it, translate statements such as `print` *expr*`;` to `System.out.println(`*expr*`);`.  For simplicity, assume that this print statement only works as the first characters of a line and only as a complete statement, not nested within a function body for example. Assume it has a space after the `print` and before the expression. This is obviously not valid Java code, but makes it more convenient to use our interactive shell.
 
 ###  Handling stderr and stdout
 
@@ -181,7 +181,7 @@ If there is an error during execution, the Java virtual machine will emit errors
 
 ![repl errors](images/repl-errors.png)
 
-The Java code entered by the user might also generate `stderr` or `stdout`. You have to make sure that this output is still sent to the user. Fortunately, you don't have to do anything to make that happen. Because we are operating within the same process, and indeed the same thread, standard streams will go to their usual places. For example, you might see something like this:
+The Java code entered by the user might also generate output to `stderr` or `stdout`. You have to make sure that this output is still sent to the user. Fortunately, you don't have to do anything to make that happen. Because we are operating within the same process, and indeed the same thread, standard streams will go to their usual places. For example, you might see something like this:
 
 ![repl errors](images/repl-stderr.png)
 
@@ -225,18 +225,29 @@ void consume() throws IOException {
 }
 ```
 
-The basic idea is as follows. When asked to do so, my code looks at each character in turn and processes it accordingly. If it is an opening curly brace, bracket, or parenthesis, I push the appropriate closing character onto a stack. Upon closing character, I check the top of the stack to make sure that it's the right symbol. If not, I declare an improperly nested piece of code and return the current buffer to my JavaREPL. When I see the start of a string or character literal, I consume characters until the closing character. Upon `//`, I consume characters until the end of line and in fact I strip away these comments and do not send them to the compiler. Upon `\n` and an empty stack, I return the current buffer to the invoking code otherwise I keep consuming characters.
+The basic idea is as follows. When asked to do so, my code looks at each character in turn and processes it accordingly. If it is an opening curly brace, bracket, or parenthesis, I push the appropriate closing character onto a stack. Upon closing character, I check the top of the stack to make sure that it's the right symbol. If not, I declare an improperly nested piece of code and return the current buffer to my JavaREPL.  Your code should have something that looks like:
+
+```java
+Stack<Character> stack = new Stack<>();
+while ( true ) {
+//			System.out.println("c="+(char)c);
+	switch (c) {
+		case '{':
+          ...
+```
+
+When I see the start of a string or character literal, I consume characters until the closing character. Upon `//`, I consume characters until the end of line and in fact I strip away these comments and do not send them to the compiler. Upon `\n` and an empty stack, I return the current buffer to the invoking code otherwise I keep consuming characters.
 
 ## Requirements
 
 Just to summarize, keep in mind the following requirements.
 
-1. Your tool must be an interactive Java shell that executes user code when they hit newline when not nested inparentheses, square brackets, or curly brackets. Those characters are not counted when they are inside single or double quoted strings or within single-line comments.
+1. Your tool must be an interactive Java shell that executes user code when they hit newline when not nested in parentheses, square brackets, or curly brackets. Those characters are not counted when they are inside single or double quoted strings or within single-line comments.
 1.  Accept as a declaration, anything that will compile with `public static` in front of it as a field of a class, which would include variable, function, and class definitions.
 1. Your program must not require more than a single newline character after the end of a valid statement or declaration. In other words, I shouldn't have to hit extra newlines to make your program execute my code.
 1.  Allow a blank line as a "do nothing" statement
 1. Accept `print `*expr*`;` as a statement and converted to a call to `System.out.println()` before processing so the unit test rig can test the output.
-1.  Comments on the end of the line should not present execution of the line:
+1.  Comments on the end of the line should not prevent execution of the line:
 `print "hi"; // a comment`.
 1.  Anything that does not parse as a valid declaration, should be assumed to be a statement and compiled/executed as such.
 1.  All code execution must occur within the same user thread and within the same process; i.e., you **cannot** use `Runtime.exec()` or anything like it to launch Java and another process. It won't do you any good but I wanted to prevent you from wasting time going down that path.
@@ -245,7 +256,7 @@ Just to summarize, keep in mind the following requirements.
 1. Users must see standard output and standard error as they would normally expect from compiler errors and run-time errors.
 1. For improperly nested input, such as `(3+4]`, it's fine to just pass it off to the compiler and let it complain. But, you need to handle this case in your input scanner so it knows when to return input for processing.
 1. Multiple statements should work simply because of the way we inject code, such as `i=3; y=i;` but it should not handle a line that includes both two declarations or both a declaration and a statement because that would force the declaration to be a local variable. Anything that will work after `public static` should work as a declaration for this project.
-1. Do not attempt to execute statements are declarations with compile errors.
+1. Do not attempt to execute statements or declarations with compile errors.
 1. Upon invalid and incomplete input such as `int {;`, keep waiting for the user to close with an improper symbol or with the proper symbol or hit eof. Your program should wait even if there are multiple new lines afterwards.
 1. Upon an improperly nested string, consume until the end of line before attempting to read another statement from the user.
 1. Exit your program when the user hits EOF (^D or ^Z, depending on the OS).
@@ -277,7 +288,7 @@ Then, using a `DiagnosticCollector` and a `StandardJavaFileManager`, I get a spe
 JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 JavacTask task = (JavacTask)
 	compiler.getTask(null, fileManager, diagnostics,
-	compileOptions, null, compilationUnits);
+	                 compileOptions, null, compilationUnits);
 boolean ok = task.call();
 ```
 
@@ -297,34 +308,33 @@ Here's some information on dynamic class loading:
 * [What is the difference between Class.forName() and ClassLoader.loadClass()?](http://www.javaworld.com/article/2077332/core-java/get-a-load-of-that-name.html)
 * [ClassLoader API](http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html)
 
-I use `URLClassLoader` to load the compiled class then used `Class.getDeclaredMethod()` to find the `exec()` method. Then `invoke()` to call our `exec()` method. Call `exec()` even if it is blank because the user typed a declaration like `int i=1;`.
+I use `URLClassLoader` to load the compiled class then use `Class.getDeclaredMethod()` to find the `exec()` method. Then use `invoke()` to call our `exec()` method. Call `exec()` even if it is blank because the user could have typed a declaration like `int i=1;`.
 
 **You must use a single instance of a `ClassLoader` during a single run of your REPL.**
 
 If it helps, here is my list of methods
 
-* main()
-* isDeclaration()
-* getCode()
-* compile()
-* exec()
-* writeFile()
+* `public static void exec(Reader r)`
+* `public static boolean isDeclaration(String line)`
+* `public static String getCode(String className, String extendSuper, String def, String stat)`
+* `public static String compile(String fileName)`
+* `public static CompilerControl getCompilerControlObject(String fileName)`
+* `public static void exec(ClassLoader loader, String className, String methodName)`
+* `public static void writeFile(String dir, String fileName, String content)`
 
 ## Getting started
 
 I have provided a [cs652 starter kit](https://github.com/USF-CS652-starterkits/parrt-repl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
 
-**I'm shifting to github education this year so I'm not sure how this will work exactly until you guys accept the project invitation. stay tuned.**
-
 ```bash
-$ git clone git@github.com:USF-CS652-S16/repl-USERID.git
+$ git clone git@github.com:USF-CS652-S17/repl-USERID.git
 Cloning into 'repl-USERID'...
 warning: You appear to have cloned an empty repository.
 Checking connectivity... done.
 $ cd USERID-repl
 $ git checkout -b master
 Switched to a new branch 'master'
-$ git remote add starterkit git@github.com:USF-CS652-starterkits/parrt-repl.git
+$ git remote add starterkit https://github.com/USF-CS652-starterkits/parrt-repl.git
 $ git pull starterkit master
 ...
 From github.com:USF-CS652-starterkits/parrt-repl
@@ -332,7 +342,7 @@ From github.com:USF-CS652-starterkits/parrt-repl
  * [new branch]      master     -> starterkit/master
 $ git push origin master
 ...
-To git@github.com:USF-CS652-S16/repl-USERID.git
+To git@github.com:USF-CS652-S17/repl-USERID.git
  * [new branch]      master -> master
 ```
 
@@ -394,7 +404,7 @@ Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 ```
 
-Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven. Success looks like:
+Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven. Success looks like (though it'll be `repl-USERID` for you):
 
 <img src=images/travis-repl.png width=500>
 
@@ -407,7 +417,7 @@ script: mvn clean verify
 language: java
 ```
 
-Check out [https://travis-ci.com/USF-CS652-S16/repl-USERID](https://travis-ci.com/USF-CS652-S16/repl-USERID) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+Check out [https://travis-ci.com/USF-CS652-S17/repl-USERID](https://travis-ci.com/USF-CS652-S17/repl-USERID) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
 ## Deliverables
 
@@ -420,4 +430,4 @@ Make sure your repository has all classes you build for this project.
 
 ## Submission
 
-You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16).
+You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S17](https://github.com/USF-CS652-S17).
