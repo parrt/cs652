@@ -25,9 +25,9 @@ class Test {
 }
 ```
 
-Now, from the `main`, create an instance of `Test` using:
+Now, instead of using `new Test()`, use the following to create instances of `Test`:
 
 1. `Class.forName` and `newInstance()`.
-2. a `ClassLoader` and `loadClass("Test")`
+2. a `ClassLoader` via `ClassLoader.getSystemClassLoader()` and then `loadClass("Test")`
 
-Once you have
+
