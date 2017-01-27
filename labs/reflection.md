@@ -25,9 +25,46 @@ class Test {
 }
 ```
 
-Now, instead of using `new Test()`, use the following to create instances of `Test`:
+Now, instead of using `new Test()`, use the following to create instances of `Test`: `Class.forName` and `newInstance()`.
 
-1. `Class.forName` and `newInstance()`.
-2. a `ClassLoader` via `ClassLoader.getSystemClassLoader()` and then `loadClass("Test")`
+## ClassLoaders
 
+Save this `T.java` file to `/tmp` or some other dir:
 
+```java
+public class T {
+	public static void foo() { System.out.println("T.foo() called"); }
+	public void bar() { System.out.println("T.bar() called"); }
+}
+```
+
+Compile it with:
+
+```bash
+$ cd /tmp
+$ javac T.java
+$ ls T.*
+T.class  T.java
+```
+
+In the main of a new test class such as `Test2.java`, Use a `URLClassLoader` and then `loadClass("T")` to load the `Class` associated with `T` from dir `/tmp`.
+
+```java
+URL tmpURL = new File("/tmp").toURI().toURL();
+ClassLoader loader = new URLClassLoader(new URL[]{tmpURL});
+Class cl = ...;
+```
+
+Once you have the class definition object, find the `foo` method and call it:
+
+```java
+Method foo = cl.getDeclaredMethod("foo");
+...
+```
+
+Now, do the same for `bar` so you can call it.  Output should be:
+
+```bash
+T.foo() called
+T.bar() called
+```

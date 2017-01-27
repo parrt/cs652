@@ -1,9 +1,20 @@
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 class Test {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Test t = new Test();
 		// call f()
 		// call t.g() and print result
 		// call t.f(8)
+
+		URL tmpURL = new File("/tmp").toURI().toURL();
+		ClassLoader loader = new URLClassLoader(new URL[]{tmpURL});
+		Class cl = ...;
+		Method foo = cl.getDeclaredMethod("foo");
+		...
 	}
 
 	public static void f() {
