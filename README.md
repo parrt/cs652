@@ -109,6 +109,8 @@ Define key terms (raw notes: [Language Terminology](https://github.com/parrt/cs6
 
 Chapter 1 from Language Implementation Patterns (LIP)
 
+[Raw formal language notes](https://github.com/parrt/cs652/blob/master/lectures/grammars.pdf)
+
 Chapter 2 in ANTLR 4 reference
 
 ## Part I -- Recognition and Tree Construction
