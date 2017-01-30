@@ -113,6 +113,8 @@ Chapter 1 from Language Implementation Patterns (LIP)
 
 Chapter 2 in ANTLR 4 reference
 
+LAB: [reflection](https://github.com/parrt/cs652/blob/master/labs/reflection.md)
+
 ## Part I -- Recognition and Tree Construction
 
 Chapter 2 on recursive-descent parsers in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
