@@ -117,9 +117,43 @@
 \begin{abstract}
 \end{abstract}
 
+\section{Language}
+
+A {\em language} is just the set of {\em sentences} that are valid. A sentence is a sequence of symbols or tokens (words).  At deeper level, sentences have structure in that words can't be in random order. e.g., {\em dogs like cats} vs {\em cats like dogs}.
+
+In Western languages, we have a two level problem. First we have to break up the sequence of characters into vocabulary symbols. For example, here is a simple sentence using Morse code:
+
+\begin{verbatim}
+I like toast
+..   .- .. -.- .  - --- .- ... -
+I    L  I  K   E  T O   A  S   T
+\end{verbatim}
+
+The symbols or tokens represent the {\em vocabulary}. The {\em syntax} is an abstract notion describing the rules of the sentence whereas a sentence is an instance of that language. By analogy, you can think of the difference between a class definition and an instance of that class.
+
+There are lots of ways to express syntax. Here are two obvious choices:\\
+
+\begin{tabular}{ll}
+x, xx, xxx, ...	 & delineation\\
+one-or-more x's	 & english\\
+\end{tabular}
+~\\
+
+This gets laborious so we tend to use more mathematical notation for compactness:\\
+
+\begin{tabular}{ll}
+$\{ x^n | n > 0\}$	&	set notation\\
+{\tt x+}		&	 regular expressions (regex)\\
+{\tt 'x'+}	&		ANTLR\\
+\end{tabular}
+
+It turns out we need a more sophisticated language for describing nested structures within language (such as parenthesized subexpressions).
+
+{\bf Q}.  What is the set notation for ``one-or-more x followed by one-or-more y''? What is the set notation for ``one-or-more x followed by the same number of y''? What is the set notation for ``One x or two y''?
+
 \section{CFGs}
 
-A {\em grammar} is a set of rules that describe the set of valid sentences in a language, $L$. The rules have a very specific format and therefore follow a language, a metalanguage. The rules are called {\em production rules} and say how to generate strings in the language. There are rule names, {\em non-terminals}, and vocabulary symbols ({\em terminals} or {\em tokens}). The rules are of the form
+A {\em grammar} is a set of rules that describe the set of valid sentences in a language, $L$. The rules have a very specific format and therefore follow a language, a {\em metalanguage}. The rules are called {\em production rules} and say how to generate strings in the language. There are rule names, {\em non-terminals}, and vocabulary symbols ({\em terminals} or {\em tokens}). The rules are of the form
 
 $leftside \rightarrow rightside$
 
@@ -127,59 +161,67 @@ Context free grammar: {\em CFG} is a grammar where $leftside$ has to be a single
 
 $expression \rightarrow {\bf id}$
 
-there can be multiple rules
+\noindent There can be multiple rules:
 
 \noindent $expression \rightarrow {\bf integer}$\\
 $expression \rightarrow {\bf id}$
 
-OR:
+\noindent Or using the alternation operator:
 
 $expression \rightarrow {\bf id} | {\bf integer}$
 
-
-For formal grammars we tend to use single single capital letters for non-terminals CFG notation:
+\noindent For formal grammars we tend to use single single capital letters for non-terminals in CFG notation:\\
 
 \noindent $
 E \rightarrow {\bf id} \\
-E \rightarrow {\bf integer}$
+E \rightarrow {\bf integer}$\\
 
- examples
+\noindent Examples\\
  
-\noindent $
+\noindent Language $L = \{a,b\}$.\\
+
+\noindent$
 A \rightarrow {\bf a} \\
 A \rightarrow {\bf b} \\
 $
 
-Or, $A \rightarrow {\bf a} | {\bf b}$
+\noindent Or, $A \rightarrow {\bf a} | {\bf b}$\\
 
-Language $L = \{a,b\}$.
+\noindent Infinite language: $L = \{a^*\}$:
 
- Infinite languages
- 
- \noindent $
+\noindent $
 A \rightarrow a A \\
 A \rightarrow \epsilon \\
 $
 
-or
+\noindent or\\
 
- \noindent $
+\noindent $
 A \rightarrow a A \\
 A \rightarrow \\
 $
 
-$L = {a^*}$
+\noindent $L = \{a^+\}$ is described by:\\
 
 \noindent $
 A \rightarrow a A \\
 A \rightarrow a\\
 $
 
-$L = {a^+}$. draw the RTN.
+\noindent {\em draw the RTN}\\
 
-Many grammars for one $L$.
+\noindent $L = \{a^nb^n | n \ge 1\}$ is CF because we can create a context free grammar to describe it:\\
 
-A  CFG grammar $G = (N, T, P, S)$ has elements:
+\noindent $
+A \rightarrow a A b\\
+A \rightarrow a b\\
+$
+
+Some languages or non-context-free, such as $L = \{a^nb^nc^n | n \ge 1\}$; there is no way to make sure all three symbols appear the same number of times.  Again, note that there is a difference between a language and its specification (the rules we use to define it). In this case, there is no context free grammar that can describe that language. Also note that there are an infinite number of grammars for describing a single language $L$.
+
+\subsection{Formal CFG definition}
+
+A CFG grammar $G = (N, T, P, S)$ has elements:
 
 \vspace{-3pt}
 \begin{itemize}\itemsep0pt \parskip0pt \parsep0pt
@@ -202,96 +244,82 @@ $\char36$ & End of file ``symbol'' \\
 \end{tabular}
 \end{center}
 
-
-$L = \{a^nb^n | n \ge 1\}$ is CF but $L = \{a^nb^nc^n | n \ge 1\}$ non CF.
-
-\noindent $
-A \rightarrow a A b\\
-A \rightarrow a b\\
-$
-
-The set of all context-free languages is identical to the set of languages accepted by pushdown automata ({\em PDA}) and all contexts we languages can be parsed in $O(n^3)$ time.
+The set of all context-free languages is identical to the set of languages accepted by pushdown automata ({\em PDA}) and all contexts we languages can be parsed in $O(n^3)$ time.  ANTLR is technically $O(n^4)$ but performs linearly $O(n)$ in practice.
 
 \section{Regular grammars}
 
-A single non-terminal on the left like CFG, but the right-hand side can only be: empty, a sequence of terminals, a sequence of terminals followed by a non-terminal, but that's it. All regular languages can be recognized by a finite state machine linear time. NFA/DFA.
+A regular grammar is a restricted form of a context free grammar that can describe the so-called {\em regular languages}. You can think of this as being equivalent to what basic regular expressions can describe.  You cannot describe nested structures with a regular grammar because there is no way to make the necessary recursive calls. There is no stack.
 
-Non-regular $\{a^nb^n | n \ge 1\}$ because we have no memory but $\{a^nb^m | n \ge 1\}$ is regular.
+A regular grammar has a single non-terminal on the left like a CFG, but the right-hand side can only be: empty, a sequence of terminals, a sequence of terminals followed by a non-terminal, but that's it. All regular languages can be recognized by a finite state machine in linear time.  These state machines are called NFA/DFA.
 
-\noindent $
-A \rightarrow a^* b^*\\
-$
+Here's an example of a non-regular language: $L = \{a^nb^n | n \ge 1\}$ because we have no memory but $\{a^nb^m | n \ge 0, m \ge 0\}$ is regular. Here is the regular grammar $A \rightarrow a^* b^*$.
 
-  drawing state machine
+draw state machine
  
 \section{Derivations}
 
-$\alpha \Rightarrow \beta$ $\alpha \Rightarrow^* \beta$ $\alpha \Rightarrow^+ \beta$
+How do we know what the language looks like, the set of sentence, given a grammar? Grammars can both ``generate'' and ``recognize'' input sentences (if we create a parser from the grammar). In formal languages, we tend to think of grammars as generating strings and we use special notation to describe how to derive sentences from a grammar.
 
-how to regenerate a string starting from the start symbol?
+A {\em derivation} is a sequence of steps that gradually transforms a grammar symbol (or grammar fragment) into a sentence (sequence of symbols). For example, given grammar $A \rightarrow a$, there is only one derivation: $A$ is transformed to $a$ using rule $A \rightarrow a$. More formally, we use a derivation operator $\Rightarrow$:
+
+\noindent $\alpha \Rightarrow \beta$\\
+$\alpha \Rightarrow^* \beta$\\
+$\alpha \Rightarrow^+ \beta$
+
+\noindent for arbitrary grammar fragments $\alpha$ and $\beta$.
+
+To answer the question ``is a sentence in the language described by a grammar,'' we try to find a derivation from the start symbol of the grammar to that sentence. For example, consider the following grammar:
 
 \noindent $
 A \rightarrow a A b\\
 A \rightarrow a b\\
 $
 
-generation of $ab$:
- 
-$A \Rightarrow ab$
+The derivation/generation of $ab$ is $A \Rightarrow ab$. The derivation of $aabb$ is $A \Rightarrow aAb \Rightarrow aabb$. We replace symbols on the right-hand side according to the rules of the grammar. We are free to choose any alternative production for a nonterminal when replacing.
 
-generation of $aabb$:
- 
-$A \Rightarrow aAb \Rightarrow aaba$
-
-leftmost and rightmost derivations
+There are {\em leftmost} and {\em rightmost derivations}.\\
  
 \noindent $
-S \rightarrow {\bf if} E {\bf then} S\\
-S \rightarrow {\bf return} E\\
+S \rightarrow {\bf if}\, E\, {\bf then}\, S\\
+S \rightarrow {\bf return}\, E\\
 E \rightarrow {\bf id}\\
 $
 
-$S \Rightarrow_{lm} {\bf if} E {\bf then} S \\
-\Rightarrow_{lm} {\bf if} {\bf x} {\bf then} S \\
-\Rightarrow_{lm} {\bf if} {\bf x} {\bf then} {\bf return} E \\
-\Rightarrow_{lm} {\bf if} {\bf x} {\bf then} {\bf return} {\bf y}$
+\noindent $S \Rightarrow_{lm} {\bf if}\, E\, {\bf then}\, S \\
+\Rightarrow_{lm} {\bf if}\, {\bf x}\, {\bf then}\, S \\
+\Rightarrow_{lm} {\bf if}\, {\bf x}\, {\bf then}\, {\bf return}\, E \\
+\Rightarrow_{lm} {\bf if}\, {\bf x}\, {\bf then}\, {\bf return}\, {\bf y}$
 
-or
+\noindent or
 
-$S \Rightarrow_{rm} {\bf if} E {\bf then} S \\
-\Rightarrow_{rm} {\bf if} E {\bf then} {\bf return} E \\
-\Rightarrow_{rm} {\bf if} E {\bf then} {\bf return} {\bf y}\\
-\Rightarrow_{rm} {\bf if} {\bf x} {\bf then} {\bf return} {\bf y}$
+\noindent $S \Rightarrow_{rm} {\bf if}\, E\, {\bf then}\, S \\
+\Rightarrow_{rm} {\bf if}\, E\, {\bf then}\, {\bf return}\, E \\
+\Rightarrow_{rm} {\bf if}\, E\, {\bf then}\, {\bf return}\, {\bf y}\\
+\Rightarrow_{rm} {\bf if}\, {\bf x}\, {\bf then}\, {\bf return}\, {\bf y}$
 
-diff deriv but same tree. So parse tree of $A$ then if-then-else.
+We get different derivations but we get the {\bf same tree}. Show parse tree of $A$ then if-then-else.
 
-Formally, the language generated by grammar sequence $\alpha$ in user state $\store$ is
-$L(\alpha)=\{ w \, | \, (\alpha) \Rightarrow^*
-(w)\}$ and the language of grammar $G$ is $L(G) = \{ w \, | \,
-(S) \Rightarrow^* (w)\}$. Language $L$ is CF {\em iff} there exists a CFG for $L$.
+Formally, the language generated by grammar fragment $\alpha$ is: $L(\alpha)=\{ w \, | \, \alpha \Rightarrow^* w\}$ and the language of grammar $G$ is $L(G) = \{ w \, | \, S \Rightarrow^* w\}$. Language $L$ is CF {\em iff} there exists a CFG for $L$.
 
-$\alpha$ is {\em sentential form} if S derives to it. If $\alpha \in T \cup N$ it's a {\em sentence}.
+$\alpha$ is {\em sentential form} (grammar fragment) if $S$ derives to it.
 
-Proof that $G$ gens $L$ means show every string gen'd by G is in L and every string in L can be gen'd by G. and
+Proof that $G$ gens $L$ means show every string gen'd by G is in L and every string in L can be gen'd by G.
 
 \section{Parse trees}
 
-is just a record of the replacements made in a derivation. grab the derivation given a big shake. start symbols at the root.
- 
-Show parse tree of  $A \rightarrow a A | \epsilon$ and if-then-else above.
+A parse tree is just a record of the replacements made in a derivation. Grab the derivation by the start symbol and give it a big shake.  Show parse tree of {\tt aaa} given $A \rightarrow a A | \epsilon$.
+
+{\bf Q}. What does parse tree look like for {\tt aab} given $A \rightarrow a A | b$.
 
 \section{Ambiguity}
 
-See section 5.4 in ANTLR 4 book. p69 printed.
+See section 5.4 in ANTLR 4 book. p69 in printed version.
 
-"You can't put too much water in a nuclear reactor". By one shot an elephant in my pajamas. How he got my pajamas I will never know.
+``You can't put too much water in a nuclear reacto.'' 
 
-more than one lm or rm deriv for same input. normally an error. $L$ can be ambig too syntactically; e.g., expressions. Ambig $L$ gives ambig $G$. Need disambiguating rules from semantics or otherwise.
+``I once shot an elephant in my pajamas. How he got in my pajamas I will never know.'' --- Groucho Marx
 
-\noindent $
-A \rightarrow a A | \epsilon \\
-$
-classic:
+If there is more than one lm or rm derivation for same input, normally it's an error in computer languages. $L$ is syntactically ambiguous in this case; e.g., expressions.  Also note that an ambiguous language $L$ gives ambig $G$.  For example, in the language C++ {\tt T(i)} is both a typecast and a function call so it is syntactically ambiguous. Expressions are the typical example used to describe ambiguous grammars:\\
 
 \noindent $
 E \rightarrow E * E\\
@@ -299,78 +327,42 @@ E \rightarrow E + E\\
 E \rightarrow {\bf id}\\
 $
 
-1+2*3 has two interps. show trees.
+{\tt 1+2*3} has two interps. show trees.  The parser must recognize {\tt 1*2+3} as {\tt (1*2)+3} not {\tt 1*(2+3)}.
 
-Parse trees for {\tt a*b+c} and $E \rightarrow E * E \,|\, E {\bf +} E \,|\, {\bf id}$. Converted to non-Left-recur:  $E \rightarrow {\bf id}\ (*\ E | {\bf +}\ E)^*$. The parser must recognize {\tt a*b+c} as {\tt (a*b)+c} not {\tt a*(b+c)}.
+One way to resolve is to convert to non-Left-recursive version: $E \rightarrow {\bf id}\ (*\ E | {\bf +}\ E)^*$.  The other way is to order the alternatives, which is what ANTLR does to show precedence.
 
-\begin{center}
-\begin{small}
-\begin{tabular}{cc}
-\scalebox{.9}{
-\begin{tikzpicture}
-\tikzset{level distance=25pt, sibling distance=-2pt}
-\Tree
-[.$E$
-  1 * [.$\underline{E}$ 2 ] +  [.$E$ 3 ]]
-]
-\end{tikzpicture}
-} & \scalebox{.9}{
-\begin{tikzpicture}
-\tikzset{level distance=25pt, sibling distance=-2pt}
-\Tree
-[.$E$
-  1 *
-  [.$\underline{E}$ 2 + [.$E$ 3 ]]
-]
-\end{tikzpicture}
-} \\
-{\bf (a)} {\tt (a*b)+c} & {\bf (b)} {\tt a*(b+c)} \\
-\end{tabular}
-\end{small}
-\end{center}
+{\bf Q}. Show the parse tree for {\tt 1+2+3} using the non-left recursive grammar $E \rightarrow {\bf id}\ (*\ E | {\bf +}\ E)^*$. Now show it for {\tt 1+2*3}. Do you think it represents the precedence of the operators correctly?
 
-\cut{
-A predicated grammar $G = (N, T, P, S, \Pi, \mathcal{M})$ has elements:
+{\bf Q}. Modify the expression language to allow {\bf int} integer values. Modify the expression language to allow nested parenthesis. Modify it so it allows array references.
 
-\begin{itemize}\itemsep0pt \parskip0pt \parsep0pt
-\item $N$ is the set of nonterminals (rule names)
-\item $T$ is the set of terminals (tokens)
-\item $P$ is the set of productions
-\item $S \in N$ is the start symbol
-\item $\Pi$ is a set of side-effect-free semantic predicates
-\item $\mathcal{M}$ is a set of actions (mutators) 
-\end{itemize}
-}
+\section{Left recursion}
 
-\section{Left recur}
-
-Indirectly left-recursive rules call themselves through another rule; e.g., $A
-\rightarrow B$, $B \rightarrow A$. Hidden left-recursion occurs
+Left recursion occurs when a derivation of $A$ yields another string with $A$ on the left edge. $\exists A \Rightarrow^* A\alpha$
+ 
+Indirectly left-recursive rules call themselves through another rule; e.g., $A \rightarrow B$, $B \rightarrow A$. Hidden left-recursion occurs
 when an empty production exposes left recursion; e.g., $A \rightarrow
-B A$, $B \rightarrow \epsilon$.
+B A$, $B \rightarrow \epsilon$.  Here's an obvious case of direct left recursion:
 
 \noindent $
 A \rightarrow A a\\
 A \rightarrow b\\
 $
 
-right recur
+\noindent Here is an indirect left recursion case:\\
+
+\noindent $
+A \rightarrow Ba\, |\, b\\
+B \rightarrow A\\
+$
+
+{\bf Q}. What sentences does this grammar generate?
+
+\noindent Here is right recursion:\\
 
 \noindent $
 A \rightarrow a A\\
 A \rightarrow b\\
 $
-
-Ex: elim in direct left recur
-
-\noindent $
-E \rightarrow E * E\\
-E \rightarrow E / E\\
-E \rightarrow E + E\\
-E \rightarrow {\bf id}\\
-$
-
-Show typical non-left recur arith expr rules.
 
 \section{Left factoring}
 
@@ -383,22 +375,22 @@ $
 S \rightarrow {\bf if} E {\bf then} S S'\\
 S' \rightarrow {\bf else} S \\
 S' \rightarrow
-$
+$\\
 
-or EBNF
+\noindent or EBNF notation:\\
 
 \noindent $
-S \rightarrow {\bf if} E {\bf then} S ({\bf else} S)^?\\
+S \rightarrow {\bf if}\, E\, {\bf then}\, S\, ({\bf else}\, S)?\\
 $
 \section{EBNF}
 
-which introduces us to extended BNF (EBNF). we typically use a variation on {\tt yacc} notation, which flips things so that non-terminals are lowercase and terminals are uppercase like constants:
+That example introduces us to extended BNF (EBNF). We typically use a variation on {\tt yacc} notation, which flips things so that non-terminals are lowercase and terminals are uppercase like constants:
 
 \begin{alltt}
 a : A* B* ; // extended; yacc doesn't allow *
 \end{alltt}
 
-or
+\noindent or
 
 \begin{alltt}
 a : 'a'* 'b'* ; // ANTLR notation
