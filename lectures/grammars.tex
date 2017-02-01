@@ -315,7 +315,7 @@ A parse tree is just a record of the replacements made in a derivation. Grab the
 
 See section 5.4 in ANTLR 4 book. p69 in printed version.
 
-``You can't put too much water in a nuclear reacto.'' 
+``You can't put too much water in a nuclear reactor.'' 
 
 ``I once shot an elephant in my pajamas. How he got in my pajamas I will never know.'' --- Groucho Marx
 
@@ -327,17 +327,25 @@ E \rightarrow E + E\\
 E \rightarrow {\bf id}\\
 $
 
-{\tt 1+2*3} has two interps. show trees.  The parser must recognize {\tt 1*2+3} as {\tt (1*2)+3} not {\tt 1*(2+3)}.
+{\tt 1+2*3} has two interpretations. The parser should recognize {\tt 1*2+3} as {\tt (1*2)+3} not {\tt 1*(2+3)}.
+
+{\bf Q}. Show the {\bf two} leftmost derivation for {\tt 1+2*3}
 
 One way to resolve is to convert to non-Left-recursive version: $E \rightarrow {\bf id}\ (*\ E | {\bf +}\ E)^*$.  The other way is to order the alternatives, which is what ANTLR does to show precedence.
 
+{\bf Q}. Show the {\bf two} parse tree for {\tt 1+2*3}.
+
 {\bf Q}. Show the parse tree for {\tt 1+2+3} using the non-left recursive grammar $E \rightarrow {\bf id}\ (*\ E | {\bf +}\ E)^*$. Now show it for {\tt 1+2*3}. Do you think it represents the precedence of the operators correctly?
 
-{\bf Q}. Modify the expression language to allow {\bf int} integer values. Modify the expression language to allow nested parenthesis. Modify it so it allows array references.
+{\bf Q}. Modify the expression language to allow {\bf int} integer values. 
+
+{\bf Q}. Modify the expression language to allow nested parenthesis. 
+
+{\bf Q}. Modify it so it allows array references.
 
 \section{Left recursion}
 
-Left recursion occurs when a derivation of $A$ yields another string with $A$ on the left edge. $\exists A \Rightarrow^* A\alpha$
+Left recursion occurs when a derivation of $A$ yields another string with $A$ on the left edge: $\exists A \Rightarrow^* A\alpha$.
  
 Indirectly left-recursive rules call themselves through another rule; e.g., $A \rightarrow B$, $B \rightarrow A$. Hidden left-recursion occurs
 when an empty production exposes left recursion; e.g., $A \rightarrow
@@ -347,6 +355,8 @@ B A$, $B \rightarrow \epsilon$.  Here's an obvious case of direct left recursion
 A \rightarrow A a\\
 A \rightarrow b\\
 $
+
+{\bf Q}. What sentences does this grammar generate?
 
 \noindent Here is an indirect left recursion case:\\
 
@@ -364,16 +374,18 @@ A \rightarrow a A\\
 A \rightarrow b\\
 $
 
+{\bf Q}. What sentences does this grammar generate?
+
 \section{Left factoring}
 
 \noindent $
-S \rightarrow {\bf if} E {\bf then} S {\bf else} S\\
-S \rightarrow {\bf if} E {\bf then} S\\
+S \rightarrow {\bf if}\, E\, {\bf then}\, S\, {\bf else}\, S\\
+S \rightarrow {\bf if}\, E\, {\bf then}\, S\\
 $
 
 \noindent $
-S \rightarrow {\bf if} E {\bf then} S S'\\
-S' \rightarrow {\bf else} S \\
+S \rightarrow {\bf if}\, E\, {\bf then}\, S\, S'\\
+S' \rightarrow {\bf else}\, S \\
 S' \rightarrow
 $\\
 
@@ -382,36 +394,6 @@ $\\
 \noindent $
 S \rightarrow {\bf if}\, E\, {\bf then}\, S\, ({\bf else}\, S)?\\
 $
-\section{EBNF}
-
-That example introduces us to extended BNF (EBNF). We typically use a variation on {\tt yacc} notation, which flips things so that non-terminals are lowercase and terminals are uppercase like constants:
-
-\begin{alltt}
-a : A* B* ; // extended; yacc doesn't allow *
-\end{alltt}
-
-\noindent or
-
-\begin{alltt}
-a : 'a'* 'b'* ; // ANTLR notation
-\end{alltt}
-
-\begin{alltt}\small
-grammar Ex; // generates class ExParser
-// action defines ExParser member: enum_is_keyword
-@members \{boolean enum_is_keyword = true;\}
-stat: expr '=' expr ';' // production 1
-    | expr ';'          // production 2
-    ;
-expr: expr '*' expr
-    | expr '+' expr
-    | expr '(' expr ')' // f(x)
-    | id
-    ;
-id  : ID | \{!enum_is_keyword\}? 'enum' ;
-ID  : [A-Za-z]+ ; // match id with upper, lowercase
-WS  : [ \textbackslash{}t\textbackslash{}r\textbackslash{}n]+ -> skip ; // ignore whitespace
-\end{alltt}
 
 \section{Designing grammars}
 
