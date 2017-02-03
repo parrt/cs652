@@ -117,6 +117,8 @@ LAB: [reflection](https://github.com/parrt/cs652/blob/master/labs/reflection.md)
 
 LAB: [A first taste of ANTLR (parsing CSV)](https://github.com/parrt/cs652/blob/master/labs/csv.md)
 
+LAB: [Simple statement parsing](https://github.com/parrt/cs652/blob/master/labs/statgram.md)
+
 ## Part I -- Recognition and Tree Construction
 
 Chapter 2 on recursive-descent parsers in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
