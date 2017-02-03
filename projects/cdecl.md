@@ -62,7 +62,7 @@ In this case, it shows doing the pointer operator first rather than the array op
 I have provided a [starter kit](https://github.com/USF-CS652-starterkits/parrt-cdecl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
 
 ```bash
-$ git clone git@github.com:USF-CS652-S16/USERID-cdecl.git
+$ git clone git@github.com:USF-CS652-S17/USERID-cdecl.git
 $ cd USERID-cdecl/ # jump into dir containing YOUR empty repo
 $ git pull git@github.com:USF-CS652-starterkits/parrt-cdecl.git master
 ```
@@ -126,7 +126,7 @@ Every time you commit to your repository, your software will automatically be do
 
 <img src=images/travis-cdecl.png width=500>
 
-Check out [https://travis-ci.com/USF-CS652-S16/USERID-cdecl](https://travis-ci.com/USF-CS652-S16/USERID-cdecl) where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
+Check out https://travis-ci.com/USF-CS652-S17/cdecl-USERID where USERID is your github user id. Mine is parrt, for example. You will not be able to see the repositories of other students.
 
 ## Deliverables
 
@@ -134,6 +134,6 @@ You must fill in `Tool.java` and `EnglishGenerator.java` to get a working soluti
 
 ## Submission
 
-You must submit your project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16).
+You must submit your project via github using your account and the repository I've created for you in our CS652 github organization.
 
 You are required to show git commits to your repository that are consistent with developing the software for this project.
