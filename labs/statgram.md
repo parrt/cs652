@@ -25,6 +25,6 @@ x = 3;
 return x*10;
 ```
 
+The parse tree should look like:
 
-
-
+<img src=images/statgram.png width=300>
