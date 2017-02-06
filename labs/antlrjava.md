@@ -10,7 +10,5 @@ The goal of this lab is to learn to have antlr generate code and invoke it from 
 <img src=images/setsrc.png width=500>
 1. Create a `src` directory in the project root directory and create a main program called `Test`.
 1. Enter Java code that creates an [ANTLRInputStream](http://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRInputStream.html) reading from a string, such as "`int *;`". Create a `CDeclLexer` attached to that input stream and then a `CommonTokenStream` attached to the lexer. Create a `CDeclParser` object attached to the token stream. Call start symbol `declaration` and save the return value as a parse tree.
-1. Enter code to the tree out in LISP form using `toStringTree(Parser)` on the result tree. Run the program and for `int *i;` it should print:
-"`(declaration (typename int) (declarator * (declarator i)) ;)`"
-1.  Enter code to open a dialog box showing the tree visually using `Trees.inspect(Tree, parser)`. Running should produce this dialog box:
-<img src=images/cdecl.png width=300>
+1. Enter code to the tree out in LISP form using `toStringTree(Parser)` on the result tree. Run the program and for `int *i;` it should print:<br>"`(declaration (typename int) (declarator * (declarator i)) ;)`"
+1.  Enter code to open a dialog box showing the tree visually using `Trees.inspect(Tree, parser)`. Running should produce this dialog box:<br><img src=images/cdecl.png width=300>
