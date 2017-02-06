@@ -28,14 +28,14 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 | Artifact | Grade Weight | Due date |
 |--------|--------|--------|
 |[Java REPL](https://github.com/parrt/cs652/blob/master/projects/Java-REPL.md)| 4%| Friday, Feb 3, 2016 |
-|[C declaration to English translator](https://github.com/parrt/cs652/blob/master/projects/cdecl.md) |3%| Fri, Feb 10|
+|[C declaration to English translator](https://github.com/parrt/cs652/blob/master/projects/cdecl.md) |3%| Web, Feb 15|
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |20%| 3 parts|
-|&nbsp;&nbsp;&nbsp;&nbsp;Java subset grammar |5%| Fri, Feb 17|
-|&nbsp;&nbsp;&nbsp;&nbsp;Semantic analysis |7%| Fri, Mar 3|
-|&nbsp;&nbsp;&nbsp;&nbsp;Code generation |8%| Fri, Mar 24|
-|[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| Fri, Apr 28 |
-|[smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| Officially Sunday, May 7 at 11:59pm but will accept them til Wed May 10th at class time |
-|Exam 1| 15%| Wed, Feb 22 |
+|&nbsp;&nbsp;&nbsp;&nbsp;Java subset grammar |5%| Wed, Feb 22|
+|&nbsp;&nbsp;&nbsp;&nbsp;Semantic analysis |7%| Wed, Mar 8|
+|&nbsp;&nbsp;&nbsp;&nbsp;Code generation |8%| Fri, Mar 31|
+|[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| Mon, May 1 |
+| CANCELED [smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| Sunday, May 7 at 11:59pm |
+|Exam 1| 15%| Mon, Feb 27 |
 |Exam 2| 15%| Fri, Apr 21 |
 |Final| 20%| 3pm Monday, May 16|
 
