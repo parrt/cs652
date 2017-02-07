@@ -12,11 +12,11 @@ typename
     ;
 
 declarator
-    :   declarator '[' ']'		# Array		// right operators have highest precedence
-    |   declarator '(' ')'		# Func
-    |	'*' declarator			# Pointer
-	|   '(' declarator ')'		# Grouping
-    |	ID						# Var
+    :   declarator '[' ']'//		# Array		// right operators have highest precedence
+    |   declarator '(' ')'//		# Func
+    |	'*' declarator	  //		# Pointer
+	|   '(' declarator ')'//		# Grouping
+    |	ID				  //		# Var
     ;
 
 // the following also would work but with less cool trees
