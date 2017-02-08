@@ -117,8 +117,6 @@ Chapter 2 in ANTLR 4 reference
 
 Chapter 5 in ANTLR 4 reference on grammar patterns
 
-Parse Trees & ASTs. Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
-
 LAB: [reflection](https://github.com/parrt/cs652/blob/master/labs/reflection.md)
 
 LAB: [A first taste of ANTLR (parsing CSV)](https://github.com/parrt/cs652/blob/master/labs/csv.md)
@@ -127,12 +125,15 @@ LAB: [Simple statement parsing](https://github.com/parrt/cs652/blob/master/labs/
 
 LAB: [Calling ANTLR from java](https://github.com/parrt/cs652/blob/master/labs/antlrjava.md)
 
+ANTLR 4 section 7.2, Tree walkers, order. Section 5.1 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
+LAB: [Parse tree listeners](https://github.com/parrt/cs652/blob/master/labs/listeners.md)
+
+Parse Trees & ASTs. Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
+
 Chapter 2 on recursive-descent parsers in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X).
 
 Watch [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
-
-
-Tree walkers, order. Section 5.1, 5.4, and Pattern 13 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
 Section 2.5 in ANTLR 4 reference on Parse-Tree Listeners and Visitors
 
