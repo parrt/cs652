@@ -62,8 +62,8 @@ In this case, it shows doing the pointer operator first rather than the array op
 I have provided a [starter kit](https://github.com/USF-CS652-starterkits/parrt-cdecl) that you can pull into your repository. From the command line, clone your project repo and then pull in my starter kit:
 
 ```bash
-$ git clone git@github.com:USF-CS652-S17/USERID-cdecl.git
-$ cd USERID-cdecl/ # jump into dir containing YOUR empty repo
+$ git clone git@github.com:USF-CS652-S17/cdecl-USERID.git
+$ cd cdecl-USERID # jump into dir containing YOUR empty repo
 $ git pull git@github.com:USF-CS652-starterkits/parrt-cdecl.git master
 ```
 
@@ -130,7 +130,7 @@ Check out https://travis-ci.com/USF-CS652-S17/cdecl-USERID where USERID is your 
 
 ## Deliverables
 
-You must fill in `Tool.java` and `EnglishGenerator.java` to get a working solution that passes all [15 unit tests](https://github.com/USF-CS652-starterkits/parrt-cdecl/blob/master/test/cs652/cdecl/TestCDecl.java).
+You must fill in `Tool.java` and `EnglishGenerator.java` to get a working solution that passes all [15 unit tests](https://github.com/USF-CS652-starterkits/parrt-cdecl/blob/master/test/cs652/cdecl/TestCDecl.java). **As usual, it must run successfully on travis and on unix. Make sure you do not hardcode pathnames or anything else that would prevent your program from running on a different computer.**
 
 ## Submission
 
