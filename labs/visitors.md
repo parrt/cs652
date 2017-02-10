@@ -17,8 +17,6 @@ e : e '*' e
   | INT	
   ;
 
-MULT : '*' ;
-ADD : '*' ;
 INT : [0-9]+ ;
 WS : [ \r\t\n]+ -> skip ;
 ```
