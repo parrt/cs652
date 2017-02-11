@@ -12,11 +12,13 @@ Get a new module or project together and enter the following grammar (*no Java p
 grammar Expr;
 
 s : e ; // <-- start rule
-e : e '*' e
-  | e '+' e
+e : e MULT e
+  | e ADD e
   | INT	
   ;
 
+MULT : '*' ;
+ADD : '+' ;
 INT : [0-9]+ ;
 WS : [ \r\t\n]+ -> skip ;
 ```
