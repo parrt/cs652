@@ -35,5 +35,5 @@ declarator2
         )*
     ;
 
-ID : [a-zA-Z_]* [a-zA-Z0-9_]+ ;
+ID : [a-zA-Z_] [a-zA-Z0-9_]+ ;
 WS : [ \t\n\r]+ -> skip ;
