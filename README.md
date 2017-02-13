@@ -135,8 +135,9 @@ ANTLR book Section 7.5 on sharing info between parse tree walk event methods. Se
 
 LAB: [Parse tree visitors](https://github.com/parrt/cs652/blob/master/labs/visitors.md)
 
-
 LAB: [Parsing JSON](https://github.com/parrt/cs652/blob/master/labs/json.md)
+
+LAB: [Loading CSV data](https://github.com/parrt/cs652/blob/master/labs/csvloader.md)
 
 Parse Trees & ASTs. Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
