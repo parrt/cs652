@@ -131,9 +131,12 @@ LAB: [Parse tree listeners](https://github.com/parrt/cs652/blob/master/labs/list
 
 Section 2.5 in ANTLR 4 reference on Parse-Tree Listeners and Visitors. Then more stuff on them in Sections 7.2-7.4 Decoupling Grammars from Application-Specific Code in ANTLR 4 reference on Parse tree listeners/visitors. 
 
-ANTLR book Section 7.5 on sharing info between parse tree walk event methods.
+ANTLR book Section 7.5 on sharing info between parse tree walk event methods. See grey box titled "Adding fields to nodes via rule arguments and return values" (rougly page 122).
 
 LAB: [Parse tree visitors](https://github.com/parrt/cs652/blob/master/labs/visitors.md)
+
+
+LAB: [Parsing JSON](https://github.com/parrt/cs652/blob/master/labs/json.md)
 
 Parse Trees & ASTs. Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
@@ -141,9 +144,6 @@ Chapter 2 on recursive-descent parsers in [Language Implementation Patterns](htt
 
 Watch [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
 
-
-
-See grey box titled "Adding fields to nodes via rule arguments and return values" (rougly page 122).
 
 Read chapter 8 on building real language applications as it contains examples of how to use listeners and visitors.
 
