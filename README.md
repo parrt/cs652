@@ -147,7 +147,6 @@ Chapter 2 on recursive-descent parsers in [Language Implementation Patterns](htt
 
 Watch [The Quest for the One True Parser](http://www.infoq.com/presentations/parsing-history?utm_source=infoq&utm_medium=QCon_EarlyAccessVideos&utm_campaign=QConSanFrancisco2014)
 
-
 Read chapter 8 on building real language applications as it contains examples of how to use listeners and visitors.
 
 **LAB**: [Parse Tree construction in an LL(1) Parser](https://github.com/parrt/cs652/blob/master/labs/LL1-trees.md)
@@ -160,9 +159,15 @@ Read chapter 8 on building real language applications as it contains examples of
 
 Chapter 6 in Language Implementation Patterns (LIP)
 
+LAB: [Symbols and scopes](https://github.com/parrt/cs652/blob/master/labs/def-ref.md)
+
 (ANTLR 4 ref Section 8.4 has a subsection called a "Crash course in symbol tables" that could also be a useful supplement to Chapter 6 in LIP book.)
 
-See [Declarative Name Binding and Scope Rules](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2012-015.pdf) for another description of symbol table management.
+See [Declarative Name Binding and Scope Rules](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2012-015.pdf) for another description of symbol table management. Quoting:
+
+>  Name binding is concerned with the relationship between definitions and references of identifiers and textural software languages, including scope rules that govern these relations. ... The essence of name binding is establishing relations between a definition that binds a name and a reference that uses that name.
+
+>  Scopes restrict the visibility of definition sites. A named scope is the definition site for a name which scopes other definition sites. By contrast, an anonymous scope does not define a name. Scopes can be nested and name resolution typically looks for definition sites from inner to outer scopes.
 
 Chapter 7 in LIP: structs, classes
 
