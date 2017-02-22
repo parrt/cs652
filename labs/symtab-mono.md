@@ -116,3 +116,28 @@ The errors are:
 No such var: x
 No such var: x
 ```
+
+## Predefined types
+
+Alter the `DefSymbols` class so that it defines built-in type symbols for `int` and `float`.
+
+Set the `type` field of variable symbols in `enterVar()`.
+
+
+## Annotating the parse tree
+
+Now that we have properly built a full symbol table for a single monolithic scope, let's annotate the parse tree so that the `prog` node points at the global scope. It's not really worth the effort for a single scope, but it introduces the basic mechanism used in more complicated grammars. The simplest way to annotate the parse tree is to define a field in the appropriate `Context` object (parse tree node). Alter the grammar in the following way:
+
+
+```
+grammar LaLa;
+
+@header {
+import symtab.*;
+}
+
+prog returns [Scope globals] : (var|stat)+ ;
+...
+```
+
+Then, in `enterProg` set the `ctx.globals` field appropriately.

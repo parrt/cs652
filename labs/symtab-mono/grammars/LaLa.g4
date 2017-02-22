@@ -1,6 +1,10 @@
 grammar LaLa;
 
-prog : (var|stat)+ ;
+@header {
+import symtab.*;
+}
+
+prog returns [Scope globals] : (var|stat)+ ;
 
 var : 'var' ID ':' type ';' ;
 
