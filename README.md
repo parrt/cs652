@@ -163,6 +163,8 @@ Chapter 6 in Language Implementation Patterns (LIP)
 
 LAB: [Symbols and scopes](https://github.com/parrt/cs652/blob/master/labs/def-ref.md)
 
+LAB: [Single scope symbol table](https://github.com/parrt/cs652/blob/master/labs/symtab-mono.md)
+
 (ANTLR 4 ref Section 8.4 has a subsection called a "Crash course in symbol tables" that could also be a useful supplement to Chapter 6 in LIP book.)
 
 See [Declarative Name Binding and Scope Rules](http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2012-015.pdf) for another description of symbol table management. Quoting:

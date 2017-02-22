@@ -53,3 +53,66 @@ As usual, remember to:
 
 ## Listener to create symbol table
 
+First, copy the [symbol table](https://github.com/parrt/cs652/tree/master/labs/code/simple-symtab) to your `src` directory in this module.
+
+Next, fill in the following class:
+
+```java
+public class DefSymbols extends LaLaBaseListener {
+	protected BasicScope globals;
+	protected Scope currentScope = null;
+
+	@Override
+	public void enterProg(LaLaParser.ProgContext ctx) {
+		// create a global scope
+		// set currentScope to globals;
+	}
+
+	@Override
+	public void exitProg(LaLaParser.ProgContext ctx) {
+		// pop the scope
+	}
+
+	@Override
+	public void enterVar(LaLaParser.VarContext ctx) {
+		String varName = ...
+		// create VariableSymbol
+		// define the current scope
+	}
+
+	@Override
+	public void enterStat(LaLaParser.StatContext ctx) {
+		String varName = ...;
+		Symbol sym = ...; // resolve in the current scope
+		if ( sym==null ) {
+			System.err.println("No such var: "+varName);
+		}
+	}
+
+	@Override
+	public void enterExpr(LaLaParser.ExprContext ctx) {
+		if ( ctx.ID()!=null ) {
+			String varName = ...;
+			Symbol sym = ...; // resolve varName in the current scope
+			if ( sym==null ) {
+				System.err.println("No such var: "+varName);
+			}
+		}
+	}
+}
+```
+
+Finally, update your main program so that it creates a `DefSymbols` listener object and walks the tree with it. Because there are no errors, you should not get an error message. If you alter the input to the following (`bad.lala`), it should print out an error for the left side of the assignment and the right-hand side of the second assignment.
+
+```
+var y : float;
+x = 1;
+y = x;
+```
+
+The errors are:
+ 
+```
+No such var: x
+No such var: x
+```
