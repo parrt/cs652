@@ -58,7 +58,7 @@ All projects are due precisely at the start of class on the due date. You do not
 
 For repl, vtable, smalltalk projects, I provide you with the complete set of tests your implementation must pass. Passing all tests as specified (i.e., don't modify them) gets you 90%. Every time you commit to your repository, your software will automatically be downloaded and tested on the Travis continuous integration server using maven. Your code must not be platform specific with, for example, PC-only path names. You get the other 10% after I sign off on your code. If there are changes to be made, I will submit a github *pull request* with comments inline in your code. Merge the pull request and then respond to each comment by fixing your code. Please remove my comments as you make changes.  Please try to submit all of your changes in a single commit beyond the last commit you did for original submission of the project.  Once you have fixed the code or if I did not require any changes, I will mark you down as 100%. **In order for me to get email indicating you've finished,** please use `@parrt` in your commit message or, if you've already committed your finished update, add a comment. For example, `finished responding to @parrt review.`  Be advised that I might require you to make multiple passes over your code to fix things until I'm satisfied.  **Any required changes must be done prior to submission of your next project or the last day of class, whichever comes first.**  I will not do code reviews on incomplete projects so the maximum would be < 90%.
 
-You must submit each project via github using your account and the repository I've created for you in organization [USF-CS652-S16](https://github.com/USF-CS652-S16). The repositories are always named `projectname-userid`. For example, my repl project would be `repl-parrt`.
+You must submit each project via github using your account and the repository I've created for you in organization [USF-CS652-S17](https://github.com/USF-CS652-S17). The repositories are always named `projectname-userid`. For example, my repl project would be `repl-parrt`.
 
 *I expect to see proper git commit messages and github usage so I can track your development.* Commits must be consistent with developing the software for each project. For example, a single large commit of the entire project at once could be considered circumstantial evidence of academic dishonesty.
 
@@ -140,6 +140,8 @@ LAB: [Parsing JSON](https://github.com/parrt/cs652/blob/master/labs/json.md)
 LAB: [Loading CSV data](https://github.com/parrt/cs652/blob/master/labs/csvloader.md)
 
 DETOUR: [cs652 dev notes](https://github.com/parrt/cs652/blob/master/lectures/cs652-dev-process-notes.md)
+
+**skip to Part II**
 
 Parse Trees & ASTs. Section 4, 4.1, 4.2, and Pattern 8 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
