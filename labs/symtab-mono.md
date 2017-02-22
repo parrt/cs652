@@ -1,6 +1,6 @@
 # Single scope symbol table
 
-The goal of this lab is to get your first taste of building a simple table. We are going to use the [symbol table](https://github.com/parrt/cs652/tree/master/labs/code/simple-symtab) created during our previous class. Our language, *LaLa*, is very simple and has a single scope and just variable definitions and assignments. Here is a sample (`test.lala`):
+The goal of this lab is to get your first taste of building a symbol table. We are going to use the [symbol table](https://github.com/parrt/cs652/tree/master/labs/code/simple-symtab) created during our previous class. Our language, *LaLa*, is very simple and has a single scope and just variable definitions and assignments. Here is a sample (`test.lala`):
  
 ```
 var x : int;
