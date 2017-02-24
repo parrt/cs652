@@ -19,8 +19,6 @@ Here is a suitable grammar
 ```
 grammar FaLaLa;
 
-@header {import symtab.*;}
-
 prog : (var|func)+ ;
 
 var : 'var' def ';' ;
@@ -146,3 +144,26 @@ public void enterExpr(FaLaLaParser.ExprContext ctx) {
 
 ## Annotating the parse tree
 
+As we did in the previous lab, augment the rules for which we want to have `Scope` fields:
+
+```
+grammar FaLaLa;
+
+@header {import symtab.*;}
+...
+prog returns [Scope scope] : (var|func)+ ;
+...
+func returns [Scope scope] : 'function' ID '(' args ')' block ;
+...
+block returns [Scope scope] : '{' (var|stat)* '}' ;
+```
+
+Now, go back into your listener and add
+ 
+```java
+ctx.scope = currentScope;
+```
+
+statements to the listener event methods that push new scopes. This annotates the parse tree with all of the appropriate scope pointers into the scope tree.
+
+The next thing we will do is split symbol definitions from symbol references. Annotating the parse tree is a good first step in that direction.

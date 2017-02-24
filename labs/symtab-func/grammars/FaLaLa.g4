@@ -2,7 +2,7 @@ grammar FaLaLa;
 
 @header {import symtab.*;}
 
-prog : (var|func)+ ;
+prog returns [Scope scope] : (var|func)+ ;
 
 var : 'var' def ';' ;
 
@@ -10,13 +10,13 @@ def : ID ':' type ;
 
 type : 'int' | 'float' ;
 
-func : 'function' ID '(' args ')' block ;
+func returns [Scope scope] : 'function' ID '(' args ')' block ;
 
 args: def (',' def)*
 	|
 	;
 
-block : '{' (var|stat)* '}' ;
+block returns [Scope scope] : '{' (var|stat)* '}' ;
 
 stat : ID '=' expr ';' ;
 

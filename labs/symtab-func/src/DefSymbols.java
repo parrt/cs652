@@ -14,6 +14,7 @@ public class DefSymbols extends FaLaLaBaseListener {
 	public void enterProg(FaLaLaParser.ProgContext ctx) {
 		globals = new BasicScope(null);
 		currentScope = globals;
+		ctx.scope = currentScope;
 	}
 
 	@Override
@@ -27,6 +28,7 @@ public class DefSymbols extends FaLaLaBaseListener {
 		FunctionSymbol s = new FunctionSymbol(funcName, currentScope);
 		currentScope.define(s);
 		currentScope = s;
+		ctx.scope = currentScope;
 	}
 
 	@Override
@@ -37,6 +39,7 @@ public class DefSymbols extends FaLaLaBaseListener {
 	@Override
 	public void enterBlock(FaLaLaParser.BlockContext ctx) {
 		currentScope = new BasicScope(currentScope);
+		ctx.scope = currentScope;
 	}
 
 	@Override
