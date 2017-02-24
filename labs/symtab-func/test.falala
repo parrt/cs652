@@ -1,0 +1,7 @@
+var x : int;
+function foo(x : int, z : float) {
+	 var y : float;
+	 x = 1;
+	 y = x;
+}
+function bar() { x = 9; }
