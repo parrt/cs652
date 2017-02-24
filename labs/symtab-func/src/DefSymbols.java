@@ -1,4 +1,5 @@
 import symtab.BasicScope;
+import symtab.FunctionSymbol;
 import symtab.Scope;
 import symtab.Symbol;
 import symtab.VariableSymbol;
@@ -11,7 +12,7 @@ public class DefSymbols extends FaLaLaBaseListener {
 
 	@Override
 	public void enterProg(FaLaLaParser.ProgContext ctx) {
-		globals = new BasicScope();
+		globals = new BasicScope(null);
 		currentScope = globals;
 	}
 
@@ -22,6 +23,10 @@ public class DefSymbols extends FaLaLaBaseListener {
 
 	@Override
 	public void enterFunc(FaLaLaParser.FuncContext ctx) {
+		String funcName = ctx.ID().getText();
+		FunctionSymbol s = new FunctionSymbol(funcName, currentScope);
+		currentScope.define(s);
+		currentScope = s;
 	}
 
 	@Override
@@ -31,7 +36,7 @@ public class DefSymbols extends FaLaLaBaseListener {
 
 	@Override
 	public void enterBlock(FaLaLaParser.BlockContext ctx) {
-		currentScope = new BasicScope()
+		currentScope = new BasicScope(currentScope);
 	}
 
 	@Override

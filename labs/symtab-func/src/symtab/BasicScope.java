@@ -33,6 +33,6 @@ public class BasicScope implements Scope {
 
 	@Override
 	public Scope getEnclosingScope() {
-		return null;
+		return enclosingScope;
 	}
 }

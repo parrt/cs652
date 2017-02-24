@@ -55,6 +55,10 @@ CommonTokenStream tokens = new CommonTokenStream(lexer);
 FaLaLaParser parser = new FaLaLaParser(tokens);
 ParseTree tree = parser.prog();
 System.out.println(tree.toStringTree(parser));
+
+ParseTreeWalker walker = new ParseTreeWalker();
+DefSymbols def = new DefSymbols();
+walker.walk(def, tree);
 ```
 
 As usual, remember to:
@@ -66,11 +70,9 @@ As usual, remember to:
 
 ## Listener to create symbol table
 
-## Annotating the parse tree
-
 Start by copying the solution to the previous lab to a new `DefSymbols.java` file and then modify "`LaLa`" to "`FaLaLa`". Because the knew grammar uses a shared `def` rule to define both variables and arguments, we can conveniently override `enterDef` instead of both event methods for variables and arguments. Fill in the blank functions below to push and pop scopes. Also note that the function scope is comprised of two scopes: the function itself which holds the arguments and the block of code. That implies that local variables with the same name as arguments hide the argument because they aren't two different scopes, the local scope nested within the function scope.
 
-The symbol table code, which I have augmented from the previous lab, is available.
+The [symbol table](https://github.com/parrt/cs652/tree/master/labs/symtab-func/src/symtab) code, which I have augmented from the previous lab, is available.
 
 ```
 protected BasicScope globals;
@@ -91,18 +93,23 @@ public void exitProg(FaLaLaParser.ProgContext ctx) {
 
 @Override
 public void enterFunc(FaLaLaParser.FuncContext ctx) {
+	// Define a function symbol in the current scope
+	// make that function symbol the current scope
 }
 
 @Override
 public void exitFunc(FaLaLaParser.FuncContext ctx) {
+	// pop the scope
 }
 
 @Override
 public void enterBlock(FaLaLaParser.BlockContext ctx) {
+	// push a new BasicScope
 }
 
 @Override
 public void exitBlock(FaLaLaParser.BlockContext ctx) {
+	// pop the scope
 }
 
 // Handle defs
@@ -136,4 +143,6 @@ public void enterExpr(FaLaLaParser.ExprContext ctx) {
 	}
 }
 ```	
+
+## Annotating the parse tree
 
