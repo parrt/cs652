@@ -70,7 +70,7 @@ As usual, remember to:
 
 Start by copying the solution to the previous lab to a new `DefSymbols.java` file and then modify "`LaLa`" to "`FaLaLa`". Because the knew grammar uses a shared `def` rule to define both variables and arguments, we can conveniently override `enterDef` instead of both event methods for variables and arguments. Fill in the blank functions below to push and pop scopes. Also note that the function scope is comprised of two scopes: the function itself which holds the arguments and the block of code. That implies that local variables with the same name as arguments hide the argument because they aren't two different scopes, the local scope nested within the function scope.
 
-The [symbol table](https://github.com/parrt/cs652/tree/master/labs/symtab-func/src/symtab) code, which I have augmented from the previous lab, is available.
+The [symbol table](https://github.com/parrt/cs652/tree/master/labs/symtab-func/src/symtab) code, which I have augmented from the previous lab, is available.  Or, here is [a zip](https://github.com/parrt/cs652/tree/master/labs/symtab-func/symtab-func.zip).
 
 ```
 protected BasicScope globals;
