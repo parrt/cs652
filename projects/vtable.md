@@ -575,7 +575,11 @@ You must fill in the `J.g4` grammar by looking at all of the examples and the st
  *	JField.java
  *	JMethod.java
  *	JVar.java
-1. JPrimitiveType.java  represents a primitive type like `int` or `float`.
+1. JPrimitiveType.java  represents a primitive type like `int` or `float`. 
+1. Define the types in the global scope for this project.
+ ```java
+ 	public static final Type JINT_TYPE = new JPrimitiveType("int");
+ ```
 1. Add implicit `this` method parameter when you create/define method symbols.
 1. Fill in `DefineScopesAndSymbols.java` using the following parse tree and associated scope tree as a guide to fill in the methods. 
 1. Add `returns`  specifications to the ANTLR rules to add fields to the parse tree nodes so that you can annotate the tree with scope pointers into the scope tree.
