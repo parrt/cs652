@@ -595,7 +595,7 @@ You can also look at our [lab code that demonstrates how to define symbols and s
 ```java
 class Employee {
     int ID;
-    int getID() { return ID; }
+    int getID() { return ID; } // has implicit this argument
     void setID(int ID) { this.ID = ID; }
 }
 ```
@@ -608,32 +608,38 @@ class Employee {
 
 ### 2b. Recording type information
 
-While this is not good enough in general, for this type of school project, we can get away with recording types as we define symbols. This requires that we do not refer to types that are defined later in the file but that is an okay limitation.
+While this is not good enough in general, for this type of school project, we can get away with recording the types of symbols as we define the symbols (e.g., record that `ID`'s type is `int`). This requires that we do not refer to types that are defined later in the file but that is an okay limitation for our project.
 
 * As your listener visits the main program, set its return type to `ComputeTypes.JVOID_TYPE`.
 *  When you enter method declaration, set the methods return type to void if `void` is the specified return type. Otherwise, you have a type specifier: an identifier, 'int', or 'float'. In this case get a `Type` object, either a `JPrimitiveType` or a `JClass` depending on what you find when you resolve the symbol from the current scope.
-* For a field declaration or local variable declaration, set its type to `JPrimitiveType` or `JClass` depending on what you find when you resolve the symbol from the current scope.
+* For a field declaration or local variable declaration, set its type to an appropriate `JPrimitiveType` or `JClass` depending on what you find when you resolve the symbol from the current scope.
 
 
 ### 2c. Computing expression types
 
-1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes.
+1.  Fill in `ComputeTypes.java` to compute types of the various expressions. Annotate expression tree nodes with `type`; add `returns`  specifications to the ANTLR grammar to add a field or fields to the parse tree nodes:
+
+```
+expression returns [Type type]
+	: ...
+	;
+```
 
 You need to compute expression types for:
 
-* Constructor calls `new T()`. The type is `T`.
+* Constructor calls `new T()`: The type is `T`.
 * Field references
-  * `x` Look up `x` in the symbol table and ask for its type.
-  * `this.x`  The type of `this` is the current class. Look up `x` in the current class.
-  * `a.b.c.x` Look up `a` to get its type, say, *T*. Look up `b` in *T* and get its type, *T'*. Look up `c` in *T'*, etc...
-* Variable references 'x'. Look up `x` in the symbol table and ask for its type.
-* Method calls `foo()`, `foo(x,1)` Lookup the method and ask for its type.
-* Qualified method calls `a.b.foo()` Look up `a` to get its type, say, *T*. Look up `b` in *T* and get its type, *T'*. Look up `foo` in *T'*.
-* References to `this` Return the type of the current class.
-* References to `null`, for which we can use a `void` type
-* Literal references to integers and floating-point numbers
+  * `x`: Look up (`resolve()`) `x` in the symbol table and ask for its type.
+  * `this.x`  The type of `this` is the current class. Resolve `x` in the current class.
+  * `a.b.c.x`: Resolve `a` to get its type, say, *T*. Look up `b` in *T* using `resolveMember()` and get its type, *T'*. Look up `c` in *T'*, etc...
+* Variable references 'x': Look up `x` in the symbol table and ask for its type.
+* Method calls `foo()`, `foo(x,1)`: Lookup the method and ask for its type.
+* Qualified method calls `a.b.foo()`: Look up `a` to get its type, say, *T*. Look up `b` in *T* and get its type, *T'*. Look up `foo` in *T'*.
+* References to `this`: Return the type of the current class.
+* References to `null`: We can use a `void` type for this case.
+* Literal references to integers and floating-point numbers.
 
-Once you have created the scopes and annotated the parse tree with scope pointers in the previous phase, you need to set the `currentScope` variable for this compute types phase. I tend to factor this functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
+When we created the scopes in the previous phase, we annotated the parse tree with scope pointers.  As with that phase, we need to keep a `currentScope` variable for this compute types phase.  That variable is updated as the listener walks the tree by simply extracting that pointer from the appropriate parse tree nodes.  In the previous phase, we computed and captured those scope variables and in this phase we will reuse those pointers. I tend to factor the "set current scope" functionality out into a separate class, so you will see: `SetScopes.java` but you don't have to use it if you don't want. You can combine everything you need for the compute types phase in one class.
 
 ### 3a. Constructing a model
 
