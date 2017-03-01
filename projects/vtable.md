@@ -569,7 +569,9 @@ You must fill in the `J.g4` grammar by looking at all of the examples and the st
 
 ### 2a. Defining scopes and symbols
 
-*The [symtab class hierarchy](https://raw.githubusercontent.com/antlr/symtab/master/doc/symtab.png) might come in handy.*
+*The [symtab class hierarchy](https://raw.githubusercontent.com/antlr/symtab/master/doc/symtab.png) might come in handy.*  Here is the data aggregate stuff:
+
+<img src=https://raw.githubusercontent.com/antlr/symtab/master/doc/struct.png width=400>
 
 1. Define J symbol table objects using [`org/antlr/symtab`](https://github.com/antlr/symtab) objects as superclasses as necessary:
  *	JArg.java
