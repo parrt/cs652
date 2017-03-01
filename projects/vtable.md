@@ -576,7 +576,7 @@ You must fill in the `J.g4` grammar by looking at all of the examples and the st
  *	JMethod.java
  *	JVar.java
 1. JPrimitiveType.java  represents a primitive type like `int` or `float`. 
-1. Define the types in the global scope for this project.
+1. Add the built-in types in the global scope for this project. Here is how I define `int` in Java as part of my DefineScopesAndSymbols because sometimes you want to directly reference types during type computation (no need to do a resolve sometimes):
 
  ```java
  	public static final Type JINT_TYPE = new JPrimitiveType("int");
