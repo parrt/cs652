@@ -538,7 +538,7 @@ The following diagram illustrates the overall flow of your translation.
 
 ![data flow](images/vtable-data-flow.png)
 
-We take in J code and parse it into a parse tree using ANTLR. Then we walk the parse tree with a tree listener that defines symbols and scopes for our symbol table. It annotates the parse tree with pointers to the leaves of the scope tree so that we can recoup that information during subsequent tree passes.
+We take in J code and parse it into a parse tree using ANTLR. Then we walk the parse tree with a tree listener that defines symbols and scopes for our symbol table. It annotates the parse tree with pointers to the nodes of the scope tree so that we can recoup that information during subsequent tree passes.
 
 Once we have all of the symbols defined, we can walk the parse tree again to evaluate the type of all expressions. As we descend the tree, we need to maintain a `currentScope` pointer so that we can look up functions and variables to determine their type. I have factored out this functionality into a listener called `SetScopes.java` but you don't have to do that. Annotate the tree with type information for every subexpression and expression. We will need this information during translation so that we can create the appropriate casts and use the appropriate slot numbers.
 
@@ -548,7 +548,7 @@ Once you have the complete output model constructed, it's a simple matter of wal
 
 ### 1. Creating the J grammar
 
-Your must fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.) Learning how to examine exemplars of a language and construct a suitable grammar is important but here are a few details that matter in terms of symbol table management and type analysis.
+You must fill in the `J.g4` grammar by looking at all of the examples and the standard [ANTLR Java grammar](https://github.com/antlr/grammars-v4/blob/master/java/Java.g4). (I used as a template to cut it down to my `J.g4`.) Learning how to examine exemplars of a language and construct a suitable grammar is important but here are a few details that matter in terms of symbol table management and type analysis.
 
 * Assume all input is syntactically and semantically valid J(ava) code with the exception that statements existing outside of class definitions are considered the main program. Other than that, assume Java syntax and semantics.
 * Support method and field inheritance.
@@ -570,15 +570,17 @@ Your must fill in the `J.g4` grammar by looking at all of the examples and the s
 ### 2a. Defining scopes and symbols
 
 1. Define J symbol table objects using [`org/antlr/symtab`](https://github.com/antlr/symtab) objects as superclasses as necessary:
-	JArg.java
-	JClass.java
-	JField.java
-	JMethod.java
-	JVar.java
+ *	JArg.java
+ *	JClass.java
+ *	JField.java
+ *	JMethod.java
+ *	JVar.java
 1. JPrimitiveType.java  represents a primitive type like `int` or `float`.
+1. Add implicit `this` method parameter when you create/define method symbols.
 1. Fill in `DefineScopesAndSymbols.java` using the following parse tree and associated scope tree as a guide to fill in the methods. 
+1. Add `returns`  specifications to the ANTLR rules to add fields to the parse tree nodes so that you can annotate the tree with scope pointers into the scope tree.
 
-You can also look at our [lecture code that demonstrates how to define symbols and scopes](https://github.com/parrt/cs652/tree/master/lectures/code/symtab). Add `returns`  specifications to the ANTLR rules to add fields to the parse tree nodes so that you can annotate the tree with scope pointers into the scope tree.
+You can also look at our [lab code that demonstrates how to define symbols and scopes](https://github.com/parrt/cs652/tree/master/labs/symtab-func). 
 
 <center>
 **Annotated parse tree**<br>
