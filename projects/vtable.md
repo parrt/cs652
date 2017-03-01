@@ -577,6 +577,7 @@ You must fill in the `J.g4` grammar by looking at all of the examples and the st
  *	JVar.java
 1. JPrimitiveType.java  represents a primitive type like `int` or `float`. 
 1. Define the types in the global scope for this project.
+
  ```java
  	public static final Type JINT_TYPE = new JPrimitiveType("int");
  ```
