@@ -2,12 +2,12 @@
 
 Given classes:
 
-```
+```java
 class T {...}
 class A extends T {...}
 class E extends T {...}
-``` 
-Which of the following assignments will compile in Java (put yes or no next to each line)?
+```
+ Which of the following assignments will compile in Java (put yes or no next to each line)?
 
 ```
 A a;
