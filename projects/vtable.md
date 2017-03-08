@@ -240,7 +240,7 @@ printf("%d\n", x);
 
 #### Polymorphism
 
-Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with an assignment of a `Dog` to reference an `Animal` reference.
+Polymorphism is the ability to have a single pointer refer to multiple types. In Java, references to an identifier of type `T` become pointers to `T` in C: `Dog d;` &rarr; `Dog *d;`. Consider the following J code with an assignment of a `Dog` to an reference `Animal` reference.
 
 <table border="0">
 <tr><th><b>J</b></th><th><b>C</b></th></tr>
