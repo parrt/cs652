@@ -348,7 +348,7 @@ class Truck extends Vehicle {
 }
 ```
 
-Both `Car` and `Truck` inherit `getColor`.
+Both `Car` and `Truck` inherit `getColor` and both override `start`.
 
 If I have a `Vehicle` reference and send it message `start`, we need to figure out whether to execute `Truck`'s `start` or `Vehicle`'s version. Always remember that the receiver dictates how to respond to a message/method. Consider the following J code.
 
@@ -365,24 +365,45 @@ From above, we know that the `start` methods will be translated to  multiple C f
 ```c
 void Vehicle_start(Vehicle *this) { }
 void Truck_start(Truck *this) { }
+void Car_start(Truck *this) { }
 ```
 
-Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start(v)` but that would be static binding not dynamic binding. We need to do the equivalent of testing the type of object  pointed at by `v` and then call the appropriate function implementation. A more sophisticated way to do that is through a function pointer. In the following possible translation (not the way we will eventually do it), we use a function pointer that points at the appropriate function.
+Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start(v)` or `Vehicle_start(v)` but that would be static binding not dynamic binding. We need to do the equivalent of testing the type of object  pointed at by `v` and then call the appropriate function implementation:
+
+```c
+if ( v->clazz==&Vehicle_metadata ) Vehicle_start(v)
+else if ( v->clazz==& Truck_metadata ) Car_start(v)
+else if ( v->clazz==&Car_metadata ) Car_start(v)
+else error
+```
+
+*This code is the hallmark of non-object learned programming; don't catch yourself doing something similar in Java, for example*
+
+A more sophisticated way to do that is through a function pointer. In the following possible translation (not the way we will eventually do it), we use a function pointer inside the object instance that points at the appropriate function.
 
 ```c
 typedef struct {
     metadata *clazz;
-    void (*start)(); // set this to &Vehicle_start
-    ...
+    void (*start)(); 	        // set this to &Vehicle_start
+    int (*getColor)();         // Vehicle_getColor
 } Vehicle;
 typedef struct {
     metadata *clazz;
-    void (*start)(); // set this to &Truck_start
-    ...
+    void (*start)(); 	        // set this to &Truck_start
+    int (*getColor)();         // Truck_getColor
+    void (*setPayload)(int n); // Truck_setPayload
 } Truck;
+typedef struct {
+    metadata *clazz;
+    void (*start)(); 	        // set this to &Car_start
+    int (*getColor)();         // Car_getColor
+    void (*setDoors)(int n);   // Car_setDoors
+} Car;
 ```
 
-(It is important that the `start` function pointer sit at the same offset in each struct.)
+*It is important that the `start` function pointer sit at the same offset in each struct.*
+
+<img src=images/ptrs-in-obj.png width=300>
 
 Then, the translation of method calls to function calls becomes an indirection through a function pointer:
 
@@ -401,9 +422,9 @@ v.start();
 
 Unfortunately this is a big waste of memory because each instance of a class requires a pointer for each method defined in the class, instead of just space for the declared fields. As the diagram here shows, it's better to factor out all those pointers as they are known statically at compile time. Then, each object simply needs a pointer to the appropriate table of method pointers, which we call a vtable:
 
-![late binding example](images/vtable_example.png)
+<img src=images/vtable_example.png width=600>
 
-In our case, we will access the vtable through the `clazz` field: `o->clazz->_vtable`.
+We access the vtable through the `clazz` field: `o->clazz->_vtable`.
 
 Each new method name in a class hierarchy gets a new *slot* number, which corresponds to the position within the vtable. The order in which subclasses define overridden methods does not matter, they still need to have the same slot number as defined by the superclass method definition. For example, switching the order of the methods in `Truck` should have no effect on the vtable order as the order of slot was defined in the superclass.
 
