@@ -372,7 +372,7 @@ Given a vehicle reference, `v`, you might be tempted to simply call `Truck_start
 
 ```c
 if ( v->clazz==&Vehicle_metadata ) Vehicle_start(v)
-else if ( v->clazz==& Truck_metadata ) Car_start(v)
+else if ( v->clazz==& Truck_metadata ) Truck_start(v)
 else if ( v->clazz==&Car_metadata ) Car_start(v)
 else error
 ```
@@ -390,13 +390,13 @@ typedef struct {
 typedef struct {
     metadata *clazz;
     void (*start)();           // set this to &Truck_start
-    int (*getColor)();         // Truck_getColor
+    int (*getColor)();         // Vehicle_getColor
     void (*setPayload)(int n); // Truck_setPayload
 } Truck;
 typedef struct {
     metadata *clazz;
     void (*start)();           // set this to &Car_start
-    int (*getColor)();         // Car_getColor
+    int (*getColor)();         // Vehicle_getColor
     void (*setDoors)(int n);   // Car_setDoors
 } Car;
 ```
