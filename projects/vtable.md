@@ -384,18 +384,18 @@ A more sophisticated way to do that is through a function pointer. In the follow
 ```c
 typedef struct {
     metadata *clazz;
-    void (*start)(); 	        // set this to &Vehicle_start
+    void (*start)();           // set this to &Vehicle_start
     int (*getColor)();         // Vehicle_getColor
 } Vehicle;
 typedef struct {
     metadata *clazz;
-    void (*start)(); 	        // set this to &Truck_start
+    void (*start)();           // set this to &Truck_start
     int (*getColor)();         // Truck_getColor
     void (*setPayload)(int n); // Truck_setPayload
 } Truck;
 typedef struct {
     metadata *clazz;
-    void (*start)(); 	        // set this to &Car_start
+    void (*start)();           // set this to &Car_start
     int (*getColor)();         // Car_getColor
     void (*setDoors)(int n);   // Car_setDoors
 } Car;
