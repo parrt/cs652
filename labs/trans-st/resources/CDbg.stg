@@ -1,0 +1,9 @@
+CFile(model) ::= <<
+#include \<stdio.h>
+// this is the debug version
+<model.declSTs>
+>>
+
+ObjectRefDecl(model) ::= "<model.type> *<model.id>; // found on line ...<\n>"
+
+PrimitiveDecl(model) ::= "<model.type> <model.id>; // found on line ...<\n>"

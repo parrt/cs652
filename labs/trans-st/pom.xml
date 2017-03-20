@@ -6,7 +6,7 @@
 		<version>9</version>
 	</parent>
 	<groupId>edu.usfca.cs652</groupId>
-	<artifactId>trans-objects</artifactId>
+	<artifactId>trans-st</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 

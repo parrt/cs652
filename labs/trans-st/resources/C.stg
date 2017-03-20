@@ -1,0 +1,8 @@
+CFile(model) ::= <<
+#include \<stdio.h>
+<model.declSTs:{d | <d> // foo<\n>}>
+>>
+
+ObjectRefDecl(model) ::= "<model.type> *<model.id>;"
+
+PrimitiveDecl(model) ::= "<model.type> <model.id>;"

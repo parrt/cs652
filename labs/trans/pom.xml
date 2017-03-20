@@ -40,12 +40,8 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
-			<resource><directory>data</directory></resource>
+			<resource><directory>resources</directory></resource>
 		</resources>
-		<testResources>
-			<testResource><directory>test/us/parr/animl/samples</directory></testResource>
-			<testResource><directory>python</directory></testResource>
-		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
