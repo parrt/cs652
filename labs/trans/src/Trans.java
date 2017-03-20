@@ -19,5 +19,9 @@ public class Trans {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		Gen listener = new Gen();
 		walker.walk(listener, tree);
+
+		for (String decl : listener.decls) {
+			System.out.println(decl);
+		}
 	}
 }

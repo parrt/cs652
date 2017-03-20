@@ -1,13 +1,18 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Gen extends LangBaseListener {
+	public List<String> decls = new ArrayList<>();
+
 	@Override
 	public void enterDecl(LangParser.DeclContext ctx) {
 		String typename = ctx.typename().getText();
 		String varname = ctx.ID().getText();
 		if ( isClassName(typename) ) {
-			System.out.println(typename+" *"+varname+";");
+			decls.add(typename+" *"+varname+";");
 		}
 		else {
-			System.out.println(typename+" "+varname+";");
+			decls.add(typename+" "+varname+";");
 		}
 	}
 
