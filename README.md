@@ -188,11 +188,11 @@ In Language implementation patterns:
 * Figure 11.8 *Assembling a C file model using Java AST visitor* is particularly illuminating for your vtable project.
 * Pattern 31: *Target-specific generator classes* for simple SQL table creation.
 
+**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans.md)
+
 Sample code: [Generating SQL](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
 See Figure 11.8 in LIP book -- Assembling a C file model using Java AST visitor. check out the associated overall C template.
-
-Vtables, polymorphic method calls: [vehicle.c](https://github.com/parrt/cs652/blob/master/lectures/code/vtable/vehicle.c).
 
 ## Part IV -- Virtual machines
 
