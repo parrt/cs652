@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Gen extends LangBaseListener {
 	public CFile file;
-	public static STGroup templates = new STGroupFile("CDbg.stg");
 
 	@Override
 	public void enterFile(LangParser.FileContext ctx) {
