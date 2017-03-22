@@ -11,13 +11,14 @@ public class Gen extends LangBaseListener {
 		String typename = ctx.typename().getText();
 		String varname = ctx.ID().getText();
 		if ( isClassName(typename) ) {
-			file.decls.add(new ObjectRefDecl(typename, varname));
+			file.addDecl(new ObjectRefDecl(typename, varname));
 		}
 		else {
-			file.decls.add(new PrimitiveDecl(typename, varname));
+			file.addDecl(new PrimitiveDecl(typename, varname));
 		}
 	}
 
+	/** Pretend we have type information */
 	public boolean isClassName(String typename) {
 		return Character.isUpperCase(typename.charAt(0));
 	}

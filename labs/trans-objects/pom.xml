@@ -10,7 +10,7 @@
 	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>AniML</name>
+	<name>trans-objects</name>
 	<description>Simple translator with object model</description>
 	<url>https://github.com/parrt/cs652</url>
 	<organization>
