@@ -1,6 +1,6 @@
 # Translation with templates
 
-In the previous [syntax-directed translation lab](https://github.com/parrt/cs652/blob/master/labs/trans-objects.md), we built a translator that created an abstraction of the desired output using output model objects. Translation was a matter of constructing the appropriate model and then a final `toString` call on the root to get a string representation in the output language of interest.
+In the previous [Model-based translation lab](https://github.com/parrt/cs652/blob/master/labs/trans-objects.md), we built a translator that created an abstraction of the desired output using output model objects. Translation was a matter of constructing the appropriate model and then a final `toString` call on the root to get a string representation in the output language of interest.
 
 One of the problems with that lab was that we used Java's relatively poor string construction facilities to construct output. In this lab, we're going to use my [StringTemplate](http://www.stringtemplate.org/) to do a better job.
 
