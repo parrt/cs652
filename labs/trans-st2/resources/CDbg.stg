@@ -1,7 +1,7 @@
-CFile(model) ::= <<
+OutputFile(model,decls) ::= <<
 #include \<stdio.h>
 // this is the debug version
-<model.declSTs>
+<decls>
 >>
 
 ObjectRefDecl(model) ::= "<model.type> *<model.id>; // found on line ...<\n>"

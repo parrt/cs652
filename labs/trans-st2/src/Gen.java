@@ -3,7 +3,7 @@ import org.stringtemplate.v4.STGroupFile;
 
 public class Gen extends LangBaseListener {
 	public OutputFile file;
-	public static STGroup templates = new STGroupFile("C.stg");
+	public static STGroup templates = new STGroupFile("CDbg.stg");
 
 	@Override
 	public void enterFile(LangParser.FileContext ctx) {

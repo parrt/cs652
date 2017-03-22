@@ -139,3 +139,37 @@ public ST getTemplate() {
 ```
 
 Run your main program to verify you get the same output as before.
+
+## Generating multiple output languages
+
+Because we have moved all output strings to a separate file, away from the code, we have properly separated model and view. If you want to generate code for a different language, you can easily just switch out the template group for another. For example, here is one that does things a little bit differently:
+
+```
+OutputFile(model,decls) ::= <<
+#include \<stdio.h>
+// this is the debug version
+<decls>
+>>
+
+ObjectRefDecl(model) ::= "<model.type> *<model.id>; // found on line ...<\n>"
+
+PrimitiveDecl(model) ::= "<model.type> <model.id>; // found on line ...<\n>"
+```
+
+Alter the `Gen` code generator to load the different template file, `CDbg.stg`:
+
+```
+public static STGroup templates = new STGroupFile("CDbg.stg");
+```
+
+The output now looks like:
+
+```
+(file (decl (typename int) x ;) (decl (typename A) b ;))
+#include <stdio.h>
+// this is the debug version
+int x; // found on line ...
+A *b; // found on line ...
+```
+
+Amazing, right? :)
