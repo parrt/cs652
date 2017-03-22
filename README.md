@@ -190,11 +190,11 @@ In Language implementation patterns:
 
 **LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans.md)
 
-**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-objects.md)
+**LAB**: [Model-driven translator](https://github.com/parrt/cs652/blob/master/labs/trans-objects.md)
 
-**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-st.md)
+**LAB**: [Translation with templates](https://github.com/parrt/cs652/blob/master/labs/trans-st.md)
 
-**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-st2.md)
+**LAB**: [Translation with templates (Part 2)](https://github.com/parrt/cs652/blob/master/labs/trans-st2.md)
 
 Sample code: [Generating SQL](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
