@@ -34,7 +34,7 @@ public void addDecl(OutputModelObject decl) { decls.add(decl); }
 * `PrimitiveDecl` has two strings, `type` and `id`and its `toString()` simply returns "*type* *id* `;`" 
 * `ObjectRefDecl` is the same really except that its `toString()` returns "*type* `*`*id* `;`"
 
-Now that we have the appropriate output model objects, we have to alter the code generator, `Gen`, so that it does not collect a list of strings. Instead, it should
+Now that we have the appropriate output model objects, we have to alter the code generator, `Gen`, so that it does not collect a list of strings. Instead, it should create and fill an `OutputFile` object:
 
 ```java
 public class Gen extends LangBaseListener {
