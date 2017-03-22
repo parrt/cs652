@@ -9,7 +9,7 @@ public class OutputFile extends OutputModelObject {
 	public void addDecl(OutputModelObject decl) { decls.add(decl); }
 
 	public ST getTemplate() {
-		ST t = new ST("<decls:{d | <d>\n}>");
+		ST t = super.getTemplate();
 		for (OutputModelObject decl : decls) {
 			// convert objects to templates and add to output file template
 			t.add("decls", decl.getTemplate());

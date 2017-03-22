@@ -1,6 +1,6 @@
-CFile(model) ::= <<
+OutputFile(model,decls) ::= <<
 #include \<stdio.h>
-<model.declSTs:{d | <d> // foo<\n>}>
+<decls:{d | <d><\n>}>
 >>
 
 ObjectRefDecl(model) ::= "<model.type> *<model.id>;"
