@@ -21,7 +21,7 @@ public class Trans {
 		Gen listener = new Gen();
 		walker.walk(listener, tree);
 
-		ST translation = listener.file.getTemplate();
-		System.out.println(translation.render());
+		ST output = listener.file.getTemplate();
+		System.out.println(output.render());
 	}
 }

@@ -8,4 +8,11 @@ public class PrimitiveDecl extends OutputModelObject {
 		this.type = type;
 		this.id = id;
 	}
+
+	public ST getTemplate() {
+		ST t = new ST("<type> <id>;");
+		t.add("type", type);
+		t.add("id", id);
+		return t;
+	}
 }

@@ -5,19 +5,15 @@ import java.util.List;
 
 public class OutputFile extends OutputModelObject {
 	public List<OutputModelObject> decls = new ArrayList<>();
-	public List<ST> declSTs = new ArrayList<>();
 
-	@Override
+	public void addDecl(OutputModelObject decl) { decls.add(decl); }
+
 	public ST getTemplate() {
-		ST st = super.getTemplate();
-		for (OutputModelObject modelObject : decls) {
-			declSTs.add(modelObject.getTemplate());
+		ST t = new ST("<decls:{d | <d>\n}>");
+		for (OutputModelObject decl : decls) {
+			// convert objects to templates and add to output file template
+			t.add("decls", decl.getTemplate());
 		}
-		return st;
-	}
-
-	@Override
-	public String toString() {
-		return "a CFile with "+decls.size()+" decls";
+		return t;
 	}
 }
