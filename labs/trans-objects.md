@@ -27,11 +27,10 @@ Now create the following class hierarchy:
 
 <img src=images/trans-objects.png width=300>
 
-* `OutputFile` has a list of `OutputModelObject` objects and its `toString()` method just returns a string with all of those objects rendered to string;each one is followed by newline. You can also add a handy method to add declarations:
-
-        ```java
+* `OutputFile` has a list of `OutputModelObject` objects and its `toString()` method just returns a string with all of those objects rendered to string;each one is followed by newline. You can also add a handy method to add declarations:<br>
+<pre>
 public void addDecl(OutputModelObject decl) { decls.add(decl); }
-```
+</pre>
 * `PrimitiveDecl` has two strings, `type` and `id`and its `toString()` simply returns "*type* *id* `;`" 
 * `ObjectRefDecl` is the same really except that its `toString()` returns "*type* `*`*id* `;`"
 
