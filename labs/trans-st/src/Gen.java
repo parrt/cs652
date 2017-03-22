@@ -1,16 +1,13 @@
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Gen extends LangBaseListener {
-	public CFile file;
+	public OutputFile file;
 	public static STGroup templates = new STGroupFile("CDbg.stg");
 
 	@Override
 	public void enterFile(LangParser.FileContext ctx) {
-		file = new CFile();
+		file = new OutputFile();
 	}
 
 	@Override

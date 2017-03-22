@@ -2,7 +2,6 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.stringtemplate.v4.ST;
 
 public class Trans {
 	public static void main(String[] args) {
@@ -21,7 +20,6 @@ public class Trans {
 		Gen listener = new Gen();
 		walker.walk(listener, tree);
 
-		ST translation = listener.file.getTemplate();
-		System.out.println(translation.render());
+		System.out.println(listener.file.toString());
 	}
 }

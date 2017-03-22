@@ -26,6 +26,8 @@ ID : [a-zA-Z]+ ;
 WS : [ \r\t\n]+ -> skip;
 ```
 
+*In a true syntax directed translator, we would add print statements directly in that grammar but of course that makes the grammar specific to a particular application.  To avoid this, we will build the usual parse tree and then put print statements in a listener.  Technically, this would still be a syntax directed translator, albeit a more flexible one.*
+
 Then we need the usual main program that fires up the parser and prints out the tree:
 
 ```java
@@ -73,7 +75,7 @@ A *b;
 
 ## Buffering output elements
 
-As we discussed in class, syntax directed translators are very inflexible and tie the order of the output to the order of the input. To decouple that order, we must buffer the output and then emit in the appropriate order later. Order does not matter here, but I want to reinforce this point.
+As we discussed in class, syntax-directed translators are very inflexible and tie the order of the output to the order of the input. To decouple that order, we must buffer the output and then emit in the appropriate order later. Order does not matter here, but I want to reinforce this point.
 
 Alter the `Gen` listener so that it adds the output strings to a field:
 
@@ -87,4 +89,6 @@ Then, alter the main program so that it prints out the declarations after walkin
 for (String decl : listener.decls) {
 	System.out.println(decl);
 }
-```		
+```	
+
+You should get the same output but we have a much more flexible translator here. For example, we could reverse the order of the output declarations or even sort them in some interesting way.

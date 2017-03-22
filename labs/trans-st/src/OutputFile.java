@@ -3,7 +3,7 @@ import org.stringtemplate.v4.ST;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CFile extends OutputModelObject {
+public class OutputFile extends OutputModelObject {
 	public List<OutputModelObject> decls = new ArrayList<>();
 	public List<ST> declSTs = new ArrayList<>();
 

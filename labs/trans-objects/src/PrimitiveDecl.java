@@ -1,5 +1,3 @@
-import org.stringtemplate.v4.ST;
-
 public class PrimitiveDecl extends OutputModelObject {
 	public String type;
 	public String id;
@@ -7,5 +5,10 @@ public class PrimitiveDecl extends OutputModelObject {
 	public PrimitiveDecl(String type, String id) {
 		this.type = type;
 		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return type+" "+id+";";
 	}
 }
