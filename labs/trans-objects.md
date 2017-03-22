@@ -58,3 +58,13 @@ public class Gen extends LangBaseListener {
 	}
 }
 ```
+
+Try that out with your main program printing out the listeners file object. You should get the same output as in the previous lab:
+
+```
+(file (decl (typename int) x ;) (decl (typename A) b ;))
+int x;
+A *b;
+```
+
+Unfortunately, our translator is still not the best we can do. (Dramatic foreshadowing of the next lab!)
