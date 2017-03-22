@@ -190,6 +190,12 @@ In Language implementation patterns:
 
 **LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans.md)
 
+**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-objects.md)
+
+**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-st.md)
+
+**LAB**: [Simple translator](https://github.com/parrt/cs652/blob/master/labs/trans-st2.md)
+
 Sample code: [Generating SQL](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
 See Figure 11.8 in LIP book -- Assembling a C file model using Java AST visitor. check out the associated overall C template.
