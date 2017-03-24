@@ -79,7 +79,6 @@ Because an output file now has both declarations and functions, I've changed my 
  
 ```java
 public class OutputFile extends OutputModelObject {
-	@ModelElement
 	public List<OutputModelObject> elements = new ArrayList<>();
 
 	public void add(OutputModelObject decl) { elements.add(decl); }
