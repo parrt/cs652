@@ -1,3 +1,4 @@
+import org.antlr.v4.codegen.model.ModelElement;
 import org.stringtemplate.v4.ST;
 
 import java.util.ArrayList;
@@ -5,6 +6,8 @@ import java.util.List;
 
 public class Function extends OutputModelObject {
 	public String id;
+
+	@ModelElement
 	public List<OutputModelObject> decls = new ArrayList<>();
 
 	public void add(OutputModelObject decl) { decls.add(decl); }
@@ -13,6 +16,7 @@ public class Function extends OutputModelObject {
 		this.id = id;
 	}
 
+	/* Not needed with ModelConverter
 	public ST getTemplate() {
 		ST t = super.getTemplate();
 		for (OutputModelObject decl : decls) {
@@ -21,4 +25,5 @@ public class Function extends OutputModelObject {
 		}
 		return t;
 	}
+	*/
 }

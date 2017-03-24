@@ -20,7 +20,11 @@ public class Trans {
 		Gen gen = new Gen();
 		OutputModelObject file = gen.visit(tree);
 
-		ST output = file.getTemplate();
+//		ST output = file.getTemplate();
+//		System.out.println(output.render());
+
+		ModelConverter converter = new ModelConverter(Gen.templates);
+		ST output = converter.walk(file);
 		System.out.println(output.render());
 	}
 }
