@@ -32,8 +32,8 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 |[Java->C for vtable](https://github.com/parrt/cs652/blob/master/projects/vtable.md) |20%| 3 parts|
 |&nbsp;&nbsp;&nbsp;&nbsp;Java subset grammar |5%| Wed, Feb 22|
 |&nbsp;&nbsp;&nbsp;&nbsp;Semantic analysis |7%| Fri, Mar 10|
-|&nbsp;&nbsp;&nbsp;&nbsp;Code generation |8%| Fri, Mar 31|
-|[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| Mon, May 1 |
+|&nbsp;&nbsp;&nbsp;&nbsp;Code generation |8%| Wed, Apr 5|
+|[smalltalk compiler](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md)| 13%| Fri, May 5 |
 | CANCELED [smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| Sunday, May 7 at 11:59pm |
 |Exam 1| 15%| Mon, Feb 27 |
 |Exam 2| 15%| Fri, Apr 21 |
