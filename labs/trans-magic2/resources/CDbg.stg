@@ -1,0 +1,16 @@
+OutputFile(model,elements) ::= <<
+#include \<stdio.h>
+// this is the debug version
+<elements>
+>>
+
+Function(model, decls) ::= <<
+
+void <model.id>() {
+	<decls:{d | <d>}>
+}
+>>
+
+ObjectRefDecl(model) ::= "<model.type> *<model.id>; // found on line ...<\n>"
+
+PrimitiveDecl(model) ::= "<model.type> <model.id>; // found on line ...<\n>"

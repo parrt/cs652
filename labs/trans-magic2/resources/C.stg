@@ -1,0 +1,15 @@
+OutputFile(model,elements) ::= <<
+#include \<stdio.h>
+<elements:{d | <d><\n>}>
+>>
+
+Function(model, decls) ::= <<
+
+void <model.id>() {
+	<decls:{d | <d><\n>}>
+}
+>>
+
+ObjectRefDecl(model) ::= "<model.type> *<model.id>;"
+
+PrimitiveDecl(model) ::= "<model.type> <model.id>;"
