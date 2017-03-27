@@ -10,20 +10,14 @@ public class Function extends OutputModelObject {
 	@ModelElement
 	public List<OutputModelObject> decls = new ArrayList<>();
 
-	public void add(OutputModelObject decl) { decls.add(decl); }
+	@ModelElement
+	public List<OutputModelObject> args = new ArrayList<>();
+
+	public void addDecl(OutputModelObject decl) { decls.add(decl); }
+
+	public void addArg(OutputModelObject decl) { args.add(decl); }
 
 	public Function(String id) {
 		this.id = id;
 	}
-
-	/* Not needed with ModelConverter
-	public ST getTemplate() {
-		ST t = super.getTemplate();
-		for (OutputModelObject decl : decls) {
-			// convert objects to templates and add to output file template
-			t.add("decls", decl.getTemplate());
-		}
-		return t;
-	}
-	*/
 }

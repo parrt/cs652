@@ -2,7 +2,9 @@ grammar Lang;
 
 file : (fun|decl)+ ;
 
-fun : 'fun' ID '(' ')' '{' decl+ '}' ;
+fun : 'fun' ID '(' (arg (',' arg)*)? ')' '{' decl+ '}' ;
+
+arg : typename ID ;
 
 decl : typename ID ';' ;
 

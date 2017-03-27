@@ -8,7 +8,8 @@ public class Trans {
 		String code =
 			"int x;\n" +
 			"A b;\n" +
-			"fun f() { int y; T t; }\n";
+			"fun f(int x, B b) { int y; T t; }\n"+
+			"fun g(A a) { C c; }\n";
 		ANTLRInputStream input = new ANTLRInputStream(code);
 		LangLexer lexer = new LangLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -19,9 +20,6 @@ public class Trans {
 
 		Gen gen = new Gen();
 		OutputModelObject file = gen.visit(tree);
-
-//		ST output = file.getTemplate();
-//		System.out.println(output.render());
 
 		ModelConverter converter = new ModelConverter(Gen.templates);
 		ST output = converter.walk(file);

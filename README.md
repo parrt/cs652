@@ -198,6 +198,8 @@ In Language implementation patterns:
 
 **LAB**: [Translation using automatic model to template tree conversion](https://github.com/parrt/cs652/blob/master/labs/trans-magic.md)
 
+**LAB**: [Translation with more advanced models and templates](https://github.com/parrt/cs652/blob/master/labs/trans-magic.md)
+
 Sample code: [Generating SQL](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
 See Figure 11.8 in LIP book -- Assembling a C file model using Java AST visitor. check out the associated overall C template.

@@ -10,7 +10,12 @@ public class Gen extends LangBaseVisitor<OutputModelObject> {
 		OutputFile file = new OutputFile();
 		for (ParseTree child : ctx.children) {
 			OutputModelObject m = visit(child);
-			file.add(m);
+			if ( m instanceof Function ) {
+				file.addFun(m);
+			}
+			else {
+				file.addDecl(m);
+			}
 		}
 		return file;
 	}
@@ -18,17 +23,32 @@ public class Gen extends LangBaseVisitor<OutputModelObject> {
 	@Override
 	public OutputModelObject visitFun(LangParser.FunContext ctx) {
 		Function function = new Function(ctx.ID().getText());
+		for (LangParser.ArgContext arg : ctx.arg()) {
+			OutputModelObject m = visit(arg);
+			function.addArg(m);
+		}
 		for (LangParser.DeclContext decl : ctx.decl()) {
 			OutputModelObject m = visit(decl);
-			function.add(m);
+			function.addDecl(m);
 		}
 		return function;
+	}
+
+	@Override
+	public OutputModelObject visitArg(LangParser.ArgContext ctx) {
+		String typename = ctx.typename().getText();
+		String varname = ctx.ID().getText();
+		return getDecl(typename, varname);
 	}
 
 	@Override
 	public OutputModelObject visitDecl(LangParser.DeclContext ctx) {
 		String typename = ctx.typename().getText();
 		String varname = ctx.ID().getText();
+		return getDecl(typename, varname);
+	}
+
+	private OutputModelObject getDecl(String typename, String varname) {
 		if ( isClassName(typename) ) {
 			return new ObjectRefDecl(typename, varname);
 		}

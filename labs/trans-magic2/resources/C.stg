@@ -1,15 +1,17 @@
-OutputFile(model,elements) ::= <<
+OutputFile(model,functions,decls) ::= <<
 #include \<stdio.h>
-<elements:{d | <d><\n>}>
+<decls:{d | <d>;<\n>}>
+<functions:{f | extern void <f.model.id>(<f.args; separator=",">);<\n>}>
+<functions>
 >>
 
-Function(model, decls) ::= <<
+Function(model, args, decls) ::= <<
 
-void <model.id>() {
-	<decls:{d | <d><\n>}>
+void <model.id>(<args; separator=",">) {
+	<decls:{d | <d>;}; separator="\n">
 }
 >>
 
-ObjectRefDecl(model) ::= "<model.type> *<model.id>;"
+ObjectRefDecl(model) ::= "<model.type> *<model.id>"
 
-PrimitiveDecl(model) ::= "<model.type> <model.id>;"
+PrimitiveDecl(model) ::= "<model.type> <model.id>"

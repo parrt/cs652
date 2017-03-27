@@ -6,18 +6,10 @@ import java.util.List;
 
 public class OutputFile extends OutputModelObject {
 	@ModelElement
-	public List<OutputModelObject> elements = new ArrayList<>();
+	public List<OutputModelObject> decls = new ArrayList<>();
+	@ModelElement
+	public List<OutputModelObject> functions = new ArrayList<>();
 
-	public void add(OutputModelObject decl) { elements.add(decl); }
-
-	/* Not needed with ModelConverter
-	public ST getTemplate() {
-		ST t = super.getTemplate();
-		for (OutputModelObject el : elements) {
-			// convert objects to templates and add to output file template
-			t.add("elements", el.getTemplate());
-		}
-		return t;
-	}
-	*/
+	public void addDecl(OutputModelObject decl) { decls.add(decl); }
+	public void addFun(OutputModelObject fun) { functions.add(fun); }
 }
