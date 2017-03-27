@@ -198,7 +198,7 @@ In Language implementation patterns:
 
 **LAB**: [Translation using automatic model to template tree conversion](https://github.com/parrt/cs652/blob/master/labs/trans-magic.md)
 
-**LAB**: [Translation with more advanced models and templates](https://github.com/parrt/cs652/blob/master/labs/trans-magic.md)
+**LAB**: [Translation with more advanced models and templates](https://github.com/parrt/cs652/blob/master/labs/trans-magic2.md)
 
 Sample code: [Generating SQL](https://github.com/parrt/cs652/tree/master/lectures/code/genclasses/src).
 
