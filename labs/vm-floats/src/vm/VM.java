@@ -6,6 +6,11 @@ import java.util.List;
 import static vm.Bytecode.BR;
 import static vm.Bytecode.BRF;
 import static vm.Bytecode.BRT;
+import static vm.Bytecode.FADD;
+import static vm.Bytecode.FEQ;
+import static vm.Bytecode.FLT;
+import static vm.Bytecode.FMUL;
+import static vm.Bytecode.FSUB;
 import static vm.Bytecode.GLOAD;
 import static vm.Bytecode.GSTORE;
 import static vm.Bytecode.HALT;
@@ -56,6 +61,7 @@ public class VM {
 	protected void cpu() {
 		int opcode = code[ip];
 		int a,b,addr,offset;
+		float x,y;
 		while (opcode!= HALT && ip < code.length) {
 			if ( trace ) System.err.printf("%-35s", disInstr());
 			ip++; //jump to next instruction or to operand
@@ -85,6 +91,33 @@ public class VM {
 					a = stack[sp--];
 					stack[++sp] = (a == b) ? TRUE : FALSE;
 					break;
+
+				case FADD:
+					y = Float.intBitsToFloat(stack[sp--]);
+					x = Float.intBitsToFloat(stack[sp--]);
+					stack[++sp] = Float.floatToIntBits(x + y);
+					break;
+				case FSUB:
+					y = Float.intBitsToFloat(stack[sp--]);
+					x = Float.intBitsToFloat(stack[sp--]);
+					stack[++sp] = Float.floatToIntBits(x -y);
+					break;
+				case FMUL:
+					y = Float.intBitsToFloat(stack[sp--]);
+					x = Float.intBitsToFloat(stack[sp--]);
+					stack[++sp] = Float.floatToIntBits(x * y);
+					break;
+				case FLT :
+					y = Float.intBitsToFloat(stack[sp--]);
+					x = Float.intBitsToFloat(stack[sp--]);
+					stack[++sp] = (x < y) ? TRUE : FALSE;
+					break;
+				case FEQ :
+					y = Float.intBitsToFloat(stack[sp--]);
+					x = Float.intBitsToFloat(stack[sp--]);
+					stack[++sp] = (x == y) ? TRUE : FALSE;
+					break;
+
 				case BR :
 					ip = code[ip++];
 					break;

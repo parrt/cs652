@@ -27,7 +27,14 @@ public class Bytecode {
 	public static final short GSTORE = 13;  // store in global memory
 	public static final short PRINT  = 14;  // print stack top
 	public static final short POP  = 15;    // throw away top of stack
-	public static final short HALT = 16;
+
+	public static final short FADD = 16;     // float add
+	public static final short FSUB = 17;
+	public static final short FMUL = 18;
+	public static final short FLT  = 19;     // float less than
+	public static final short FEQ  = 20;     // float equal
+
+	public static final short HALT = 21;
 
 	public static Instruction[] instructions = new Instruction[] {
 		null, // <INVALID>
@@ -46,6 +53,11 @@ public class Bytecode {
 		new Instruction("gstore", 1),
 		new Instruction("print"),
 		new Instruction("pop"),
+		new Instruction("fadd"),
+		new Instruction("fsub"),
+		new Instruction("fmul"),
+		new Instruction("flt"),
+		new Instruction("feq"),
 		new Instruction("halt")
 	};
 }
