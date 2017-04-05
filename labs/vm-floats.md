@@ -17,7 +17,7 @@ The first problem we have to solve relates to the fact that all of our memory is
 ```java
 int[] code;         // word-addressable code memory but still bytecodes.
 int[] globals;      // global variable space
-int[] stack;		// Operand stack, grows upwards
+int[] stack;        // Operand stack, grows upwards
 ```
 
 How can we store floating-point numbers in an `int[]`? We need a trick that you probably didn't know about in Java. Test the following program:
@@ -27,7 +27,7 @@ float x = 3.14159f;
 int xi = (int)x;
 System.out.printf("%f as int is %d\n", x, xi);
 int xbits = Float.floatToIntBits(x);
-System.out.printf("%f as int is %d (0x%x)\n", x, xbits, xbits);
+System.out.printf("%f as bits is %d (0x%x)\n", x, xbits, xbits);
 x = Float.intBitsToFloat(xbits);
 System.out.printf("Bits 0x%x as float is %f\n", xbits, x);
 ```
@@ -36,7 +36,7 @@ You should see the following output:
 
 ```
 3.141590 as int is 3
-3.141590 as int is 1078530000 (0x40490fd0)
+3.141590 as bits is 1078530000 (0x40490fd0)
 Bits 0x40490fd0 as float is 3.141590
 ```
 
@@ -52,12 +52,13 @@ public static final short FSUB = 17;
 public static final short FMUL = 18;
 public static final short FLT  = 19;     // float less than
 public static final short FEQ  = 20;     // float equal
+public static final short FCONST = 21;   // push constant float
 public static final short FPRINT = 22;   // print stack top
 
 public static final short HALT = 23;
 ```
 
-Also update the `Instruction[] instructions` list. Note that the byte code values must be contiguous 1..21.
+Also update the `Instruction[] instructions` list. Note that the byte code values must be contiguous 1..23.
 
 Now add cases to the decode `switch` of `VM.java`.  For example, to get a floating-point operand off the stack, do:
 
