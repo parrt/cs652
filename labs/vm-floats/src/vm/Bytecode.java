@@ -33,8 +33,10 @@ public class Bytecode {
 	public static final short FMUL = 18;
 	public static final short FLT  = 19;     // float less than
 	public static final short FEQ  = 20;     // float equal
+	public static final short FCONST = 21;   // push constant float
+	public static final short FPRINT = 22;  // print stack top
 
-	public static final short HALT = 21;
+	public static final short HALT = 23;
 
 	public static Instruction[] instructions = new Instruction[] {
 		null, // <INVALID>
@@ -58,6 +60,8 @@ public class Bytecode {
 		new Instruction("fmul"),
 		new Instruction("flt"),
 		new Instruction("feq"),
+		new Instruction("fconst", 1),
+		new Instruction("fprint"),
 		new Instruction("halt")
 	};
 }

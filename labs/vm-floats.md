@@ -52,10 +52,70 @@ public static final short FSUB = 17;
 public static final short FMUL = 18;
 public static final short FLT  = 19;     // float less than
 public static final short FEQ  = 20;     // float equal
+public static final short FPRINT = 22;   // print stack top
 
-public static final short HALT = 21;
+public static final short HALT = 23;
 ```
 
 Also update the `Instruction[] instructions` list. Note that the byte code values must be contiguous 1..21.
 
-Now add cases to the decode `switch` of `VM.java`:
+Now add cases to the decode `switch` of `VM.java`.  For example, to get a floating-point operand off the stack, do:
+
+```java
+y = Float.intBitsToFloat(stack[sp--]);
+```
+
+and to push a floating-point value do something like:
+
+```
+stack[++sp] = Float.floatToIntBits(3.14159);
+```
+
+To push a floating-point constant on the stack, you might be surprised to learn that it's absolutely identical to pushing an integer. We simply know as programmers that the integer actually represents a float:
+
+```java
+case FCONST: // same as ICONST!!
+case ICONST:
+	stack[++sp] = code[ip++]; // push operand
+	break;
+```
+
+We just have to be careful that we put a floating-point constant as bits into the code array as an operand.
+
+## Testing
+
+Here's a new sample test, which you can put in `Test`:
+ 
+```java
+// print 3.14159 + 2.5
+static int[] fhello = { 
+	FCONST, Float.floatToIntBits(3.14159f),
+	FCONST, Float.floatToIntBits(2.5f),
+	FADD,
+	FPRINT,
+	HALT
+};
+```
+
+Then, in `main()`, run it through your interpreter:
+
+```java
+VM vm = new VM(fhello, 0, 0); // startip=0, nglobals=0
+vm.trace = true;
+vm.exec();
+```
+
+The output I get, with the trace, is:
+
+```
+0000:	fconst     1078530000        stack=[ 1078530000 ]
+0002:	fconst     1075838976        stack=[ 1078530000 1075838976 ]
+0004:	fadd                         stack=[ 1085573096 ]
+0005:	fprint                       stack=[ ]
+0006:	halt                         stack=[ ]
+Data memory:
+
+5.64159
+```
+
+The stack shows only integers so they don't look right but in fact the bits are correct.

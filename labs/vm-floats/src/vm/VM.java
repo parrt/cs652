@@ -7,9 +7,11 @@ import static vm.Bytecode.BR;
 import static vm.Bytecode.BRF;
 import static vm.Bytecode.BRT;
 import static vm.Bytecode.FADD;
+import static vm.Bytecode.FCONST;
 import static vm.Bytecode.FEQ;
 import static vm.Bytecode.FLT;
 import static vm.Bytecode.FMUL;
+import static vm.Bytecode.FPRINT;
 import static vm.Bytecode.FSUB;
 import static vm.Bytecode.GLOAD;
 import static vm.Bytecode.GSTORE;
@@ -117,6 +119,9 @@ public class VM {
 					x = Float.intBitsToFloat(stack[sp--]);
 					stack[++sp] = (x == y) ? TRUE : FALSE;
 					break;
+				case FPRINT :
+					System.out.println(Float.intBitsToFloat(stack[sp--]));
+					break;
 
 				case BR :
 					ip = code[ip++];
@@ -129,6 +134,7 @@ public class VM {
 					addr = code[ip++];
 					if ( stack[sp--]==FALSE ) ip = addr;
 					break;
+				case FCONST: // same as ICONST!!
 				case ICONST:
 					stack[++sp] = code[ip++]; // push operand
 					break;

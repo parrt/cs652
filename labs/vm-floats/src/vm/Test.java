@@ -2,6 +2,9 @@ package vm;
 
 import static vm.Bytecode.BR;
 import static vm.Bytecode.BRF;
+import static vm.Bytecode.FADD;
+import static vm.Bytecode.FCONST;
+import static vm.Bytecode.FPRINT;
 import static vm.Bytecode.GLOAD;
 import static vm.Bytecode.GSTORE;
 import static vm.Bytecode.HALT;
@@ -16,6 +19,15 @@ public class Test {
 		ICONST, 2,
 		IADD,
 		PRINT,
+		HALT
+	};
+
+	// print 3.14159 + 2.5
+	static int[] fhello = {
+		FCONST, Float.floatToIntBits(3.14159f),
+		FCONST, Float.floatToIntBits(2.5f),
+		FADD,
+		FPRINT,
 		HALT
 	};
 
@@ -45,13 +57,17 @@ public class Test {
 	};
 
 	public static void main(String[] args) {
-		VM vm = new VM(hello, 0, 0);
+		VM vm = new VM(fhello, 0, 0);
 		vm.trace = true;
 		vm.exec();
-		vm.dumpCodeMemory();
 
-		vm = new VM(loop, 0, 2);
-		vm.trace = true;
-		vm.exec();
+//		vm = new VM(hello, 0, 0);
+//		vm.trace = true;
+//		vm.exec();
+//		vm.dumpCodeMemory();
+//
+//		vm = new VM(loop, 0, 2);
+//		vm.trace = true;
+//		vm.exec();
 	}
 }
