@@ -206,9 +206,9 @@ See Figure 11.8 in LIP book -- Assembling a C file model using Java AST visitor.
 
 ## Part IV -- Virtual machines
 
-[The PostScript (PDF) language](https://github.com/parrt/cs652/blob/master/lectures/postscript.md)
+(Skip) [The PostScript (PDF) language](https://github.com/parrt/cs652/blob/master/lectures/postscript.md)
 
-Watch [How to build a virtual machine (video)](https://www.youtube.com/watch?v=OjaAToVkoTw&feature=youtu.be)
+Watch [How to build a virtual machine (video)](https://www.youtube.com/watch?v=OjaAToVkoTw&feature=youtu.be), though we will be following a very similar process in class.
 
 Read Chapter 10 in Language implementation patterns. Study the difference between a stack and register machine. Particularly relevant to the Smalltalk project, you want to look at the section on *Storing large constants in the constant pool*. We do something similar with the `push_literal` bytecode.
 
@@ -222,6 +222,8 @@ Study [Simple Virtual Machine (Java)](https://github.com/parrt/simple-virtual-ma
 Next, study [Simple Virtual Machine (C)](https://github.com/parrt/simple-virtual-machine-C). Specifically, look at the master branch, which is a C port of [split-stack branch (Java)](https://github.com/parrt/simple-virtual-machine/tree/split-stack). Then, look at the [computed-goto branch (C)](https://github.com/parrt/simple-virtual-machine-C/tree/computed-goto).
 
 Your [Smalltalk compiler project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md) and [Smalltalk-vm project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md) also provides details about how to build a Smalltalk VM.
+
+**LAB**: [Adding floats to a virtual machine](https://github.com/parrt/cs652/blob/master/labs/vm-floats.md)
 
 ## Part V -- Memory management
 
