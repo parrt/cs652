@@ -47,6 +47,10 @@
     </profile>
     <version value="1.0" />
   </component>
+  <component name="KotlinCommonCompilerArguments">
+    <option name="languageVersion" value="1.1" />
+    <option name="apiVersion" value="1.1" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
@@ -202,6 +206,7 @@
       <module fileurl="file://$PROJECT_DIR$/../types/types.iml" filepath="$PROJECT_DIR$/../types/types.iml" />
       <module fileurl="file://$PROJECT_DIR$/../visitor/visitor.iml" filepath="$PROJECT_DIR$/../visitor/visitor.iml" />
       <module fileurl="file://$PROJECT_DIR$/../vm-floats/vm-floats.iml" filepath="$PROJECT_DIR$/../vm-floats/vm-floats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../vm-func-ptr/vm-func-ptr.iml" filepath="$PROJECT_DIR$/../vm-func-ptr/vm-func-ptr.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
