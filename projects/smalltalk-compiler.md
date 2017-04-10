@@ -14,7 +14,7 @@ and compile it to symbol table information and bytecode using:
 $ stc test.st # emits MainClass.sto for implied main class
 ```
 
-The compiler emits `.sto` files JSON format:
+The compiler emits `.sto` files in JSON format:
 
 ```json
 {
@@ -311,3 +311,12 @@ The DBG instructions informed the VM where in the original Smalltalk source code
 ## Tasks
 
 Most of the compiler is given to you, but you need to build the `CodeGenerator` parse tree **visitor**. This is the meat of the compiler.
+
+To test from the command-line, these `alias`es are useful:
+
+```bash
+alias stc='java -cp "/Users/parrt/.m2/repository/edu/usfca/cs652/smalltalk-compiler/1.0/smalltalk-compiler-1.0-complete.jar:$CLASSPATH" smalltalk.compiler.STC'
+alias stvm='java -cp "/Users/parrt/.m2/repository/edu/usfca/cs652/smalltalk-vm/1.0/smalltalk-vm-1.0-complete.jar:$CLASSPATH" smalltalk.vm.VM /Users/parrt/courses/cs652-private/projects/smalltalk-vm/lib/stlib.zip'
+```
+
+where `parrt` should be replaced with your login name. Also, this assumes you've done `mvn install`, which creates the .jar file.
