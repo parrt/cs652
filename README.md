@@ -225,6 +225,8 @@ Your [Smalltalk compiler project](https://github.com/parrt/cs652/blob/master/pro
 
 **LAB**: [Adding floats to a virtual machine](https://github.com/parrt/cs652/blob/master/labs/vm-floats.md)
 
+**LAB**: [Adding function pointers to a virtual machine](https://github.com/parrt/cs652/blob/master/labs/vm-func-ptr.md)
+
 ## Part V -- Memory management
 
 malloc/free
