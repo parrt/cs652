@@ -2,19 +2,39 @@
 
 ## Goal
 
-This project is to build a full compiler for a subset of Smalltalk. For example, you will read in a small program such as:
+This goal of this project is to build a full compiler for a subset of Smalltalk. For example, you will read in a small program in, say, `test.st` such as:
 
 ```
 Transcript show: 'hello'.
 ```
 
-and compile it to symbol table information and bytecode using:
+and compile it to symbol table information and bytecode using the test rig included with your starter kit. That "main" program compiles down to an implied `main` method in a `MainClass` (which is of type `STClass`). The `STClass.toTestString()` method provides the following information:
 
-```bash
-$ stc test.st # emits MainClass.sto for implied main class
+```
+name: MainClass
+superClass: 
+fields: 
+literals: 'Transcript','hello','show:'
+methods:
+    name: main
+    qualifiedName: MainClass>>main
+    nargs: 0
+    nlocals: 0
+    0000:  push_global    'Transcript'
+    0003:  push_literal   'hello'
+    0006:  send           1, 'show:'
+    0011:  pop              
+    0012:  self             
+    0013:  return   
 ```
 
-The compiler emits `.sto` files in JSON format:
+You can also run the compiler from the commandline to generate JSON-based bytecode files (See the `stc` alias at the bottom of this description):
+
+```bash
+$ stc -dis test.st # gen MainClass.sto for implied main + test-teststring.txt
+```
+
+The JSON output `.sto` files look like:
 
 ```json
 {
@@ -40,7 +60,9 @@ The compiler emits `.sto` files in JSON format:
 }
 ```
 
-The virtual machine you build in the next project will read in this "code" and execute starting at method `main` in class `MainClass`.
+A virtual machine that knows how to execute these .sto files is available as a jar in this project. Maven pulls the VM in automatically as part of the build and the VM is used for testing Smalltalk program execution. See package `smalltalk.compiler.test.exec`.
+
+I have provided a suitable grammar and symbol table construction code base. Your job is to focus on the code generation aspects of the compiler.
 
 ## Smalltalk language definition
 
@@ -50,7 +72,7 @@ Our version of Smalltalk differs from the standard in a few ways:
 
 * no class variables but allows class methods
 * subclasses can see the fields of their parent classes; in ST-80 these are private
-* we disallow definition of globals variables. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. There is a `push_global` instruction but it is for looking up class names and other globally-visible symbols (only one so far is `Transcript` object).
+* we disallow definition of globals variables. x:=expr will generate code for expr but not the store if x is not a valid argument, local variable, or field. There is a `push_global` instruction but it is for looking up class names and other globally-visible symbols (only one: `Transcript` object).
 * We allow forward refs (refs to classes not yet defined)
 * no `#(1 2 3)` array literal notation, but with dynamic array notation `{1. 2. 3}`.
 * no ';' extended msg send notation
@@ -81,12 +103,12 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 |`.`|expression separator (not terminator)|
 |`x :=` *expr*|assignment to local or field (there are no global variables)|
 |`^`*expr*|return expression from method, even when nested in a `[...]`block|
-|`|x y|`|define two local variables or fields|
+|`&#124;x y	&#124;`|define two local variables or fields|
 |`{a. 1+2. aList size}`|dynamic array constructed from three expressions separated by periods|
-|`[:x | 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, these are called lambdas or closures.|
-|`[:x :y | x*y]`|code block taking two parameters|
+|`[:x 	&#124; 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, these are called lambdas or closures.|
+|`[:x :y 	&#124; x*y]`|code block taking two parameters|
 |`[99] value` |use `value` method to evaluate a block with 99|
-|`[:x | 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
+|`[:x 	&#124; 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
 
 ### Message send expressions
 
@@ -316,7 +338,6 @@ To test from the command-line, these `alias`es are useful:
 
 ```bash
 alias stc='java -cp "/Users/parrt/.m2/repository/edu/usfca/cs652/smalltalk-compiler/1.0/smalltalk-compiler-1.0-complete.jar:$CLASSPATH" smalltalk.compiler.STC'
-alias stvm='java -cp "/Users/parrt/.m2/repository/edu/usfca/cs652/smalltalk-vm/1.0/smalltalk-vm-1.0-complete.jar:$CLASSPATH" smalltalk.vm.VM /Users/parrt/courses/cs652-private/projects/smalltalk-vm/lib/stlib.zip'
 ```
 
 where `parrt` should be replaced with your login name. Also, this assumes you've done `mvn install`, which creates the .jar file.
