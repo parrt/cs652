@@ -144,7 +144,7 @@ The keyword message `to:do:` has lowest precedence and so `myList size` is evalu
 
 ### Class, method syntax
 
-Smalltalk has no file format or syntax for class definitions because it was all done in a code browser. In our case, we need a file format and some very simple syntax will suffice. The following class definition for `Array` demonstrates all bits of the syntax:
+Smalltalk has no file format or syntax for class definitions because it was all done in a code browser. In our case, we need a file format and some very simple syntax will suffice. The following class definition for `Array` demonstrates all bits of the syntax except fields:
 
 ```
 class Array : Collection [
@@ -163,17 +163,29 @@ class Array : Collection [
 
 Classes are defined using the `class` keyword followed by the name of the class. If there is a superclass, use a colon followed by the superclass name (`Collection`, in this case). The body of the class is wrapped in square brackets.
 
-Class methods are proceeded with the `class` keyword but are otherwise the same as other methods. Both of the `new` methods are class methods and the second one, `new:` is a primitive that has no Smalltalk implementation. Instead, the VM will look for a `Primitive` called `Array_Class_NEW` and execute the associated `perform` method. The non-primitive class method `new` invokes the primitive `new:` with a parameter of 10.
+Class methods are proceeded with the `class` keyword but are otherwise the same as other methods. Both of the `new` methods are class methods and the second one, `new:` is a primitive that has no Smalltalk implementation. Instead, the VM will look for a `Primitive` called `Array_Class_NEW` and execute the associated `perform` method. The non-primitive class method `new` invokes the primitive `new:` with a parameter of 10.  `STCompiledBlock` differentiates between class and instance methods using field:
+
+```java
+/** True if method was defined as a class method in Smalltalk code */
+public final boolean isClassMethod;
+```
 
 Method `size` takes no parameters and is primitive. Method `at:` takes one parameter and is primitive.  Method `at:put:` takes two parameters and is primitive.  Method `do:` takes one parameter, a code block, and has a Smalltalk implementation.
 
-## Bytecode operational semantics
+Field syntax look like:
 
-<img src="images/smalltalk-notation.png" width="600" align=middle>
+```
+class LinkedList : Collection [
+   | head tail |
+   ...
+]
+```
 
-<img src="images/smalltalk-rules.png" width="800" align=middle>
+You should spend some time reading [STCompiledBlock](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/symbols/STCompiledBlock.java).
 
-In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
+## Bytecode semantics
+
+In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
 
 ```
 class T [
@@ -183,6 +195,7 @@ class T [
 ```
 
 and the bytecode generated for method `foo`:
+
 ```
 0000:  push_local     0, 0
 0005:  store_field    0
@@ -191,35 +204,70 @@ and the bytecode generated for method `foo`:
 0010:  return           
 ```
 
-The numbers on the left are the byte addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L66) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/vm/Bytecode.java#L96) that are each two bytes long.
+The numbers on the left are the byte addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java#L64) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java#L99) that are each two bytes long.
+
+<img src=images/smalltalk-bytecodes.png width=700>
+
+Method *state of execution*:
+
+```java
+/** The context that was active when this context was created; i.e.,
+ *  who invoked me? This is not final because we need to set this to
+ *  RETURNED after this context finishes.
+ */
+public BlockContext invokingContext;
+
+/** The receiver of the message that resulted in this context */
+public final STObject receiver;
+
+/** The compiled code associated with this context */
+public final STCompiledBlock compiledBlock;
+
+/** All arguments and local variables associated with this block */
+public final STObject[] locals;
+
+/** The instruction pointer that points into compiledBlock.bytcodes */
+public int ip = 0;
+
+/** The operand stack for this context */
+public STObject[] stack;
+
+/** The operand stack pointer for this context; points at stack top */
+public int sp = -1;
+```
 
 ### Primitive methods
 
-Primitive methods  are like `native` methods in java and SmallTalk code can invoke them like regular methods. Although we have a great deal of our Smalltalk implementation in Smalltalk, to bootstrap we ultimately need to execute some Java. Primitive methods are the interface between Smalltalk and the underlying implementation. For example, in `image.st` you'll see a number of primitive methods:
+Primitive methods  are like `native` methods in java and SmallTalk code can invoke them like regular methods. Although we have a great deal of our Smalltalk implementation in Smalltalk, to bootstrap we ultimately need to execute some Java. Primitive methods are the interface between Smalltalk and the underlying implementation. For example:
 
 ```
-class Integer : Number [
-   "this object has no fields visible from smalltalk code and is backed by Java class STInteger"
-   + y <primitive:#Integer_ADD>
-   - y <primitive:#Integer_SUB>
-   * y <primitive:#Integer_MULT>
-   / y <primitive:#Integer_DIV>
-   < y <primitive:#Integer_LT>
-   > y <primitive:#Integer_GT>
-   <= y <primitive:#Integer_LE>
-   >= y <primitive:#Integer_GE>
-   = y <primitive:#Integer_EQ>
-   to: n do: blk [
-       self <= n ifTrue: [blk value: self. self+1 to: n do: blk]
-   ]
-   hash [ ^self ]
-   mod: n <primitive:#Integer_MOD>
+class String : Object [
+   asArray <primitive:#String_ASARRAY>
 ]
 ```
 
-As we know, there is a `STCompiledBlock` for each Smalltalk-based method, such as `hash`, but there is also one for primitive methods. The difference is that `STCompiledBlock` objects for primitive methods have the following field non-null:
+From your perspective, the only thing you care about is that the expected output has no bytecode disassembly:
 
-primitiveName
+```
+name: String
+superClass: 
+fields: 
+literals: 
+methods:
+    name: asArray
+    qualifiedName: String>>asArray
+    nargs: 0
+    nlocals: 0
+```
+
+There is a `STCompiledBlock` for each Smalltalk-based method, such as `hash`, but there is also one for primitive methods. The difference is that `STCompiledBlock` objects for primitive methods have field `primitiveName` non-null:
+
+```java
+/** In the compiler, this is the primitive name. In the VM, the equivalent
+ *  class has a 'primitive' field that points at an actual Primitive object.
+ */
+public final String primitiveName;
+```
 
 ### Class methods
 
@@ -234,39 +282,15 @@ class Object [
 ]
 ```
 
-Class methods are treated no differently than instance methods except that we turn on `isClassMethod` in `STMethod` and then `STCompiledBlock`.  Class methods only work on Smalltalk `Class` (Java `STMetaClassInfo`) objects but we rely on the programmer to avoid sending class messages to instances (see [testClassMessageOnInstanceError](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/smalltalk/test/TestCore.java#L1022)) and vice versa (see [testInstanceMessageOnClassError](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/test/smalltalk/test/TestCore.java#L1059)). For example, `Array new` makes sense because `new` is a class method but `x new` for some instance `x` does not. Similarly, `names size` makes sense but `Array size` does not.
+Class methods are treated no differently than instance methods except that we turn on `isClassMethod` in `STMethod` and then `STCompiledBlock`.  Class methods only work on Smalltalk `Class` (Java `STMetaClassInfo`) objects but we rely on the programmer to avoid sending class messages to instances (see [testClassMessageOnInstanceError](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/test/smalltalk/compiler/test/exec/TestCore.java#L1196)) and vice versa (see [testInstanceMessageOnClassError](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/test/smalltalk/compiler/test/exec/TestCore.java#L1233)). For example, `Array new` makes sense because `new` is a class method but `x new` for some instance `x` does not. Similarly, `names size` makes sense but `Array size` does not.
 
 Please note that `self` in a class method refers to the class definition object and not an instance of the class.
 
 ## Compilation
 
-[Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
+[Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler).
 
-For the constructs as shown below in the compilation rules, use visitor methods to compute the `Code` result for particular construct. As a side effect, you will be tracking literals within each block/method. Further, you will be setting the `compiledBlock` field of each block/method. In a sense, the result of compilation is the decorated scope tree and is represented by the collection of `compiledBlock`s.  But, for clarity, the result of compilation is a list of `STMetaClassObject` objects, one for each class defined in the a symbol table. These will be installed in the `SystemDictionary` of a VM prior to execution:
-```java
-	/** This method returns the final result of compilation, a list of meta objects.
-	 *  Each meta object, {@link STMetaClassObject}, has a list of compiled
-	 *  methods which, in turn, contain the list of compiled blocks for nested
-	 *  blocks of that method.
-	 *
-	 *  Convert a symbol table with classes, methods, and compiled code
-	 *  (as computed by the compiler) into a list of
-	 *  meta-objects ().
-	 *
-	 *  This method assumes that the compiler has annotated the symbol table
-	 *  symbols such as {@link STBlock} with pointers to the
-	 *  {@link smalltalk.vm.primitive.STCompiledBlock}s.
-	 */
-	public static List<STMetaClassObject> getMetaObjects(STSymbolTable symtab) {
-		List<STMetaClassObject> metas = new ArrayList<>();
-		for (Symbol s : symtab.GLOBALS.getSymbols()) {
-			if ( s instanceof STClass) {
-				metas.add(new STMetaClassObject(null, (STClass)s));
-			}
-		}
-		return metas;
-	}
-```
+For the constructs as shown below in the compilation rules, use visitor methods to compute the `Code` result for each particular construct. As a side effect, you will be tracking literals within blocks/methods. Further, you will be setting the `compiledBlock` field of each `STBlock`/`STMethod`. In a sense, the result of compilation is the scope tree (`STSymbolTable`) decorated with multiple `STCompiledBlock`s. The `STClass` objects will be installed in the `SystemDictionary` of a VM prior to execution:
 
 <img src="images/smalltalk-blocks.png" width="700" align=middle>
 
@@ -276,7 +300,7 @@ For the constructs as shown below in the compilation rules, use visitor methods 
 
 ### DBG instructions
 
-The DBG instructions informed the VM where in the original Smalltalk source code the following bytecode instruction(s) comes from. The debug information is extremely useful when writing Smalltalk code, although it can be useful when debugging the VM itself. You need to insert DBG instructions in the following locations:
+The DBG instructions inform the VM where in the original Smalltalk source code the subsequent bytecode instruction(s) comes from. The debug information is extremely useful when writing Smalltalk code, although it can be useful when debugging the VM itself. You need to insert DBG instructions in the following locations:
 
 1. `visitMain`. At the end of the body, before pop, self, return.
 2. `visitSmalltalkMethodBlock`.  After visiting the children, before the pop, self, ...
@@ -332,12 +356,14 @@ The DBG instructions informed the VM where in the original Smalltalk source code
 
 ## Tasks
 
-Most of the compiler is given to you, but you need to build the `CodeGenerator` parse tree **visitor**. This is the meat of the compiler.
+Most of the compiler is given to you, but you need to build the `CodeGenerator.java` parse tree **visitor**, which is the meat of the compiler.  Pieces of `Compiler.java` must also be filled in.
 
-To test from the command-line, these `alias`es are useful:
+To test from the command-line, this `alias` is useful:
 
 ```bash
 alias stc='java -cp "/Users/parrt/.m2/repository/edu/usfca/cs652/smalltalk-compiler/1.0/smalltalk-compiler-1.0-complete.jar:$CLASSPATH" smalltalk.compiler.STC'
 ```
 
 where `parrt` should be replaced with your login name. Also, this assumes you've done `mvn install`, which creates the .jar file.
+
+There are **136 unit tests** that your compiler should pass. Those in `exec` subdir are invoking the VM (`lib/smalltalk-vm-1.0.jar`) to execute code compiled by your compiler.

@@ -171,6 +171,73 @@ Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (i
 \label{default}
 \end{figure}%
 
+%------------BYTECODE DEFS---------------------
+
+\begin{figure}
+\begin{center}
+\begin{tabular}[t]{r | l}
+{\bf Bytecode Instruction} & {\bf Description} \\
+\hline
+{\tt nil}  & \begin{minipage}[t]{.76\linewidth}Push {\tt nil} onto the operand stack of the {\em current block or method context}.\end{minipage} \\
+
+{\tt self} & \begin{minipage}[t]{.76\linewidth}Push {\tt self}, the current method's receiver object, onto the operand stack\end{minipage} \\
+
+{\tt true} & \begin{minipage}[t]{.76\linewidth}Push {\tt true} onto the operand stack\end{minipage} \\
+
+{\tt false} & \begin{minipage}[t]{.76\linewidth}Push {\tt false} onto the operand stack\end{minipage} \\
+
+{\tt push\_char} $c$ & \begin{minipage}[t]{.76\linewidth}Push character $c$ onto the operand stack\end{minipage} \\
+
+{\tt push\_int} $i$ & \begin{minipage}[t]{.76\linewidth} Push integer $i$ onto the operand stack\end{minipage} \\ 
+
+{\tt push\_float} $f$ & \begin{minipage}[t]{.76\linewidth} Push floating-point $f$\end{minipage} \\
+
+{\tt push\_field} $i$ & \begin{minipage}[t]{.76\linewidth} Push field at index $i$ of {\tt self}\end{minipage} \\
+
+{\tt push\_local} $0, i$ & \begin{minipage}[t]{.76\linewidth} Push the local variable or method argument at index $i$ of the current context onto the operand stack of the current context\end{minipage} \\
+
+{\tt push\_local} $n > 0, i$ & \begin{minipage}[t]{.76\linewidth}Push the local variable or method argument at index $i$ of the  context $n$ callers above (stack growing downwards) onto the operand stack of the current context\end{minipage} \\
+
+{\tt push\_literal} $i$ & \begin{minipage}[t]{.76\linewidth} Push string literal at literal index $i$ onto the stack\end{minipage} \\
+
+{\tt push\_global} $i$  & \begin{minipage}[t]{.76\linewidth} Look up string at literal index $i$ in the global scope and push that object onto the operand stack of the current context. This is used to look up class definition objects primarily as in {\tt Array new}. \end{minipage} \\
+
+{\tt push\_array} $n$  & \begin{minipage}[t]{.76\linewidth}Pop $n$ items from the operand stack, create an array of them, push the array back to the operand stack\end{minipage} \\
+
+{\tt store\_field} $i$ & \begin{minipage}[t]{.76\linewidth}Store the top of the operand stack into field $i$ of {\tt self}; does {\em not} pop the operand stack\end{minipage} \\
+
+{\tt store\_local} $n,i$ & \begin{minipage}[t]{.76\linewidth}Store the top of the operand stack into local $i$ of the current context; does {\em not} pop the operand stack\end{minipage} \\
+
+{\tt pop} & \begin{minipage}[t]{.76\linewidth}Pop the top of the operand stack off\end{minipage} \\
+\hline
+
+{\tt send} $n,i$ & \begin{minipage}[t]{.76\linewidth} Send message with $n$ arguments to method identified by string literal $i$ (in current context). The receiver of the message send is pushed on the stack before the arguments so this instruction pops $n+1$ items from the operand stack. The method is looked up in the class of the receiver object\end{minipage} \\
+
+{\tt send\_super} $n,i$ & \begin{minipage}[t]{.76\linewidth}Same as {\tt send} except that the method is looked up in the superclass of {\tt self}'s class. The receiver is always {\tt self}\end{minipage} \\
+
+{\tt block} $i$  & \begin{minipage}[t]{.76\linewidth}Push the block descriptor identified by index $i$ onto the operand stack of the current context\end{minipage} \\
+
+{\tt block\_return} & \begin{minipage}[t]{.76\linewidth} Pop the return value on the top of the operand stack of the current context and push it on the operand stack of the caller's context. Pop the context stack.\end{minipage} \\
+
+({\em method local}) ~~{\tt return} & \begin{minipage}[t]{.76\linewidth}Pop the top of the operand stack of the current context and push it on the operand stack of the caller's context. Pop the context stack.\end{minipage} \\
+
+({\em method nonlocal}) ~~{\tt return} & \begin{minipage}[t]{.76\linewidth}Pop the top of the operand stack of the current context, unwind the call stack until the *enclosing method* of the current block, pop to the caller, push the return value onto the operand stack\end{minipage} \\
+
+\hline
+
+{\tt dbg} $i, loc$ & 
+\begin{minipage}[t]{.76\linewidth}
+Set VM current filename to $f_{literal_i}$ and split $loc$ into char position (indexed from 0) from lower 8 bits and line number  from the upper 24 bits. $\text{\it line}\text{=}loc[31\text{:}8], \text{\it col}\text{=}loc[7\text{:}0]]$
+\end{minipage}\\
+
+\end{tabular}
+\end{center}
+\vspace{-10pt}
+\caption{Smalltalk VM Bytecode}
+\label{default}
+\end{figure}%
+
+
 %------------EXAMPLES---------------------
 
 \begin{tabular}[t]{l | l}

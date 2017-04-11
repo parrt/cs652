@@ -339,35 +339,18 @@ public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive)
 
 Please note that `self` in a class method refers to the class definition object and not an instance of the class.
 
+## Bytecode Operational Semantics
+
+<img src="images/smalltalk-notation.png" width="600" align=middle>
+
+<img src="images/smalltalk-rules.png" width="800" align=middle>
+
 ## Compilation
 
 [Compiler starter kit](https://github.com/USF-CS652-starterkits/parrt-smalltalk/blob/master/src/smalltalk/compiler).
 
 For the constructs as shown below in the compilation rules, use visitor methods to compute the `Code` result for particular construct. As a side effect, you will be tracking literals within each block/method. Further, you will be setting the `compiledBlock` field of each block/method. In a sense, the result of compilation is the decorated scope tree and is represented by the collection of `compiledBlock`s.  But, for clarity, the result of compilation is a list of `STMetaClassObject` objects, one for each class defined in the a symbol table. These will be installed in the `SystemDictionary` of a VM prior to execution:
-```java
-	/** This method returns the final result of compilation, a list of meta objects.
-	 *  Each meta object, {@link STMetaClassObject}, has a list of compiled
-	 *  methods which, in turn, contain the list of compiled blocks for nested
-	 *  blocks of that method.
-	 *
-	 *  Convert a symbol table with classes, methods, and compiled code
-	 *  (as computed by the compiler) into a list of
-	 *  meta-objects ().
-	 *
-	 *  This method assumes that the compiler has annotated the symbol table
-	 *  symbols such as {@link STBlock} with pointers to the
-	 *  {@link smalltalk.vm.primitive.STCompiledBlock}s.
-	 */
-	public static List<STMetaClassObject> getMetaObjects(STSymbolTable symtab) {
-		List<STMetaClassObject> metas = new ArrayList<>();
-		for (Symbol s : symtab.GLOBALS.getSymbols()) {
-			if ( s instanceof STClass) {
-				metas.add(new STMetaClassObject(null, (STClass)s));
-			}
-		}
-		return metas;
-	}
-```
+
 
 <img src="images/smalltalk-blocks.png" width="700" align=middle>
 
