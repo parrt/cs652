@@ -103,12 +103,12 @@ Paraphrasing the [Pharo cheat sheet](http://files.pharo.org/media/flyer-cheat-sh
 |`.`|expression separator (not terminator)|
 |`x :=` *expr*|assignment to local or field (there are no global variables)|
 |`^`*expr*|return expression from method, even when nested in a `[...]`block|
-|`&#124;x y	&#124;`|define two local variables or fields|
+|&#124;`x y`&#124;|define two local variables or fields|
 |`{a. 1+2. aList size}`|dynamic array constructed from three expressions separated by periods|
-|`[:x 	&#124; 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, these are called lambdas or closures.|
-|`[:x :y 	&#124; x*y]`|code block taking two parameters|
+|`[:x `&#124;` 2*x]`|code block taking one parameter and evaluating to twice that parameter; in common usage, these are called lambdas or closures.|
+|`[:x :y `&#124;` x*y]`|code block taking two parameters|
 |`[99] value` |use `value` method to evaluate a block with 99|
-|`[:x 	&#124; 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
+|`[:x 	`&#124;` 2*x] value: 10` |use `value:` method to evaluate a block with parameter 10|
 
 ### Message send expressions
 
