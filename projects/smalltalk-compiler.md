@@ -183,7 +183,7 @@ class LinkedList : Collection [
 
 You should spend some time reading [STCompiledBlock](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/symbols/STCompiledBlock.java).
 
-## Bytecode semantics
+## Smalltalk Bytecode
 
 In [Bytecode.java](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java), you will see the definitions of the various bytecodes. Each instruction above gets its own unique integer "op code". There is also a definition of how many operands and the operand sizes so that we can disassemble code. For example, here is a class with a simple method:
 
@@ -206,39 +206,72 @@ and the bytecode generated for method `foo`:
 
 The numbers on the left are the byte addresses of the instructions. The first instruction takes five bytes because there is one byte for the [`push_local`](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java#L64) instruction and [two operands](https://github.com/USF-CS652-starterkits/parrt-smalltalk-compiler/blob/master/src/smalltalk/compiler/Bytecode.java#L99) that are each two bytes long.
 
-<img src=images/smalltalk-bytecodes.png width=700>
+### Execution state
 
-Method *state of execution*:
+One of the critical ideas in a Smalltalk VM is the notion of the current *state of execution* or current *context*. The virtual machine has a call stack with one node per block or method currently in flight. The method call stack is implemented with parent pointers rather than an array of contexts. To pop something from the call stack, one moves up the parent chain one node just as we do for popping scopes in the scope tree. For your reference, here is the state associated with the overall virtual machine:
 
 ```java
-/** The context that was active when this context was created; i.e.,
- *  who invoked me? This is not final because we need to set this to
- *  RETURNED after this context finishes.
- */
-public BlockContext invokingContext;
+public class VirtualMachine {
+    /** The dictionary of global objects including class meta objects.
+     *  The items are looked up by name (a string).
+     */
+    public final SystemDictionary systemDict; // singleton
 
-/** The receiver of the message that resulted in this context */
-public final STObject receiver;
-
-/** The compiled code associated with this context */
-public final STCompiledBlock compiledBlock;
-
-/** All arguments and local variables associated with this block */
-public final STObject[] locals;
-
-/** The instruction pointer that points into compiledBlock.bytcodes */
-public int ip = 0;
-
-/** The operand stack for this context */
-public STObject[] stack;
-
-/** The operand stack pointer for this context; points at stack top */
-public int sp = -1;
+    /** "This is the active context itself. It is either a MethodContext
+     *  or a BlockContext." BlueBook p 605 in pdf.
+     *  "The context that represents the CompiledMethod or block currently being
+     *   executed is called the active context." p583.
+     *
+     *  In this impl, I use BlockContext for both methods and blocks.
+     */
+    public BlockContext ctx;
 ```
+
+As the VM loads `.sto` (compiled Smalltalk) files, it creates a `STMetaClassObject` for each Smalltalk class. This metaclass is analogous to the `STClass` in the compiler. `STMetaClassObject` tracks:
+
+* name
+* superclass name
+* literals table where all string literals from the bite code are stored
+* list of field names
+* list of methods (a `Map<String,STCompiledBlock>`)
+
+The overall virtual machine state is just the call stack but for each block or method execution, we need the following information to represent the state of execution:
+
+```java
+public class BlockContext {
+	/** The context that was active when this context was created; i.e.,
+	 *  who invoked me?
+	 */
+	public BlockContext invokingContext;
+	
+	/** The receiver of the message that resulted in this context */
+	public final STObject receiver;
+	
+	/** The compiled code associated with this context */
+	public final STCompiledBlock compiledBlock;
+	
+	/** All arguments and local variables associated with this block */
+	public final STObject[] locals;
+	
+	/** The instruction pointer that points into compiledBlock.bytcodes */
+	public int ip = 0;
+	
+	/** The operand stack for this context */
+	public STObject[] stack;
+	
+	/** The operand stack pointer for this context; points at stack top */
+	public int sp = -1;
+```
+
+Unlike the virtual machines we built in class, this VM has a separate operand stack and instruction pointer per method or block execution. 
+
+### Bytecode semantics
+
+<img src=images/smalltalk-bytecodes.png width=700>
 
 ### Primitive methods
 
-Primitive methods  are like `native` methods in java and SmallTalk code can invoke them like regular methods. Although we have a great deal of our Smalltalk implementation in Smalltalk, to bootstrap we ultimately need to execute some Java. Primitive methods are the interface between Smalltalk and the underlying implementation. For example:
+Primitive Smalltalk methods are like `native` methods in java and Smalltalk code can invoke them like regular methods. Although we have a great deal of our Smalltalk implementation in Smalltalk, to bootstrap we ultimately need to execute some Java. Primitive methods are the interface between Smalltalk and the underlying implementation. For example:
 
 ```
 class String : Object [
