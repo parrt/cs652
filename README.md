@@ -223,6 +223,8 @@ Next, study [Simple Virtual Machine (C)](https://github.com/parrt/simple-virtual
 
 Your [Smalltalk compiler project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-compiler.md) and [Smalltalk-vm project](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md) also provides details about how to build a Smalltalk VM.
 
+See [Intro to Smalltalk](http://live.exept.de/doc/books/JoyOfST/IntroToST.html), [Learn Smalltalk in Y minutes](https://learnxinyminutes.com/docs/smalltalk/), and [Why Smalltalk is so strange? (or a brief history of Smalltalk)](http://web.gioorgi.com/squeak/squeak_tutorial-2.html)
+
 **LAB**: [Adding floats to a virtual machine](https://github.com/parrt/cs652/blob/master/labs/vm-floats.md)
 
 **LAB**: [Adding function pointers to a virtual machine](https://github.com/parrt/cs652/blob/master/labs/vm-func-ptr.md)
