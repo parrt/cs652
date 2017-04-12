@@ -598,20 +598,20 @@ $expr_n$\\
 \begin{tabular}[t]{r | l | l }
 {\bf Smalltalk fragment} & {\bf Visitor results} & {\bf Side-effects}\\
 \hline
-(unary msg)~~~~~~~~~~~~\, {\tt f\,[}\,$\cdots ~expr \,w$ &
+(unary msg)~~~~~~~~~~~~\, ${\tt class~ T~[} \cdots\,$ {\tt f\,[}\,$\cdots ~expr \,w$ &
 \begin{minipage}[t]{0.2\linewidth}
 $expr$\\
 {\tt send} $0,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
+\end{minipage}  & $\text{\tt T}_{literal_i} = ``w$'' \\
 
-(binary msg)~~~{\tt f\,[}$\cdots ~expr_1\, op~ expr_2$ &
+(binary msg)~~~${\tt class~ T~[} \cdots\,$ {\tt f\,[}$\cdots ~expr_1\, op~ expr_2$ &
 \begin{minipage}[t]{0.2\linewidth}
 $expr_1$\\
 $expr_2$\\
 {\tt send} $1,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``op$'' \\
+\end{minipage}  & $\text{\tt T}_{literal_i} = ``op$'' \\
 
-{\tt f\,[}$\cdots ~expr ~w_1{\tt :} e_1 ~ w_2{\tt :} e_2 \, \cdots \, w_n{\tt :} e_n$ &
+${\tt class~ T~[} \cdots\,$ {\tt f\,[}$\cdots ~expr ~w_1{\tt :} e_1 ~ w_2{\tt :} e_2 \, \cdots \, w_n{\tt :} e_n$ &
 \begin{minipage}[t]{0.2\linewidth}
 $expr$\\
 $e_1$\\
@@ -619,15 +619,15 @@ $e_2$\\
 $\cdots$\\
 $e_n$\\
 {\tt send} $n,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
+\end{minipage}  & $\text{\tt T}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$'' \\
 
-{\tt f\,[}$\,\cdots \,{\tt super} \,w$ &
+${\tt class~ T~[} \cdots\,$ {\tt f\,[}$\,\cdots \,{\tt super} \,w$ &
 \begin{minipage}[t]{0.2\linewidth}
 {\tt self}\\
 {\tt send\_super} $0,i$\vspace{5pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w$'' \\
+\end{minipage}  & $\text{\tt T}_{literal_i} = ``w$'' \\
 
-{\tt f\,[}$\cdots ~{\tt super} ~w_1{\tt :} e_1 ~ w_2{\tt :} e_2 \, \cdots \, w_n{\tt :} e_n$ &
+${\tt class~ T~[} \cdots\,$ {\tt f\,[}$\cdots ~{\tt super} ~w_1{\tt :} e_1 ~ w_2{\tt :} e_2 \, \cdots \, w_n{\tt :} e_n$ &
 \begin{minipage}[t]{0.2\linewidth}
 {\tt self}\\
 $e_1$\\
@@ -635,7 +635,7 @@ $e_2$\\
 $\cdots$\\
 $e_n$\\
 {\tt send\_super} $n,i$\vspace{3pt}
-\end{minipage}  & $\text{\tt f}^{block_j}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$''\\
+\end{minipage}  & $\text{\tt T}_{literal_i} = ``w_1{\tt :}w_2{\tt :}\cdots w_n{\tt :}$''\\
 
 {\tt\Large \verb=^=}$expr$ &
 \begin{minipage}[t]{0.2\linewidth}
