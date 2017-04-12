@@ -133,7 +133,7 @@ Smalltalk uses the concept of message sending, which is really the same thing as
 	```
 	
 3. **Keyword messages**. These messages take one or more arguments, but unlike Java, the argument names are used in the call. For example, here's how to execute a code block over the values from 1 to 5: `1 to: 5 do: [:i | ...]`.  Method `to:do:` passes the iteration number as an argument to the code block when it evaluates it. Here's how to take the conjunction of two booleans: `true and: false`. Here's how to map a code block across a list to get another list: 
-	```|x|x := { 1. 2. 3. }.x collect: [ :y | 2*y ]
+	```|x|   x := { 1. 2. 3. }.   x collect: [ :y | 2*y ]
 	```
 
 **Precedence**.  Unary operators have higher precedence than binary operators, which have higher precedence than keyword operators.  Operators within the same type (unary, binary, keyword) group left to right. That means that `1+2*3` is `(1+2)*3` not `1+(2*3)` as we use in arithmetic and most other programming languages. Parentheses override the default precedence as usual. Here's an example that uses all three operators:
