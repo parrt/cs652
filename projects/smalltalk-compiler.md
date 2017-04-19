@@ -334,6 +334,18 @@ For the constructs as shown below in the compilation rules, use visitor methods 
 
 <img src="images/smalltalk-msgs.png" width="700" align=middle>
 
+To help you visualize the data structures involved in compilation and how the compiled code relates to the symbol table, imagine compiling the following main method body.
+
+```
+[true] whileTrue: [ ]
+```
+
+There is an implied `MainClass` and `main` method within that class. There are also two local scopes, the to code blocks `[true]` and `[ ]`. The scope tree looks like you would expect, as on the left of the following diagram.
+
+<img src="images/smalltalk-symtab-compiled.png" width=700 align=middle>
+
+Your code generator needs to compile the method and the nested blocks then update pointers from the symbol table to the compiled code. Without those pointers to the compiled blocks, all of your hard work in the compilation phase would disappear.  For every, `STBlock`/`STMethod` in the program, you will have a `STCompiledBlock`.  You also have a bit of bookkeeping work to do regarding the blocks. The compiled block for a method keeps an array of pointers to compiled blocks for any blocks nested anywhere in the method. Note that these references will point at the same place that the symbol table scopes point.
+
 ### DBG instructions
 
 The DBG instructions inform the VM where in the original Smalltalk source code the subsequent bytecode instruction(s) comes from. The debug information is extremely useful when writing Smalltalk code, although it can be useful when debugging the VM itself. You need to insert DBG instructions in the following locations:
