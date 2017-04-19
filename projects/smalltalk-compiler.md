@@ -340,11 +340,11 @@ To help you visualize the data structures involved in compilation and how the co
 [true] whileTrue: [ ]
 ```
 
-There is an implied `MainClass` and `main` method within that class. There are also two local scopes, the to code blocks `[true]` and `[ ]`. The scope tree looks like you would expect, as on the left of the following diagram.
+There is an implied `MainClass` and `main` method within that class. There are also two local scopes, the two code blocks `[true]` and `[ ]`. The scope tree looks like you would expect, as on the left of the following diagram.
 
 <img src="images/smalltalk-symtab-compiled.png" width=700 align=middle>
 
-Your code generator needs to compile the method and the nested blocks then update pointers from the symbol table to the compiled code. Without those pointers to the compiled blocks, all of your hard work in the compilation phase would disappear.  For every, `STBlock`/`STMethod` in the program, you will have a `STCompiledBlock`.  You also have a bit of bookkeeping work to do regarding the blocks. The compiled block for a method keeps an array of pointers to compiled blocks for any blocks nested anywhere in the method. Note that these references will point at the same place that the symbol table scopes point.
+Your code generator needs to compile the method and the nested blocks then update pointers from the symbol table to the compiled code. Without those pointers to the compiled blocks, all of your hard work in the compilation phase would disappear.  For every `STBlock`/`STMethod` in the program, you will have a `STCompiledBlock`.  You also have a bit of bookkeeping work to do regarding the blocks. The compiled block for a method keeps an array of pointers to compiled blocks for any blocks nested anywhere in the method. Note that these references will point at the same place that the symbol table scopes point.
 
 ### DBG instructions
 
