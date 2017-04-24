@@ -37,7 +37,7 @@ Two graduate classes is considered full-time at USF and, hence, you can expect t
 | CANCELED [smalltalk VM](https://github.com/parrt/cs652/blob/master/projects/smalltalk-vm.md)| 10%| Sunday, May 7 at 11:59pm |
 |Exam 1| 15%| Mon, Feb 27 |
 |Exam 2| 15%| Fri, Apr 21 |
-|Final| 20%| 3pm Monday, May 16|
+|Final| 20%| Sat, May 13, Sec01: 12:30 pm- 2:30, Sec02: 5:30 pm - 7:30 pm|
 
 ## Instruction Format
 
