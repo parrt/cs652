@@ -173,3 +173,7 @@ From (I think) *Tanenbaum & Woodhull, Operating Systems: Design and Implementati
 ## Comparison
 
 It is my understanding that bitmaps require more memory than linked lists but that bitmaps might be faster for deallocation because they can just set some bits rather than having to coalesce adjacent free regions and so on. On the other hand, the free list should be faster for allocation, particularly with binning.  An update Fall 2015, Hanzhou Shi tested bitmap, bytemaps and found they were *much* slower than simple linked-list strategies.
+
+## Prelude to garbage collection
+
+Imagine a `malloc` implementation that did not use a free list or bitmap; it wouldn't keep data at all on free objects. Instead, allocation means hopping through the heap (*heap hopping*) using the object sizes stored in the object headers. If we do a first fit algorithm, for example, we would stop at the first free object we find that has enough space.  In this case, memory allocation would generally be more expensive than a free list (particularly one with binning) but `free(p)` would be trivial: `p->busy=false`.
