@@ -166,6 +166,8 @@ The complexity is on the order of the number of objects in the heap and we must 
 
 A proposed improvement to the mark-and-sweep strategy is called [mark and compact](http://www.brpreiss.com/books/opus5/html/page428.html). It is called a compacting collector because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for cache / virtual memory because objects are kept in same order in which they were allocated. We still have to walk the memory a lot and you have to update pointers since you are moving things around. We pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. To assign new locations for the live objects, we have to walk the objects in **sorted address order** to shift all objects "down" in the heap.  We don't have to sort though.  We can just "heap hop" from the start of the heap, hopping by `p->size`. That means that we have to "touch" even the dead objects as we look for the live ones. Alternatively, we could keep an external list of live objects, doing an insertion sort during the Mark phase.
 
+**Analogy**. Mark and compact behaves like students leaving for the summer. First, we figure out where they are going. Next, notify all of their friends of the forwarding addresses. Finally, students actually move to the forwarding address for the summer.
+
 One of the big advantages of the mark and compact collector is that it supports bump pointer allocation, which is extremely fast.
 
 ```c
@@ -198,7 +200,7 @@ typedef struct heap_object {
 After walking the object graph to mark live objects, we perform the following.
 
 1. Walk all live objects, p, in address order and compute their forwarding addresses starting from start\_of\_heap (bumping a pointer). 
-2. Alter all non-NULL roots to point to the object's forwarding address. Alter all non-NULL pointer fields of p to point to the forwarding addresses.
+2. Walk all live objects, p, alter all non-NULL pointer fields of p to point to the forwarding addresses. Alter all non-NULL roots to point to the object's forwarding address. 
 3. Physically move object each live object to its forwarding address towards front of heap and unmark it. This phase must be last as the object stores the forwarding address. When we move, we overwrite objects and could kill a forwarding address in a live object.
  
 If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep #3 separate and keep it after the others. We cannot move objects until all pointers have been updated.
