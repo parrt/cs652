@@ -18,7 +18,7 @@ The core GC strategy is:
 
 **Analogy**: Imagine walking to the refrigerator and getting out a bowl of grapes. You pick up the bunch by the stem and look in the bottom of the bowl; there are a bunch of black and blue moldy grapes--that's the "garbage". Anything not reachable from the stem has gone "bad." (This analogy is attributed to Randy Nelson, now at Pixar, formerly of the Flying Karamazov Brothers).
 
-Imagine a heap of dynamic memory for a running program. Certain variables, *root pointers*, point into the heap to your data structures. Roots are any variables a program can access without indirecting through a pointer; this includes global variables, parameters, local variables typically. 
+Imagine a heap of dynamic memory for a running program. Certain variables, *root pointers*, point into the heap to your data structures. Roots are any variables a program can access without indirecting through a pointer; this includes global variables, parameters, local variables typically. I think of them as any pointer that lives outside the heap that points into the heap.
 
 Anything *reachable* from a root is considered *live data*. When those variables no longer point at a data structure, nothing can reach the data structure so it's garbage:
 
@@ -104,7 +104,7 @@ typedef struct heap_object {
     struct _object_metadata *metadata;
     uint32_t size;      // total size including header information used by each heap_object
     bool marked;        // used during the mark phase of garbage collection
-    struct heap_object *next;
+    struct heap_object *next; // used by free list
 } heap_object;
 ```
 
@@ -164,15 +164,44 @@ The complexity is on the order of the number of objects in the heap and we must 
 
 #### Mark and compact
 
-An improvement on the mark-and-sweep strategy is called [mark and compact](http://www.brpreiss.com/books/opus5/html/page428.html). It is called a compacting collector because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for cache / virtual memory because objects are kept in same order in which they were allocated. We still have to walk the memory a lot and you have to update pointers since you are moving things around. We pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. To assign new locations for the live objects, we have to walk the objects in **sorted address order** to shift all objects "down" in the heap.  We don't have to sort though.  We can just "heap hop" from the start of the heap, hopping by `p->size`. That means that we have to "touch" even the dead objects as we look for the live ones. Alternatively, we could keep an external list of live objects, doing an insertion sort during the Mark phase.
+A proposed improvement to the mark-and-sweep strategy is called [mark and compact](http://www.brpreiss.com/books/opus5/html/page428.html). It is called a compacting collector because it walks memory moving all live objects to the front of the heap, thus, leaving a nice big contiguous block of free memory afterwards. This removes fragmentation concerns and helps locality for cache / virtual memory because objects are kept in same order in which they were allocated. We still have to walk the memory a lot and you have to update pointers since you are moving things around. We pack all live objects at the start of the heap, which effectively overwrites all of the dead stuff. To assign new locations for the live objects, we have to walk the objects in **sorted address order** to shift all objects "down" in the heap.  We don't have to sort though.  We can just "heap hop" from the start of the heap, hopping by `p->size`. That means that we have to "touch" even the dead objects as we look for the live ones. Alternatively, we could keep an external list of live objects, doing an insertion sort during the Mark phase.
 
-One of the big advantages of the mark and compact collector is that it supports bump pointer allocation, which is extremely fast. Much much faster than the free list implementations. On the other hand, the compact operation is fairly complicated and typically uses 3 passes and requires (in one mechanism) an extra forwarding_addr field in each object. After walking the object graph to Mark live objects, we perform the following.
+One of the big advantages of the mark and compact collector is that it supports bump pointer allocation, which is extremely fast.
 
-1. Walk all live objects, p, in address order and compute their forwarding addresses starting from start\_of\_heap (bumping a pointer). Alter all non-NULL pointer fields of p to point to the forwarding addresses.
-2. Alter all non-NULL roots to point to the object's forwarding address.
-3. Physically move object each live object to its forwarding address towards front of heap and unmark it. This phase must be last as the object stores the forwarding address. When we move, we overwrite objects and could kill a forwarding address in a live object. Unmark the object
+```c
+void *gc_raw_alloc(size_t size) {
+	if (next_free + size > end_of_heap) {
+		gc(); // try to collect
+		if (next_free + size > end_of_heap) { // try again
+			return NULL;                      // oh well, no room. puke
+		}
+	}
+
+	void *p = next_free; // bump-ptr-allocation
+	next_free += size;
+	return p;
+}
+```
+
+Much much faster than the free list implementations. On the other hand, the compact operation is fairly complicated and typically uses 3 passes and requires (in one mechanism) an extra forwarding_addr field in each object:
+
+```c
+/* stuff that every instance in the heap must have at the beginning (unoptimized) */
+typedef struct heap_object {
+    struct _object_metadata *metadata;
+    uint32_t size;      // total size including header information used by each heap_object
+    bool marked;	    // used during the mark phase of garbage collection
+    struct heap_object *forwarded; // where we've moved this object during collection
+} heap_object;
+```
+
+After walking the object graph to mark live objects, we perform the following.
+
+1. Walk all live objects, p, in address order and compute their forwarding addresses starting from start\_of\_heap (bumping a pointer). 
+2. Alter all non-NULL roots to point to the object's forwarding address. Alter all non-NULL pointer fields of p to point to the forwarding addresses.
+3. Physically move object each live object to its forwarding address towards front of heap and unmark it. This phase must be last as the object stores the forwarding address. When we move, we overwrite objects and could kill a forwarding address in a live object.
  
-If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep 3 separate and keep it after the others. We cannot move objects until all pointers have been updated.
+If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep #3 separate and keep it after the others. We cannot move objects until all pointers have been updated.
 
 By computing all new addresses and holding them in an area outside of the heap, with marked bits or separate temporary live list, we can reduce the number of passes to two. We can move objects and set pointers at the same time.  If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive in space and time if we're not careful. 
 
@@ -184,15 +213,13 @@ One thing to notice about these compacting collectors: long-lived objects tend t
 
 #### Scavenging (copying) collectors
 
-If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement. We can simply recursively move objects and update pointers as we traverse live objects. The cost is that we can only use up to half the memory available because we have two spaces.
+If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement and can perform better. We simply recursively move objects and update pointers as we traverse live objects. As with other schemes moving objects, we have to track forwarding addresses either in the object itself or as a separate data structure.
 
-Copying collectors have a lot of work to do moving objects at each collection!
+A super awesome mechanism for walking the live objects is called *Cheney scanning*, but requires that we can identify any pointers within an object. The algorithm first copies all objects pointed to by roots to the target space. This set then consists of all pointers we might need to walk and, since the objects are consecutive in memory, we don't need a linked list or separate array to track them. We can simply hop from object to object in the target space looking for pointers back into the source space.   Here is an illustration from the excellent [The Garbage Collection Handbook](http://gchandbook.org/):
 
-A super awesome mechanism for walking the live objects is called *Cheney scanning*, but requires that we can identify any pointers within an object. The algorithm first copies all objects pointed to by roots to the target space. This set then consists of all pointers we might need to walk and, since the objects are consecutive in memory, we don't need a linked list or separate array to track them. We can simply hop from object object in the target space looking for pointers back into the source space. As with other copying schemes, we have to track forwarding addresses.
+<img src=images/cheney-scanning.jpg width=400>
 
-Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
-
-Allocation for any copying collector is fast because you just have to bump a pointer in the heap; all free memory is contiguous after collection.
+Allocation for any copying collector is fast because you just have to bump a pointer in the heap; all free memory is contiguous after collection.  The cost is that we can only use up to half the memory available because we have two spaces.  Also copying collectors have a lot of work to do moving objects at each collection!  Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
 
 ### Details
 
