@@ -348,6 +348,8 @@ Your code generator needs to compile the method and the nested blocks then updat
 
 ### DBG instructions
 
+*As this is needed just for debugging your VM, and we're not doing the VM this semester, please ignore adding Dbg instructions and related unit tests.*
+
 The DBG instructions inform the VM where in the original Smalltalk source code the subsequent bytecode instruction(s) comes from. The debug information is extremely useful when writing Smalltalk code, although it can be useful when debugging the VM itself. You need to insert DBG instructions in the following locations:
 
 1. `visitMain`. At the end of the body, before pop, self, return.
