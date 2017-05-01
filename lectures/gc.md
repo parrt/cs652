@@ -203,7 +203,7 @@ After walking the object graph to mark live objects, we perform the following.
 1. Walk all live objects, p, in address order and compute their forwarding addresses starting from start\_of\_heap (bumping a pointer). 
 2. Walk all live objects, p, alter all non-NULL pointer fields of p to point to the forwarding addresses. Alter all non-NULL roots to point to the object's forwarding address. 
 3. Physically move object each live object to its forwarding address towards front of heap and unmark it. This phase must be last as the object stores the forwarding address. When we move, we overwrite objects and could kill a forwarding address in a live object.
- 
+
 If we keep the forwarding address inside the objects themselves, we need 3 passes. More specifically, we need to keep #3 separate and keep it after the others. We cannot move objects until all pointers have been updated.
 
 By computing all new addresses and holding them in an area outside of the heap, with marked bits or separate temporary live list, we can reduce the number of passes to two. We can move objects and set pointers at the same time.  If we don't keep forwarding addresses within the objects themselves, we need a map from old to new addresses, which can be expensive in space and time if we're not careful. 
@@ -216,15 +216,24 @@ One thing to notice about these compacting collectors: long-lived objects tend t
 
 #### Scavenging (copying) collectors
 
-If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm but is easier to implement and can perform better. We simply recursively move objects and update pointers as we traverse live objects. As with other schemes moving objects, we have to track forwarding addresses either in the object itself or as a separate data structure.
+If instead of moving live objects to the head of a single heap, you copy live objects to another memory space, you have a copying collector. You only have to walk the live objects (updating their pointers as you move them)--anything left in the old space is garbage. The term *scavenging* is often used to refer to this process. This has the advantages of the mark and compact algorithm, remove fragmentation and bump pointer allocator, but is easier to implement and can perform better. We simply recursively move objects and update pointers as we traverse live objects. As with other schemes moving objects, we have to track forwarding addresses either in the object itself or as a separate data structure. And advantage of a copying collector over Mark and compact is that we don't need a busy bit. The forwarding address can be overlapped with space outside the header in each object, at least after we have copied that object into the other space.
 
-A super awesome mechanism for walking the live objects is called *Cheney scanning*, but requires that we can identify any pointers within an object. The algorithm first copies all objects pointed to by roots to the target space. This set then consists of all pointers we might need to walk and, since the objects are consecutive in memory, we don't need a linked list or separate array to track them. We can simply hop from object to object in the target space looking for pointers back into the source space.   Here is an illustration from the excellent [The Garbage Collection Handbook](http://gchandbook.org/):
+A super awesome mechanism for walking the live objects is called *Cheney scanning*. This *breadth-first* algorithm first copies all objects pointed to by roots to the target space. The set of object field pointers then consists of all pointers we might need to walk and, since the objects are consecutive in memory, we don't need a linked list or separate array to track them. We can simply hop from object to object in the target space looking for pointers back into the source space.  Here is an illustration from the excellent [The Garbage Collection Handbook](http://gchandbook.org/):
 
 <img src=images/cheney-scanning.jpg width=400>
 
+Or, here's a sequence from a simple heap that copies from a source to target:
+
+<img src=images/gc-copying1.png width=450>
+<img src=images/gc-copying2.png width=450>
+<img src=images/gc-copying3.png width=450>
+<img src=images/gc-copying4.png width=450>
+
+When we copy an object from the source to the target space, that object in the source space becomes what I call a "zombie", because it is sort of undead. We aren't going to use it anymore as an object but we can't get rid of it yet because we store the forwarding address in that object.
+ 
 Allocation for any copying collector is fast because you just have to bump a pointer in the heap; all free memory is contiguous after collection.  The cost is that we can only use up to half the memory available because we have two spaces.  Also copying collectors have a lot of work to do moving objects at each collection!  Note that if you have a finalize() method (a destructor), it implies you have to walk garbage even if not strictly required by your strategy.
 
-### Details
+### Details of a simple recursive implementation
 
 A scavenging collector operates on two equally sized heaps, heap0 and heap1. We ping-pong between heaps by swapping heap0 and heap1 pointers. That way we can always be scavenging from heap0 to heap1. 
 
@@ -237,7 +246,7 @@ static void *heap0;
 static void *heap1;
 ```
 
-in addition to the pointers we use in mark and compact:
+plus the pointers we used in mark and compact:
 
 ```C
 static void *start_of_heap;
@@ -247,8 +256,6 @@ static void *next_free_forwarding;
 ```
 
 `end_of_heap` can be easily computed on demand. `next_free` and `next_free_forwarding` operate in `heap0` and `heap1`, respectively.
-
-Scavenging uses a bump pointer allocator.
 
 Scavenging does not require a mark bit field or a forwarding address field in live objects. However, we do need a forwarding address field in zombie objects. A zombie object is one that has been copied into the new space but before the end of the collection process. Zombies hang around for the sole purpose of updating pointers from other objects (and roots) to the forwarding address in heap1. For our purposes, perhaps it's best to just force every object to have a forwarding address field.
 
@@ -279,19 +286,19 @@ heap_object *forward(heap_object *p) {
 
 ### Nondisruptive, Generational Schemes
 
-The disruptive stop-and-collect schemes are so disruptive because they have so much work to do--they must deal with the entire heap. If your heap is 3G, then it has lots to do.
+The disruptive stop-and-collect schemes are so disruptive because they have so much work to do--they must deal with the entire heap. If your heap is 8G, then it has lots to do. With the mark and copy collector, we are constantly moving long-lived objects from one heap to the other and back. This is a huge waste of time.
 
-Observation: most objects live only a short time while some tend to live a long time (think about System object in Java).
+**Observation:** most objects live only a short time while some tend to live a long time (think about `System.out` object in Java).
 
 A *generational collector* takes advantage of this observation by having a "younger" and an "older" generation. Objects that live a few "generations" (i.e., collection runs), are moved to the "older" generation, which reduces the amount of live objects the collector must traverse in the younger generation.
 
 [Myths and Realities: The Performance Impact of Garbage Collection](http://www.cs.utexas.edu/users/mckinley/papers/mmtk-sigmetrics-2004.pdf): "*Our experiments show that the generational collectors provide better performance than the whole heap collectors in virtually all circumstances*."
 
-Note the similarity to the mark and copy algorithm; here, though, the "when to copy" algorithm is very different. A generational copying collector moves objects to another generation when it has survived a few generations. Mark and copy copies all live objects upon each activation, thus, not significantly reducing its workload for future generations. Also, there may be many generations, not just two spaces as in a mark and copy scheme.
+Note the similarity to the mark and copy algorithm; here, though, the "when to copy" algorithm is very different. A generational copying collector moves objects to another generation when it has survived a few generations. Mark and copy copies all live objects upon each activation, thus, not significantly reducing its workload for future generations. Also, there may be many generations, not just two spaces as in a mark and copy scheme. A generational collector is not wasting half its heap either.
 
 Generational collectors have more bookkeeping to do than the mark and compact or mark and copy collectors. They have track references that span generations. In general, all or most pointers will point intra-nursery or into older generations and not point from older generations into the nursery. Hopefully that means our overhead is not too bad.
 
-We want to reduce how many live objects we have to look at to determine what is live and what is dead and so we want to trace only the objects in the nursery. But, we might find that there are objects pointed to from the older generation but not from the nursery itself. We can't declare such objects as dead.  That means we need a way to find pointers into the nursery from the older generation without having to walk all live objects in the older generation.  We can create pointers from the old into the nursery when we move objects to the older generation and the mutator itself can alter pointers. If you track memory writes to identify pointers that point into the nursery. These are oddly called *write barriers*.  A write barrier is literally some code generated by the compiler upon each pointer store. In both cases, the *remembered set* records the address of pointers that contain intergenerational pointers of interest.  This effectively increases the size of the root set for doing the minor collection in the nursery. See [Slava Pestov's write barrier discussion](http://factor-language.blogspot.com/2009/10/improved-write-barriers-in-factors.html).
+We want to reduce how many live objects we have to look at to determine what is live and what is dead and so we want to trace only the objects in the nursery. But, we might find that there are objects pointed to from the older generation but not from the nursery itself. We can't declare such objects as dead.  That means we need a way to find pointers into the nursery from the older generation without having to walk all live objects in the older generation.  We might conjure up pointers from the old into the nursery when we move objects to the older generation and the mutator itself can alter pointers. We need to track memory writes to identify pointers that point into the nursery from the old generation. These are oddly called *write barriers*.  A write barrier is literally some code generated by the compiler upon each pointer store. In both cases, the *remembered set* records the address of pointers that contain intergenerational pointers of interest.  This effectively increases the size of the root set for doing the minor collection in the nursery. See [Slava Pestov's write barrier discussion](http://factor-language.blogspot.com/2009/10/improved-write-barriers-in-factors.html).
 
 See [Myths and Realities: The Performance Impact of Garbage Collection](http://www.cs.utexas.edu/users/mckinley/papers/mmtk-sigmetrics-2004.pdf):
 
@@ -306,10 +313,7 @@ In the end, even generational schemes must stop-and-collect the older generation
 
 ### Nondisruptive, Incremental Tracing Collectors
 
-If you must avoid stopping to do collection, you can interleave collection with the running program, stopping the program during tiny collections, with an *incremental collector*. *Concurrent collectors* also interleave their work with the execution of the *mutator* (the program) but does not stop the execution of the mutator. It presents an obvious concurrency problem because, while it's looking for (tracing) live objects, the mutator can rearrange the objects.
-
-One means of dealing with this concurrency is a *write barrier*, which tracks pointer writes. The write barrier can record writes of pointers into objects and re-traverse some objects later. This allows writes to occur while the collector is operating. Reads are obviously not an issue here.
-Incremental collectors can be combined with generational schemes for added efficiency.
+If you must avoid stopping to do collection, you can interleave collection with the running program, stopping the program during tiny collections, with an *incremental collector*.  Or you can interleave the GC work with the execution of the *mutator* (the program) with a *concurrent collector* that does not stop the execution of the mutator. It presents an obvious concurrency problem because, while it's looking for (tracing) live objects, the mutator can rearrange the objects.
 
 Important fact: once something is garbage you can never become live again. A concurrent collector can therefore remove any garbage it identifies even though the mutator is currently changing pointers all over the place.
 
