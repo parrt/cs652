@@ -84,7 +84,7 @@ public class HelloJNI {
 		System.loadLibrary("hello"); 
 	}
 
-	private native void sayHello();
+	native void sayHello();
 
 	public static void main(String[] args) {
 		HelloJNI hello = new HelloJNI();
