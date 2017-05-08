@@ -112,13 +112,13 @@ To build/link, do this on a Mac (`jdk1.8.0.jdk` might be different):
 
 ```bash
 $ ls
-HelloJNI.java  statichello.c
+HelloJNI.java  hello.c
 $ javac HelloJNI.java 
 $ ls
-HelloJNI.class  HelloJNI.java   statichello.c
+HelloJNI.class  HelloJNI.java   hello.c
 $ javah HelloJNI
 $ ls
-HelloJNI.class  HelloJNI.h      HelloJNI.java   statichello.c
+HelloJNI.class  HelloJNI.h      HelloJNI.java   hello.c
 $ cc -dynamiclib -o libhello.jnilib \
   -I/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include \
   -I/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin \
