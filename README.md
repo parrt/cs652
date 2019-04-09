@@ -127,7 +127,7 @@ LAB: [Calling ANTLR from java](https://github.com/parrt/cs652/blob/master/labs/a
 
 ANTLR 4 section 7.2, Tree walkers, order. Section 5.1 in [Language Implementation Patterns](http://www.amazon.com/Language-Implementation-Patterns-Domain-Specific-Programming/dp/193435645X)
 
-LAB: [Parse tree listeners](https://github.com/parrt/cs652/blob/master/labs/listeners.md)
+LAB: [Parse tree listeners](https://github.com/parrt/cs652/blob/master/labs/listener.md)
 
 Section 2.5 in ANTLR 4 reference on Parse-Tree Listeners and Visitors. Then more stuff on them in Sections 7.2-7.4 Decoupling Grammars from Application-Specific Code in ANTLR 4 reference on Parse tree listeners/visitors. 
 
